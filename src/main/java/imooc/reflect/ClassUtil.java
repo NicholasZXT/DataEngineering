@@ -35,6 +35,7 @@ public class ClassUtil {
 			System.out.println(")");
 		}
 	}
+
     /**
      * 获取成员变量的信息
      * @param obj
@@ -59,6 +60,7 @@ public class ClassUtil {
 			System.out.println(typeName+" "+fieldName);
 		}
 	}
+
 	/**
 	 * 打印对象的构造函数的信息
 	 * @param obj
