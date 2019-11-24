@@ -13,7 +13,9 @@ public class FileDemo {
 		File file = new File("E:\\javaio\\imooc");
 		//System.out.println(file.exists());
 		if(!file.exists())
-			file.mkdir(); //file.mkdirs()
+			file.mkdir();
+//		 多级目录使用下面这个
+		//file.mkdirs()
 		else
 			file.delete();
 		//是否是一个目录  如果是目录返回true,如果不是目录or目录不存在返回的是false
