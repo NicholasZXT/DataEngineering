@@ -25,9 +25,11 @@ public class RafDemo {
 		raf.write('A');//只写了一个字节
 		System.out.println(raf.getFilePointer());
 		raf.write('B');
-		
+
+//		Java里最大的整数
 		int i = 0x7fffffff;
 		//用write方法每次只能写一个字节，如果要把i写进去就得写4次
+//		右移24位，只剩下高8位，然后写入
 		raf.write(i >>> 24);//高8位
 		raf.write(i >>> 16);
 		raf.write(i >>> 8);
@@ -35,6 +37,7 @@ public class RafDemo {
 		System.out.println(raf.getFilePointer());
 		
 		//可以直接写一个int
+//		上面的就是writeInt的源码实现
 		raf.writeInt(i);
 		
 		String s = "中";
