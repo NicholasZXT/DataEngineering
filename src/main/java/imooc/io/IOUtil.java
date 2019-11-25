@@ -20,11 +20,14 @@ public class IOUtil {
 		int b ;
 		int i = 1;
 		while((b = in.read())!=-1){
+//			b <= 0xf，说明只有一位，需要补一个0
 			if(b <= 0xf){
 				//单位数前面补0
 				System.out.print("0");
 			}
+//			将整型b转换为16进制表示的字符串
 			System.out.print(Integer.toHexString(b)+"  ");
+//			每10个byte换行
 			if(i++%10==0){
 				System.out.println();
 			}
