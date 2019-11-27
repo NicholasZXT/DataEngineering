@@ -38,6 +38,9 @@ public class Student implements Serializable{
 		return "Student [stuno=" + stuno + ", stuname=" + stuname + ", stuage="
 				+ stuage + "]";
 	}
+
+//	自定义序列化方法，主要用于序列化transient关键字修饰的变量
+//	这个方法是私有的
 	 private void writeObject(java.io.ObjectOutputStream s)
 		        throws java.io.IOException{
 		 s.defaultWriteObject();//把jvm能默认序列化的元素进行序列化操作

@@ -67,7 +67,7 @@ RandomAccessFile支持随机访问文件，可以访问文件的任意位置
 文本文件是文本(char)序列按照某种编码方案(utf-8,utf-16be,gbk)序列化为byte的存储结果
 3)字符流(Reader Writer)---->操作的是文本文本文件
 字符的处理，一次处理一个字符
-字符的底层任然是基本的字节序列
+----->字符的底层任然是基本的字节序列
 字符流的基本实现
    InputStreamReader   完成byte流解析为char流,按照编码解析
    OutputStreamWriter  提供char流到byte流，按照编码处理  
