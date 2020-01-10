@@ -19,6 +19,7 @@ object CaseClassDemo {
   def main(args: Array[String]): Unit = {
 //    创建样例类的对象
     val obj1 = new Point(1,2)
+//    样例类可以不使用 new 关键字
     val obj2 = Point(3,4)
 //    使用样例类
     println(obj1.x)
