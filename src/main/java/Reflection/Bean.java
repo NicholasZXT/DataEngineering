@@ -13,6 +13,7 @@ public class Bean implements Serializable {
 
     private String id;
     private String className;
+    public String description;
 
 //    无参构造方法
     public Bean() {
@@ -23,16 +24,30 @@ public class Bean implements Serializable {
         this.id = id;
     }
 //    两个参数的构造方法
+//    公有构造方法
+//    public Bean(String id, String className) {
+//        this.id = id;
+//        this.className = className;
+//    }
+//    私有构造方法
     public Bean(String id, String className) {
         this.id = id;
         this.className = className;
     }
 
+//    @Override
+//    public String toString() {
+//        return "Bean{" +
+//                "id='" + id + '\'' +
+//                ", className='" + className + '\'' +
+//                '}';
+//    }
     @Override
     public String toString() {
         return "Bean{" +
                 "id='" + id + '\'' +
                 ", className='" + className + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 
@@ -50,5 +65,9 @@ public class Bean implements Serializable {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("main 方法");
     }
 }
