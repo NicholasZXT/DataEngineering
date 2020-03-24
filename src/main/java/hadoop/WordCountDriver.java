@@ -14,7 +14,13 @@ public class WordCountDriver {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{
 
         Configuration config = new Configuration();
+//      Job is the primary interface for a user to describe a MapReduce job to the Hadoop framework for execution
+//      Job 对象是管理map-reduce任务的对象，所有的配置都从这个对象出发，类似于spark里的SparkContext
         Job job = Job.getInstance(config);
+
+//      Job对象通常用于进行以下配置
+//      Job is typically used to specify the:
+//      Mapper, combiner (if any), Partitioner, Reducer, InputFormat, OutputFormat implementations
 
         job.setJarByClass(WordCountDriver.class);
         job.setMapperClass(WordCountMapper.class);
