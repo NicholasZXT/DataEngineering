@@ -62,14 +62,13 @@ public class IterationSqStack<Item> implements Iterator<Item> {
 			return true;
 	}
 
-
 	public Item next() {
+//		这里调用this.top之后执行--，会改变实例变量的值，实际上相当于执行了出栈操作
 		return this.stack[this.top--];
 	}
 
-	public void remove() {
-		
-	}
+//	空的remove方法
+	public void remove() { }
 
 	//	栈的内容，使用泛型数组，但是要注意，实际上Java是不支持泛型数组的，这里只是申明
 	private Item[] stack;

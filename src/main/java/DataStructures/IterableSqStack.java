@@ -79,9 +79,8 @@ public class IterableSqStack<Item> implements Iterable<Item> {
 			return stack[cursor--];
 		}
 
-	public void remove() {
-
-	}
+//		空的remove方法
+		public void remove() { }
 }
 	
 	

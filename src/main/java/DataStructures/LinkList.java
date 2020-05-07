@@ -18,11 +18,16 @@ public class LinkList<Item> {
 		// TODO Auto-generated method stub
 
 	}
-	
+
+//	定义表示节点的类——内部类
 	private class Node{
+//		内部类既可以访问自身的数据域，也可以访问创建它的外围类对象的数据域
+//		内部类的变量可以不使用修饰符
 		Item data;
 		Node next;
 	}
+
+
 //	LinkNode的实例域
 	Node linkList;
 	
@@ -48,9 +53,7 @@ public class LinkList<Item> {
 		return temp;
 	}
 	
-	
 
-	
 //	根据位置查找节点内容
 	public Item searchByLocation(int index) {
 		Node temp = linkList;
