@@ -1,3 +1,5 @@
+package DataStructures;
+
 import java.util.Scanner;
 /**
  * 这个是顺序栈的示例，采用数组作为实现方式，
@@ -46,7 +48,7 @@ public class FixedCapacitySqStackOfStrings {
 //	栈顶指针指示的是栈尾元素所在位置，此时要特别注意的是，栈空时，栈顶指针为-1，而不是0
 //	private int top;
 //	栈的当前大小
-//	使用栈的大小作为表示方式时，栈尾元素实际位于 size-1 的位置，而不是size指定的位置
+//	使用栈的大小size来指示栈尾元素时，由于下标从0开始，栈尾元素实际位于 size-1 的位置，而不是size指定的位置
 	private int size;
 
 //	含参构造器

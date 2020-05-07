@@ -1,3 +1,5 @@
+package DataStructures;
+
 import java.util.Iterator;
 import java.util.Scanner;
 
@@ -47,7 +49,6 @@ public class IterableSqStack<Item> implements Iterable<Item> {
 	
 //	Iterable接口的实现
 //	这里的Iteration顺序就是出栈顺序
-	@Override
 //	这个iterator方法不是泛型方法，它只是返回了一个实现了Iterator接口的对象而已
 	public Iterator<Item> iterator() {
 //		返回一个Itr类的对象，这个对象是实现了Iterator接口的类对象
@@ -64,7 +65,7 @@ public class IterableSqStack<Item> implements Iterable<Item> {
 //			这里的cursor记录了当前top的值
 			cursor = top;
 		}
-		@Override
+
 		public boolean hasNext() {
 			// TODO Auto-generated method stub
 			if(cursor<0)
@@ -72,12 +73,16 @@ public class IterableSqStack<Item> implements Iterable<Item> {
 			else
 				return true;
 		}
-		@Override
+
 		public Item next() {
 			// TODO Auto-generated method stub
 			return stack[cursor--];
-		}	
+		}
+
+	public void remove() {
+
 	}
+}
 	
 	
 //	栈的内容，使用泛型数组，但是要注意，实际上Java是不支持泛型数组的，这里只是申明

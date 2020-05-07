@@ -1,3 +1,5 @@
+package DataStructures;
+
 import java.util.Iterator;
 import java.util.Scanner;
 
@@ -5,7 +7,7 @@ import java.util.Scanner;
 /**
  * 顺序栈的示例，使用数组实现
  * 自动扩容，使用了泛型
- * 继承了Iteration接口
+ * 继承了Iteration接口，不是Iterable接口
  * @author danielzhang
  *
  */
@@ -49,7 +51,6 @@ public class IterationSqStack<Item> implements Iterator<Item> {
 	}
 
 //	实现Iteration接口的内容
-	@Override
 //	实际上，这里的hasNext和next方法的逻辑与栈里面的isEmpty和Pop方法是一样的
 //	由于直接实现的这两个方法，这两个方法调用的this.top和this.stack是实例变量的值，特别是next方法中
 //	改变了实例变量top的值，就会影响到实例变量的状态——这意味只能遍历一次
@@ -61,13 +62,16 @@ public class IterationSqStack<Item> implements Iterator<Item> {
 			return true;
 	}
 
-	@Override
+
 	public Item next() {
 		return this.stack[this.top--];
 	}
-	
-	
-//	栈的内容，使用泛型数组，但是要注意，实际上Java是不支持泛型数组的，这里只是申明
+
+	public void remove() {
+		
+	}
+
+	//	栈的内容，使用泛型数组，但是要注意，实际上Java是不支持泛型数组的，这里只是申明
 	private Item[] stack;
 //	栈顶指针
 	private int top;

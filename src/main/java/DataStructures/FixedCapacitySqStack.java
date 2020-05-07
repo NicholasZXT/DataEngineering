@@ -57,7 +57,7 @@ public class FixedCapacitySqStack<Item> {
 ///////////Class 栈的实例变量与方法
 //	栈的内容，使用泛型数组，但是要注意，实际上Java是不支持泛型数组的，这里只是申明
 	private Item[] stack;
-//	栈顶指针
+//	栈顶指针，它既用于表示栈顶元素位置，也用于表示栈的容量
 	private int top;
 //	栈的最大容量
 	private int capacity;
@@ -67,6 +67,7 @@ public class FixedCapacitySqStack<Item> {
 	public FixedCapacitySqStack(int cap) {
 //		对于泛型数组不能直接构造，只能先构造Object的数组，然后进行类型转换
 		this.stack = (Item []) new Object[cap];
+//		-1 表示栈空
 		this.top = -1;
 		this.capacity = cap;
 	}

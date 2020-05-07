@@ -1,7 +1,7 @@
+package DataStructures;
+
 import java.util.Scanner;
-/**
- * 
- */
+
 
 /**
  * 单链表的示例
