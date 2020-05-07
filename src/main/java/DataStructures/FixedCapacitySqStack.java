@@ -18,6 +18,7 @@ public class FixedCapacitySqStack<Item> {
 //	main函数，测试用例
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
+//		IDEA里的快捷键为sout
 		System.out.println("请输入栈的容量：");
 		int cap = scan.nextInt();
 		

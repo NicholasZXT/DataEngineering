@@ -6,6 +6,7 @@ import java.util.Scanner;
 /**
  * 单链表的示例
  * 使用了泛型
+ * 没有实现Iterable接口
  * @author danielzhang
  *
  */
@@ -15,7 +16,21 @@ public class LinkList<Item> {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+
+//		初始化一个链表
+		LinkList<String> linkList = new LinkList<String>();
+//		开始输入
+		Scanner scan = new Scanner(System.in);
+		System.out.println("请逐个输入链表元素(eof为结束符):");
+		while(!scan.hasNext("eof")){
+			linkList.createReverseLinkList(scan.next());
+		}
+
+//		输出创建的链表
+		System.out.println("遍历链表：");
+		for(Node node = linkList.linkList; node != null; node = node.next){
+			System.out.println(node.data);
+		}
 
 	}
 
@@ -37,8 +52,13 @@ public class LinkList<Item> {
 	}
 	
 //	头插法逆序建立单链表
-	public void createReverseLinkList(){
-		
+//	每次插入一个元素
+	public void createReverseLinkList(Item data){
+		Node temp = new Node();
+		temp.data = data;
+//		插入
+		temp.next = this.linkList.next;
+		this.linkList.next = temp;
 	}
 	
 //	根据值的查找（第一个）节点的位置
@@ -69,9 +89,8 @@ public class LinkList<Item> {
 		return null;	
 	}
 	
-	
 //	在链表尾部插入一个节点
-	public void addNode(Item data) {
+	public void addEndNode(Item data) {
 		Node temp = new Node();
 		temp.data = data;
 		Node last = linkList;
