@@ -12,9 +12,6 @@ import java.util.Scanner;
  */
 public class LinkList<Item> {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 
 //		初始化一个链表
@@ -28,9 +25,20 @@ public class LinkList<Item> {
 
 //		输出创建的链表
 		System.out.println("遍历链表：");
-		for(Node node = linkList.linkList; node != null; node = node.next){
+//		！！！！！在静态的main方法中使用内部类Node时，需要带上外部类的名称！！！！！
+//		由于linkNode作为头结点，里面的data域没有值，所以要从第一个节点开始
+		LinkList.Node node = linkList.linkNode.next;
+		while (node!=null){
 			System.out.println(node.data);
+			node = node.next;
 		}
+//		使用for循环遍历时不太好，因为不好处理第一个元素
+//		for(LinkList.Node node = linkList.linkNode.next; node != null; node = node.next){
+//			System.out.println(node.data);
+//		}
+
+//		根据值查找元素
+
 
 	}
 
@@ -44,26 +52,29 @@ public class LinkList<Item> {
 
 
 //	LinkNode的实例域
-	Node linkList;
+	private Node linkNode;
 	
 //	LinkNode类的构造函数，也就是创建一个单链表的头结点
-	public LinkList(){
-		this.linkList = new Node();
+//	这个头结点的data域是没有值的
+	private LinkList(){
+		this.linkNode = new Node();
 	}
-	
+
+
 //	头插法逆序建立单链表
-//	每次插入一个元素
-	public void createReverseLinkList(Item data){
+//	每次插入一个元素，这样插入的时候，linkNode这个头结点里的data域是没有值的
+//	所以在遍历的时候，linkNode头结点要跳过，否则会输出null
+	private void createReverseLinkList(Item data){
 		Node temp = new Node();
 		temp.data = data;
 //		插入
-		temp.next = this.linkList.next;
-		this.linkList.next = temp;
+		temp.next = this.linkNode.next;
+		this.linkNode.next = temp;
 	}
 	
 //	根据值的查找（第一个）节点的位置
 	public Node searchByData(Item data) {
-		Node temp = linkList;
+		Node temp = this.linkNode;
 		while(temp.next!=null) {
 			if(temp.data!=data)
 				temp = temp.next;
@@ -76,7 +87,7 @@ public class LinkList<Item> {
 
 //	根据位置查找节点内容
 	public Item searchByLocation(int index) {
-		Node temp = linkList;
+		Node temp = linkNode;
 		int i = 0;
 		while(temp.next != null) {
 			if(i < index) {
@@ -93,7 +104,7 @@ public class LinkList<Item> {
 	public void addEndNode(Item data) {
 		Node temp = new Node();
 		temp.data = data;
-		Node last = linkList;
+		Node last = linkNode;
 		while(last.next!=null) {
 			last = last.next;
 		}
