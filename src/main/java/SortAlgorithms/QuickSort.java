@@ -38,11 +38,10 @@ public class QuickSort {
 
     }
 
-    //    Comparable是一个接口
+    /**
+     * 这个方法是执行排序的主要部分
+     */
     public static void sort(Comparable[] array, int left, int right){
-        /**
-         * 这个方法是执行排序的主要部分
-         */
         if ( left >= right) return;
 //        首先找到用于切分的主轴元素——也就是该元素的index
 //        partition函数执行后，有array[left: split_index-1] <= array[split_index] <= array[split_index+1: right]
@@ -54,10 +53,10 @@ public class QuickSort {
         sort(array, split_index+1, right);
     }
 
+    /**
+     * 这个方法用于切分数组
+     */
     private static int partition(Comparable[] array, int left, int right){
-        /**
-         * 这个方法用于切分数组
-         */
 //        low和high是扫描的指针
         int low = left;
         int high = right + 1; //这里right要加1,是为了避免第一次使用右指针时跳过最右边的元素
@@ -81,27 +80,27 @@ public class QuickSort {
         return high;
     }
 
+    /**
+     * 用于比较两个元素，v < w 时返回compareTo返回负数——返回值为True
+     */
     private static boolean less(Comparable v, Comparable w){
-        /**
-         * 用于比较两个元素，v < w 时返回compareTo返回负数——返回值为True
-         */
         return v.compareTo(w) < 0;
     }
 
+    /**
+     * 用于交换数组array中i和j位置的元素
+     */
     private static void exchange(Comparable[] array, int i, int j){
-        /**
-         * 用于交换数组array中i和j位置的元素
-         */
         Comparable t = array[i];
         array[i] = array[j];
         array[j] = t;
     }
 
-    //    下面的方法都是次要的
+// ----------下面的方法都是次要的-----------
+    /**
+     * 用于打印
+     */
     private static void show(Comparable[] array){
-        /**
-         * 用于打印
-         */
         for ( int i =0 ; i < array.length; i++){
             System.out.print(array[i]);
             System.out.print(" ");
@@ -109,10 +108,11 @@ public class QuickSort {
         System.out.print("\n");
     }
 
+    /**
+     * 测试数组元素是否有序
+     */
     private static boolean isSorted(Comparable[] array){
-        /**
-         * 测试数组元素是否有序
-         */
+
         for(int i = 1; i < array.length; i++){
             if ( less(array[i], array[i-1])) return false;
         }
