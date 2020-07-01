@@ -11,6 +11,8 @@ Javabean规范：
 
 public class Bean implements Serializable {
 
+
+//    这些字段必须是私有的
     private String id;
     private String className;
     public String description;
