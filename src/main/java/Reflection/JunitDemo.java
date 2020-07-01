@@ -21,6 +21,7 @@ public class JunitDemo {
     /*Junit使用
     1. 在方法上方添加注解@Test
     2. 导入Junit包，右键Junit运行
+    需要注意的是，被测试的方法不能含有参数和返回值
      */
     @Test
     public void demo2(){
