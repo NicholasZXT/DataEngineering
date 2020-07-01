@@ -4,7 +4,7 @@ import scala.beans.BeanProperty
 import com.alibaba.fastjson.JSON
 import java.util.List
 
-class BeanDemo{
+class BeanForJsonDemo{
 
 //  name是普通的变量
   var name:String = ""
@@ -35,10 +35,10 @@ case class Family_2(
    @BeanProperty var address:String = ""
    )
 
-object BeanDemo {
+object BeanForJsonDemo {
 
   def main(args: Array[String]): Unit = {
-    val bean = new BeanDemo()
+    val bean = new BeanForJsonDemo()
 
 //    name只能通过属性的方式设置和取值
 //    bean.name = "name"
