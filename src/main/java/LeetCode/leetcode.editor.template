@@ -1,0 +1,11 @@
+Q${question.frontendQuestionId}_$!velocityTool.camelCaseName(${question.titleSlug})
+
+${question.content}
+
+package LeetCode.leetcode.editor.en;
+public class Q${question.frontendQuestionId}_$!velocityTool.camelCaseName(${question.titleSlug}){
+  public static void main(String[] args) {
+       Solution solution = new Q${question.frontendQuestionId}_$!velocityTool.camelCaseName(${question.titleSlug})().new Solution();
+  }
+  ${question.code}
+}
