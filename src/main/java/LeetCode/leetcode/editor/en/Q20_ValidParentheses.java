@@ -62,6 +62,7 @@ public class Q20_ValidParentheses{
        solution.isValid("([)]");
        solution.isValid("{[]}");
        solution.isValid("]}");
+       solution.isValid("((()(())))");
   }
 
   //leetcode submit region begin(Prohibit modification and deletion)
