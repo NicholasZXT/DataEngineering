@@ -26,19 +26,19 @@ public class Q53_MaximumSubarray{
   //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int maxSubArray(int[] nums) {
-        int start = 0;
-        int end = 0;
-        int sum = 0;
-        int i = start;
-        int j = end;
-        while( end < nums.length){
-            if(nums[j] >= nums[i]){
-                j++;
+        int len = nums.length;
+        int[] dp = new int[len];
+        dp[0] = nums[0];
+//        int max = nums[0];
+//        int pre = max;
+        for (int i = 1; i < len; i++){
+            if( nums[i] < 0){
+                dp[i] = dp[i-1];
+            }else {
+                dp[i] = dp[i] > 0 ? dp[i] + nums[i] : nums[i];
             }
         }
-
-
-        return sum;
+        return dp[len-1];
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
