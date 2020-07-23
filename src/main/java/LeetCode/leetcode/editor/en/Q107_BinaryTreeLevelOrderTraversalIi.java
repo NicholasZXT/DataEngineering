@@ -37,6 +37,9 @@ import java.util.Queue;
 import java.util.LinkedList; // LinkedList是Queue这个接口的实现类
 
 
+/**
+ * 这道题有点难度，但是也复习了很多细节的东西
+ */
 public class Q107_BinaryTreeLevelOrderTraversalIi{
   public static void main(String[] args) {
        Solution solution = new Q107_BinaryTreeLevelOrderTraversalIi().new Solution();
@@ -46,11 +49,11 @@ public class Q107_BinaryTreeLevelOrderTraversalIi{
 //         9  20
 //           /  \
 //          15   7
-//       TreeNode tree = new TreeNode(3);
-//       tree.left = new TreeNode(9); tree.left.left = null; tree.left.right = null;
-//       tree.right = new TreeNode(20);
-//       tree.right.left = new TreeNode(15); tree.right.left.left = null; tree.right.left.right = null;
-//       tree.right.right = new TreeNode(7); tree.right.right.left = null; tree.right.right.right = null;
+       TreeNode tree = new TreeNode(3);
+       tree.left = new TreeNode(9); tree.left.left = null; tree.left.right = null;
+       tree.right = new TreeNode(20);
+       tree.right.left = new TreeNode(15); tree.right.left.left = null; tree.right.left.right = null;
+       tree.right.right = new TreeNode(7); tree.right.right.left = null; tree.right.right.right = null;
 
 //       测试案例二, [1,2,3,4,null,null,5]， 这个案例要特别注意
 //           1
@@ -58,13 +61,13 @@ public class Q107_BinaryTreeLevelOrderTraversalIi{
 //         2   3
 //        /     \
 //       4       5
-      TreeNode tree = new TreeNode(1);
-      tree.left = new TreeNode(2);
-      tree.left.left = new TreeNode(4); tree.left.left.left = null; tree.left.left.right = null;
-      tree.left.right = null;
-      tree.right = new TreeNode(3);
-      tree.right.left = null;
-      tree.right.right = new TreeNode(5); tree.right.right.left = null; tree.right.right.right = null;
+//      TreeNode tree = new TreeNode(1);
+//      tree.left = new TreeNode(2);
+//      tree.left.left = new TreeNode(4); tree.left.left.left = null; tree.left.left.right = null;
+//      tree.left.right = null;
+//      tree.right = new TreeNode(3);
+//      tree.right.left = null;
+//      tree.right.right = new TreeNode(5); tree.right.right.left = null; tree.right.right.right = null;
 
 //       测试案例三
 //           1
@@ -88,29 +91,41 @@ public class Q107_BinaryTreeLevelOrderTraversalIi{
 
 
 //      获取并打印
-//       List<List<Integer>> result = solution.levelOrderBottom(tree);
-//       for (List<Integer> list: result){
-//           System.out.println(Arrays.toString(list.toArray()));
-//       }
+       List<List<Integer>> result = solution.levelOrderBottom(tree);
+       for (List<Integer> list: result){
+           System.out.println(Arrays.toString(list.toArray()));
+       }
   }
 
 //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
         public List<List<Integer>> levelOrderBottom(TreeNode root) {
             List<List<Integer>> result = new ArrayList<>();
-//        这里注意List的初始化
-            result.add(Arrays.asList(1,2,3));
-
             Queue<TreeNode> queue = new LinkedList<>();
+            int levelNum = queue.size();
+            TreeNode tempNode;
+            List<Integer> sublist;
+            if(root == null) return result;
             queue.add(root);
+//            这里的while循环是仿照树的层序遍历，用队列来存储每一层的节点
             while (!queue.isEmpty()){
-
+//              这里的levelNum记录的是当前层的节点数，它和下面的for循环配合
+//              每次for循环里都只遍历当前层的所有节点，同时把下一层的所有节点放入队列
+                levelNum = queue.size();
+//              这里的这个sublis在for循环里每次必须要新建一个对象，不能在加入result之后通过执行sublist.clear()来重复使用，
+//              这样会将所有已经存储的值清除掉
+                sublist = new ArrayList<>();
+                for (int i = 0; i < levelNum; i++){
+                    tempNode = queue.poll();
+                    sublist.add(tempNode.val);
+                    if(tempNode.left != null) {queue.offer(tempNode.left);}
+                    if(tempNode.right != null) {queue.offer(tempNode.right);}
+                }
+                result.add(0,sublist);
+//                sublist.clear();
             }
-
-
             return result;
         }
-
 
     }
 //leetcode submit region end(Prohibit modification and deletion)
