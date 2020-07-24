@@ -36,8 +36,10 @@
 
 package LeetCode.leetcode.editor.en;
 
-import java.io.Writer;
 
+/**
+ * 这个比较简单
+ */
 public class Q110_BalancedBinaryTree{
   public static void main(String[] args) {
        Solution solution = new Q110_BalancedBinaryTree().new Solution();

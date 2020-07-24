@@ -30,6 +30,9 @@
 
 package LeetCode.leetcode.editor.en;
 
+/**
+ * 这个比较简单
+ */
 public class Q125_ValidPalindrome{
   public static void main(String[] args) {
        Solution solution = new Q125_ValidPalindrome().new Solution();
@@ -40,7 +43,8 @@ public class Q125_ValidPalindrome{
        String s = "0P";
       System.out.println("result is : " + solution.isPalindrome(s));
   }
-  //leetcode submit region begin(Prohibit modification and deletion)
+
+//leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public boolean isPalindrome(String s) {
         if(s.isEmpty()) return true;

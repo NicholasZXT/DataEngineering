@@ -22,6 +22,10 @@
 
 
 package LeetCode.leetcode.editor.en;
+
+/**
+ * 这个比较简单
+ */
 public class Q111_MinimumDepthOfBinaryTree{
   public static void main(String[] args) {
        Solution solution = new Q111_MinimumDepthOfBinaryTree().new Solution();
