@@ -48,10 +48,10 @@ public class Q110_BalancedBinaryTree{
 //           /  \
 //          15   7
 //      TreeNode tree = new TreeNode(3);
-//      tree.left = new TreeNode(9); tree.left.left = null; tree.left.right = null;
+//      tree.left = new TreeNode(9, null, null);
 //      tree.right = new TreeNode(20);
-//      tree.right.left = new TreeNode(15); tree.right.left.left = null; tree.right.left.right = null;
-//      tree.right.right = new TreeNode(7); tree.right.right.left = null; tree.right.right.right = null;
+//      tree.right.left = new TreeNode(15, null, null);
+//      tree.right.right = new TreeNode(7, null, null);
 
 //       测试案例二, [1,2,3,4,null,null,5]
 //           1
@@ -61,11 +61,11 @@ public class Q110_BalancedBinaryTree{
 //       4       5
 //      TreeNode tree = new TreeNode(1);
 //      tree.left = new TreeNode(2);
-//      tree.left.left = new TreeNode(4); tree.left.left.left = null; tree.left.left.right = null;
+//      tree.left.left = new TreeNode(4, null, null);
 //      tree.left.right = null;
 //      tree.right = new TreeNode(3);
 //      tree.right.left = null;
-//      tree.right.right = new TreeNode(5); tree.right.right.left = null; tree.right.right.right = null;
+//      tree.right.right = new TreeNode(5, null, null);
 
 // 测试案例三，[1,2,2,3,3,null,null,4,4]:
 //            1
@@ -78,10 +78,10 @@ public class Q110_BalancedBinaryTree{
       TreeNode tree = new TreeNode(1);
       tree.left = new TreeNode(2);
       tree.left.left = new TreeNode(3);
-      tree.left.left.left = new TreeNode(4); tree.left.left.left.left = null; tree.left.left.left.right = null;
-      tree.left.left.right = new TreeNode(4); tree.left.left.right.left = null; tree.left.left.right.right = null;
-      tree.left.right = new TreeNode(3); tree.left.right.left = null; tree.left.right.right = null;
-      tree.right = new TreeNode(2); tree.right.left = null; tree.right.right = null;
+      tree.left.left.left = new TreeNode(4,null, null);
+      tree.left.left.right = new TreeNode(4, null, null);
+      tree.left.right = new TreeNode(3, null, null);
+      tree.right = new TreeNode(2, null ,null);
 
       boolean result = solution.isBalanced(tree);
       System.out.println("result = " + result);
