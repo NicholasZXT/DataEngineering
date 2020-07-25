@@ -27,7 +27,6 @@
 
 package LeetCode.leetcode.editor.en;
 
-import qianfeng.Tree;
 
 import java.util.Arrays;
 import java.util.List;
