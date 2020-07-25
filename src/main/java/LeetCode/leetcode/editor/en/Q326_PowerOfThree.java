@@ -29,8 +29,9 @@
 //Could you do it without using any loop / recursion? Related Topics Math 
 // 👍 515 👎 1469
 
-/*
+/**
 这道题看着简单，但实际上不好做
+类似的还有231题
  */
 package LeetCode.leetcode.editor.en;
 public class Q326_PowerOfThree{
