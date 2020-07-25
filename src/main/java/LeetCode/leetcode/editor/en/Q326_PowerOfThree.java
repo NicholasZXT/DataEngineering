@@ -29,7 +29,9 @@
 //Could you do it without using any loop / recursion? Related Topics Math 
 // 👍 515 👎 1469
 
-
+/*
+这道题看着简单，但实际上不好做
+ */
 package LeetCode.leetcode.editor.en;
 public class Q326_PowerOfThree{
   public static void main(String[] args) {
@@ -40,7 +42,8 @@ public class Q326_PowerOfThree{
 //       int n = 9;
 //       int n = 45;
 //       int n = 19684;
-      System.out.println(19684/3);
+//      System.out.println(19684/3);
+      System.out.println(2 / 3);
       System.out.println(n + ", result is : " + solution.isPowerOfThree(n));
 
   }
@@ -48,16 +51,15 @@ public class Q326_PowerOfThree{
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public boolean isPowerOfThree(int n) {
-//        if(n == 0) return false;
-        if(n == 1) return true;
-        int res = n/3;
-        int mode = n%3;
-
-        while (res >= 3 | mode != 0){
-            mode = res%3;
-            res = res/3;
+        if(n < 1) return false;
+        int mode = n % 3;
+//        while循环的判断用mode，但是最终结果的判断用 n
+//        当余数为0时一直除下去
+        while (mode == 0){
+            n = n / 3;
+            mode = n % 3;
         }
-        return res == 1 & mode == 0;
+        return n == 1 ;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
