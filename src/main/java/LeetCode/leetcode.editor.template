@@ -7,5 +7,5 @@ public class Q${question.frontendQuestionId}_$!velocityTool.camelCaseName(${ques
   public static void main(String[] args) {
        Solution solution = new Q${question.frontendQuestionId}_$!velocityTool.camelCaseName(${question.titleSlug})().new Solution();
   }
-  ${question.code}
+${question.code}
 }
