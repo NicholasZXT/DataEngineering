@@ -33,13 +33,20 @@
 
 
 package LeetCode.leetcode.editor.en;
+
+/**
+ * 这道题值得一看
+ */
 public class Q88_MergeSortedArray{
   public static void main(String[] args) {
        Solution solution = new Q88_MergeSortedArray().new Solution();
-       int[] nums1 = {1, 2, 3, 0, 0, 0};
-       int[] nums2 = {2,5,6};
-       solution.merge(nums1, 6, nums2,3);
-       for(int i: nums1){
+//       int[] nums1 = {1, 2, 3, 0, 0, 0};
+//       int[] nums2 = {2,5,6};
+//      solution.merge(nums1, 3, nums2,3);
+      int[] nums1 = {0};
+      int[] nums2 = {1};
+      solution.merge(nums1, 0, nums2,1);
+      for(int i: nums1){
            System.out.print(i + ", ");
        }
   }
@@ -47,7 +54,16 @@ public class Q88_MergeSortedArray{
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public void merge(int[] nums1, int m, int[] nums2, int n) {
-        
+        int tail1 = m - 1;
+        int tail2 = n - 1;
+        int finished = m + n - 1;
+        while(tail1 >= 0 & tail2 >= 0){
+            nums1[finished--] = (nums1[tail1] > nums2[tail2]) ? nums1[tail1--]: nums2[tail2--];
+        }
+//      剩下的只需要考虑nums有没有归并完，这里的条件必须是 >= ,不能是 >
+        while (tail2 >= 0 ){
+            nums1[finished--] = nums2[tail2--];
+        }
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
