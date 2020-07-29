@@ -25,8 +25,6 @@
 
 package LeetCode.leetcode.editor.en;
 
-import qianfeng.Tree;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
