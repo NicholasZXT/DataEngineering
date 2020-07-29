@@ -71,7 +71,7 @@ class Solution {
             if( pre.charAt(i) == tempChar )
                 count += 1;
             else{
-                say = say + count + String.valueOf(tempChar);
+                say = say + count + tempChar;
                 tempChar = pre.charAt(i);
                 count = 1;
             }
@@ -80,7 +80,7 @@ class Solution {
         if( say.isEmpty())
             say = count + String.valueOf(tempChar);
         else
-            say = say + count + String.valueOf(tempChar);
+            say = say + count + tempChar;
         return say;
     }
 }
