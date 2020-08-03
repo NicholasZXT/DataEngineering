@@ -40,6 +40,9 @@
 
 - Q70_ClimbingStairs
 
+- Q83_RemoveDuplicatesFromSortedList  
+这道题不难，但是花了点时间，值得复习下
+
 - Q88_MergeSortedArray
 
 - Q100_SameTree

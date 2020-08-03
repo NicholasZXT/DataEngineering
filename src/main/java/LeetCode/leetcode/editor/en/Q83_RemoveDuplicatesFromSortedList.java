@@ -19,17 +19,23 @@
 
 
 package LeetCode.leetcode.editor.en;
+
+/**
+ * 这道题不难，但是花了点时间，需要再复习下
+ */
 public class Q83_RemoveDuplicatesFromSortedList{
   public static void main(String[] args) {
        Solution solution = new Q83_RemoveDuplicatesFromSortedList().new Solution();
-//       测试案例一
+//       测试案例一,1,1,2
 //       ListNode head = new ListNode(1); head.next = new ListNode(1); head.next.next = new ListNode(2,null);
 //       测试案例二, 1,1,2,3,3
-      ListNode head = new ListNode(1); head.next = new ListNode(1); head.next.next = new ListNode(2,null);
-      head.next.next.next = new ListNode(3); head.next.next.next.next = new ListNode(3,null);
+//      ListNode head = new ListNode(1); head.next = new ListNode(1); head.next.next = new ListNode(2,null);
+//      head.next.next.next = new ListNode(3); head.next.next.next.next = new ListNode(3,null);
+//      测试案例三 []
+      ListNode head = null;
+
+
       PrintList(head);
-
-
       System.out.println("result is :");
       PrintList(solution.deleteDuplicates(head));
   }
@@ -37,13 +43,15 @@ public class Q83_RemoveDuplicatesFromSortedList{
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public ListNode deleteDuplicates(ListNode head) {
-        ListNode pre = head, cur = head.next;
-        if(pre == null | cur == null) return pre;
+        ListNode pre = head;
+        if(pre == null ) return pre;
+        ListNode cur = head.next;
+        if(cur == null) return pre;
 
         while (cur.next != null){
             if( cur.val == pre.val){
                 pre.next = cur.next;
-                pre = pre.next;
+//                pre = pre.next;
                 cur = pre.next;
             }else {
                 pre = pre.next;
