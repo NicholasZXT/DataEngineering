@@ -43,8 +43,6 @@ public class Q14_LongestCommonPrefix{
   }
   //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-
-
 //      下面这两个解法的性能瓶颈在于：如果最后一个字符串非常短，那么前面很多次比较都是不必要的
 //      官方的解法一：大体思路和我一开始的解法是一样的，但是在循环数组的内层里和我不太一样
       public String longestCommonPrefix(String[] strs) {
