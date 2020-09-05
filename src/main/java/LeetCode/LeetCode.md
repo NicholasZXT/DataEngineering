@@ -90,6 +90,8 @@
 + Q5_LongestPalindromicSubstring
 动态规划求解，高频经典
 
++ Q1143_LongestCommonSubsequence
+最长公共子序列(不是公共子串)，动态规划求解，高频经典
 
 
 --------------------
