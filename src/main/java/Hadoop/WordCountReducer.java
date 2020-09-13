@@ -15,10 +15,11 @@ public class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritab
 
 //    reduce方法的签名：
 //  reduce(KEYIN key, Iterable<VALUEIN> values, org.apache.hadoop.mapreduce.Reducer.Context context)
-//  这个reduce方法 对于 每个 key 调用一次
+//  这个reduce方法 对于 每个 key 调用一次，注意，是每个key调用一次！！！！
     @Override
     protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
 //        super.reduce(key, values, context);
+//        由于reduce方法是对每个key调用一次，每个key对应的多个值被组成了一个 Iterable<IntWritable> 对象，
         sum = 0;
         for (IntWritable count: values){
             sum += count.get();

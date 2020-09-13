@@ -13,6 +13,7 @@ public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritabl
 //    下面这两个变量是存储 Map 过程 输出 的 k-v 对，（不是输入的）
 //    这个 k 用于存储输入的文本作为key，是Hadoop自带的序列化类型
 //    注意，这个 k 作为 reduce 阶段的key，不仅要能序列化，还要实现 WritableComparable 接口，因为结果要排序
+//    这里将输出的k,v的对象构造放在map方法外面，是为了提高效率，避免map中for循环重复创建对象
     Text k = new Text();
 //    这个 v 的值就是1，只不过因为要序列化，不使用java内部的整型
     IntWritable v = new IntWritable(1);
@@ -23,8 +24,10 @@ public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritabl
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 //        super.map(key, value, context);
-//        传入的形参 key 和 value 都是经过序列化之后的对象
+//        传入的形参 key 和 value 都是经过序列化之后的对象，但是这里传入的key是文件中每行的偏移量，对于wordcount没有用
+//        获取当前行的值
         String line = value.toString();
+//        将每一行按照空格进行分割
         String[] words = line.split(" ");
 
         for(String word:words){
