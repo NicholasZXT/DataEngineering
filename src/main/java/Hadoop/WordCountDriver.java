@@ -37,6 +37,8 @@ public class WordCountDriver {
 //        5. 设置Reduce阶段输出数据的key, value类型
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
+//        这里也可设置reduceTask的数量，默认为1
+        job.setNumReduceTasks(2);
 
 //        6. 设置输入和输出数据路径
         FileInputFormat.setInputPaths(job, new Path(args[0]));
