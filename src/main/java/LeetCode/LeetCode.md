@@ -89,12 +89,16 @@
 
 + Q5_LongestPalindromicSubstring
 动态规划求解，高频经典
+Q5,Q72,Q1143一起
 
 + Q1143_LongestCommonSubsequence
-最长公共子序列(不是公共子串)，动态规划求解，高频经典
+最长公共子序列(不是公共子串)，动态规划求解，高频经典  
+Q5,Q72,Q1143一起
 
 
 --------------------
-
-
 # Hard
+
++ Q72_EditDistance
+字符串编辑距离，动态规划求解，
+Q5,Q72,Q1143一起

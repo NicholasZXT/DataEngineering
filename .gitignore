@@ -10,3 +10,4 @@ gen
 /target/
 /app.properties
 app.properties
+!/data/wordcount_result/
