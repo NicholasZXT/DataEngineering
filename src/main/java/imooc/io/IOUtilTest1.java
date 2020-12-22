@@ -11,7 +11,6 @@ public class IOUtilTest1 {
 		try {
 			IOUtil.printHex("e:\\javaio\\FileUtils.java");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

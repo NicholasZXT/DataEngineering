@@ -10,7 +10,6 @@ public class RandomAccessFileSeriaDemo {
 	 * @param args
 	 */
 	public static void main(String[] args)throws IOException {
-		// TODO Auto-generated method stub
 		File demo = new File("demo1");
 		if(!demo.exists())demo.mkdir();
 		File file = new File(demo,"raf.dat");

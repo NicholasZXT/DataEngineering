@@ -13,7 +13,6 @@ public class SqStack<Item> {
 
 //	main函数，测试用例
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Scanner scan = new Scanner(System.in);
 		System.out.println("请输入栈的初始容量：");
 		int cap = scan.nextInt();

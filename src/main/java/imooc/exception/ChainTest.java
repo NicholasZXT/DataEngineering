@@ -24,7 +24,6 @@ public class ChainTest {
 		try {
 			test1();
 		} catch (DrunkException e) {
-			// TODO Auto-generated catch block
 			RuntimeException newExc = 
 				new RuntimeException(e);
 //			newExc.initCause(e);

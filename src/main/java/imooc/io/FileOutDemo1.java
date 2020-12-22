@@ -9,7 +9,6 @@ public class FileOutDemo1 {
 	 * @param args
 	 */
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
 		//如果该文件不存在，则直接创建，如果存在，删除后创建
 		FileOutputStream out = new FileOutputStream("demo/out.dat");
 		out.write('A');//写出了'A'的低八位

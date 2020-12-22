@@ -10,7 +10,6 @@ public class FileDemo2 {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		File file = new File("e:\\example");
 		/*String[] filenames = file.list(new FilenameFilter() {
 			
@@ -27,7 +26,6 @@ public class FileDemo2 {
 			
 			@Override
 			public boolean accept(File dir, String name) {
-				// TODO Auto-generated method stub
 				System.out.println(dir+"\\"+name);
 			
 				return false;
@@ -36,7 +34,6 @@ public class FileDemo2 {
 		File[] files = file.listFiles(new FileFilter() {
 
 			public boolean accept(File pathname) {
-				// TODO Auto-generated method stub
 				System.out.println(pathname);
 				
 				return false;

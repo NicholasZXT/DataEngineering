@@ -9,7 +9,6 @@ public class RafReadDemo {
 	 * @param args
 	 */
 	public static void main(String[] args)throws IOException {
-		// TODO Auto-generated method stub
 		RandomAccessFile raf = new RandomAccessFile("demo/raf.dat", "r");
 		raf.seek(2);
 		int i = 0;

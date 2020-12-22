@@ -29,7 +29,6 @@ public class FileDemo {
 			try {
 				file2.createNewFile();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		else 

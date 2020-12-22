@@ -19,7 +19,6 @@ public class IterableSqStack<Item> implements Iterable<Item> {
 
 //	main函数，测试用例
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Scanner scan = new Scanner(System.in);
 		System.out.println("请输入栈的初始容量：");
 		int cap = scan.nextInt();
@@ -67,7 +66,6 @@ public class IterableSqStack<Item> implements Iterable<Item> {
 		}
 
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
 			if(cursor<0)
 				return false;
 			else
@@ -75,7 +73,6 @@ public class IterableSqStack<Item> implements Iterable<Item> {
 		}
 
 		public Item next() {
-			// TODO Auto-generated method stub
 			return stack[cursor--];
 		}
 

@@ -33,7 +33,6 @@ public class MethodDemo1 {
                // m2.invoke(a1, new Object[]{});
                 m2.invoke(a1);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
      
