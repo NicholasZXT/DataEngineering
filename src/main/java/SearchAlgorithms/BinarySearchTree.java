@@ -46,10 +46,10 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         Key key;  //键
         Value value;
         Node left, right;  // 左右子树
-        int N;  // 以该节点为根的子树中的节点数
+        int N;  // 节点计数器——以该节点为根的子树中的节点数
 
         public Node(Key key, Value value, int N){
-            this.key = key; this.value = value;this.N=N;
+            this.key = key; this.value = value; this.N=N;
         }
     }
 

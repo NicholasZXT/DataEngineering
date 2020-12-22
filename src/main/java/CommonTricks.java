@@ -1,6 +1,3 @@
-package LeetCode;
-
-
 /**
  * 这里记录了刷LeetCode中使用过的一些Java技巧
  */
