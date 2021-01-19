@@ -9,3 +9,6 @@ public class Q${question.frontendQuestionId}_$!velocityTool.camelCaseName(${ques
   }
   ${question.code}
 }
+
+cookie登录教程网址
+https://github.com/shuzijun/leetcode-editor/blob/master/doc/LoginHelp_ZH.md

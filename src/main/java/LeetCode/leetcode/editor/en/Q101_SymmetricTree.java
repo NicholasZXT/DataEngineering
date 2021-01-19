@@ -38,6 +38,7 @@ import java.util.Queue;
 
 /**
  * 这道题也有点意思，可以写出来，不过有些地方需要注意
+ * 和二叉树的层序遍历有关
  */
 public class Q101_SymmetricTree{
   public static void main(String[] args) {

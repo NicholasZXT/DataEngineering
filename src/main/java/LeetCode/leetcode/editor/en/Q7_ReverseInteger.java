@@ -58,9 +58,9 @@ class Solution {
 //            做这个溢出判断的时候，数学上应该是判断  rev * 10 + pop > Integer.MAX_VALUE，但是要注意的是，数值溢出可能在
 //            rev*10 这个运算中就已经发生，所以不能使用 rev * 10 + pop > Integer.MAX_VALUE 进行判断，要对 rev*10是否溢出做判断
 //            判断正数溢出
-            if( (rev > Integer.MAX_VALUE/10) || (rev == Integer.MAX_VALUE && pop > 7) ){rev = 0; break;}
+            if( (rev > Integer.MAX_VALUE/10) || (rev == Integer.MAX_VALUE/10 && pop > 7) ){rev = 0; break;}
 //            判断负数溢出
-            if( (rev < Integer.MIN_VALUE/10) || (rev == Integer.MIN_VALUE && pop < -8) ) {rev = 0; break;}
+            if( (rev < Integer.MIN_VALUE/10) || (rev == Integer.MIN_VALUE/10 && pop < -8) ) {rev = 0; break;}
 //            下面这句用于组合结果，但是执行这个运算之前，需要在上面先判断是否会溢出
             rev = rev * 10 + pop;
         }
