@@ -11,3 +11,4 @@ gen
 /app.properties
 app.properties
 !/data/wordcount_result/
+/.gradle/

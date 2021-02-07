@@ -40,9 +40,10 @@ object BeanForJsonDemo {
   def main(args: Array[String]): Unit = {
     val bean = new BeanForJsonDemo()
 
-//    name只能通过属性的方式设置和取值
-//    bean.name = "name"
-//    println(bean.name)
+//    name使用的是Scala自动生成的getter和setter方法，只不过封装成了属性的方式
+    println("default name", bean.name)
+    bean.name = "name"
+    println("new name", bean.name)
 
 //    name_bean会自动生成下面的set和get方法
 //    bean.setName_bean("name_bean")
