@@ -1,14 +1,12 @@
 package Hadoop;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.io.Text;
 import org.apache.commons.beanutils.BeanUtils;
-import scala.xml.Null;
 
 public class ReduceJoinReducer extends Reducer<Text, TableBean, TableBean, NullWritable>{
 
