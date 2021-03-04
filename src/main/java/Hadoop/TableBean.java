@@ -9,10 +9,12 @@ import java.io.IOException;
 // ReduceJoin 和 MapJoin 使用的 Bean 对象
 public class TableBean implements Writable{
 
-    private String city;
-    private String statyear;
-    private int num;
-    private String source;
+    // bean对象里的字段
+    private String id = "";
+    private String city = "";
+    private String statyear = "";
+    private int num = 0;
+    private String source = "";  // 用于区分来自不同表的记录
 
     // 空参构造函数，用于反序列化
     public TableBean(){
@@ -20,10 +22,11 @@ public class TableBean implements Writable{
     }
 
     // 有参构造函数
-    public TableBean(String city, String statyer, int num, String source){
+    public TableBean(String id, String city, String statyear, int num, String source){
         super();
+        this.id = id;
         this.city = city;
-        this.statyear = statyer;
+        this.statyear = statyear;
         this.num = num;
         this.source = source;
     }
@@ -31,6 +34,7 @@ public class TableBean implements Writable{
     // 序列化方法
     @Override
     public void write(DataOutput output) throws IOException {
+        output.writeUTF(id);
         output.writeUTF(city);
         output.writeUTF(statyear);
         output.writeInt(num);
@@ -40,6 +44,7 @@ public class TableBean implements Writable{
     // 反序列化方法
     @Override
     public void readFields(DataInput input) throws IOException {
+        this.id = input.readUTF();
         this.city = input.readUTF();
         this.statyear = input.readUTF();
         this.num = input.readInt();
@@ -49,10 +54,19 @@ public class TableBean implements Writable{
     // toString 方法，用于打印
     @Override
     public String toString() {
-        return city + "\t" + statyear + "\t" + num;
+        return id + "\t" + city + "\t" + statyear + "\t" + num;
     }
 
     // get和set方法
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getCity() {
         return city;

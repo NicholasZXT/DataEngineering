@@ -3,7 +3,7 @@ package Hadoop;
 import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.mapred.FileSplit;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.io.Text;
 
@@ -12,7 +12,6 @@ public class ReduceJoinMapper extends Mapper<LongWritable, Text, Text, TableBean
     String filename;
     TableBean bean = new TableBean();
     Text key_out = new Text();
-
 
     // 重写 set 方法，获取文件信息
     @Override
@@ -30,13 +29,17 @@ public class ReduceJoinMapper extends Mapper<LongWritable, Text, Text, TableBean
         String line = value.toString();
 
         if (filename.startsWith("left")){
-            String[] fields = line.split("\t");
+            // 左表的记录
+            String[] fields = line.split(" ");
+            bean.setId(fields[0]);
             bean.setNum(Integer.parseInt(fields[1]));
             bean.setSource("left");
 
             key_out.set(fields[0]);
         } else {
-            String[] fields = line.split("\t");
+            // 右表的记录
+            String[] fields = line.split(" ");
+            bean.setId(fields[0]);
             bean.setCity(fields[1]);
             bean.setStatyear(fields[2]);
             bean.setSource("right");
