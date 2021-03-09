@@ -12,3 +12,4 @@ gen
 app.properties
 !/data/wordcount_result/
 /.gradle/
+/src/main/java/LeetCode/leetcode/editor/en/
