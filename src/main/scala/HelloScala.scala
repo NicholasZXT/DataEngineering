@@ -4,7 +4,7 @@ object HelloScala {
 
   def main(args: Array[String]): Unit = {
 
-//    println("hello scala")
+    println("hello scala")
 
 //    breakable的break方法
     breakable{
