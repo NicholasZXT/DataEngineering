@@ -14,7 +14,8 @@ object HelloSpark {
     val sc = new SparkContext(conf)
     sc.setLogLevel("ERROR")
 
-    val rdd1:RDD[String] = sc.textFile("input/")
+//    val rdd1:RDD[String] = sc.textFile("input/")
+    val rdd1 = sc.parallelize(List(1,2,3,4))
     rdd1.foreach(println)
 
 //    rdd1.flatMap(_.split("")).map((_, 1)).
