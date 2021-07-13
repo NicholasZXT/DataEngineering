@@ -9,14 +9,35 @@ import java.util.Arrays;
 public class BinarySearch<Key extends Comparable<Key>, Value> {
 
     public static void main(String[] args) {
+        Integer[] array = {1, 3, 5, 7, 8, 11};
+        // 为了下面使用，这里创建数组时必须要是用包装类，不能使用基本类型
+        //int[] array = {1, 3, 5, 7, 8, 11};
+        //Arrays.sort(array);  // 对数组就地排序
+        System.out.println(Arrays.toString(array));
+        BinarySearch<Integer, Integer> bs = new BinarySearch(array, array);
+        bs.show();
+        System.out.println(bs.rank(new Integer(6)));
+        //System.out.println(bs.rank(new Integer(5)));
+        //System.out.println(bs.rank(new Integer(9)));
+
+        //BinarySearch bs = new BinarySearch(10);
+        //for(int i:array){
+        //    bs.put(i, i);
+        //}
+        //bs.print();
 
 
     }
 
+    // 实例域
     private Key[] keys;       // 存储键的数组
     private Value[] values;   // 存储值的数组
     private int N;         // 当前数组的大小
 
+    /**
+     * 初始化方法，构建一个大小为 capacity 的空数组
+     * @param capacity 数组最大容量
+     */
     public BinarySearch(int capacity){
         keys = (Key[]) new Comparable[capacity];
         values = (Value[]) new Comparable[capacity];
@@ -24,6 +45,18 @@ public class BinarySearch<Key extends Comparable<Key>, Value> {
         //keys = new Key[size];
         //values = new Value[size];
         N = 0;
+    }
+    /**
+     * 另一个初始化方法，直接给内部 keys-values 赋值
+     * @param key_arr key所在的数组
+     * @param value_arr value 所在的数组
+     */
+    public BinarySearch(Key[] key_arr, Value[] value_arr){
+        keys = Arrays.copyOf(key_arr, key_arr.length);
+        values = Arrays.copyOf(value_arr, value_arr.length);
+        N = keys.length;
+        //System.out.println("keys: " + Arrays.toString(keys));
+        //System.out.println("values: " + Arrays.toString(values));
     }
 
     /**
@@ -78,18 +111,25 @@ public class BinarySearch<Key extends Comparable<Key>, Value> {
      */
     public int rank(Key key){
         int low = 0, high = N-1;
-        while (low < high){
+        // 下面 while 里 < 和 <= 都可以
+        //while (low < high){
+        while (low <= high){
             int mid = low + (high - low) / 2;
             //下面这个用法也一样
             //int mid = (low + high) / 2;
             int cmp = key.compareTo(keys[mid]);
             if (cmp == 0) return mid;  // 查找成功，返回 key 在 keys 中的下标值
             else {
-                if (cmp > 0) low = mid;
-                else high = mid;
+                // 下面的两种方式，区别很大，是二分查找的关键所在 -------------------------KEY
+                // 方式 1：错误
+                //if (cmp > 0) low = mid;
+                //else high = mid;
+                // 方法 2：正确
+                if (cmp > 0) low = mid + 1;
+                else high = mid - 1;
             }
         }
-        // 查找失败的时候，low == high，此时的下标值也就是该 key 应当插入的位置——用于put方法，也可以返回
+        // 查找失败的时候，low == high，此时的 low 的下标值也就是该 key 应当插入的位置——用于put方法，也可以返回
         return low;
     }
 
@@ -121,10 +161,14 @@ public class BinarySearch<Key extends Comparable<Key>, Value> {
         return size() == 0;
     }
 
-    public void print(){
+    public void show(){
+        //System.out.println("size: " + size());
+        //System.out.println("N: " + N);
+        //System.out.println("keys: " + Arrays.toString(keys));
+        //System.out.println("values: " + Arrays.toString(values));
         System.out.print("{");
         for(int i = 0; i < N; i++){
-            System.out.print(keys[i] + " : " + values[i] + "");
+            System.out.print(keys[i] + ":" + values[i]);
             if (i < N-1) System.out.print(", ");
         }
         System.out.println("}.");

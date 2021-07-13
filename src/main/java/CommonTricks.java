@@ -11,13 +11,16 @@ public class CommonTricks {
 
         //1. Java数组建立之后，数组内的值默认初始化为0
         int[][] array = new int[3][3];
-//        System.out.println(array[0][0]);
+        //System.out.println(array[0][0]);
 
         // 快速打印 Array
         String array_string = Arrays.toString(array);
         // 快速打印 List
         //String array_string = Arrays.toString(list.toArray());
 
+        //复制一个数组
+        int[] arr = {3, 1, 5, 6, 4, 8};
+        int[] arr_copy = Arrays.copyOf(arr, arr.length);
 
         // 快速初始化数组
         int[] nums = new int[]{-1,0,1,2,-1,-4};
