@@ -5,27 +5,33 @@ import java.util.Arrays;
 /**
  * 二分查找法实现类
  * 使用的数据结构是 有序数组
+ *
+ * 自己实现难度： easy+
  */
 public class BinarySearch<Key extends Comparable<Key>, Value> {
 
     public static void main(String[] args) {
-        Integer[] array = {1, 3, 5, 7, 8, 11};
+        Integer[] array1 = {1, 3, 5, 7, 8, 11};
         // 为了下面使用，这里创建数组时必须要是用包装类，不能使用基本类型
         //int[] array = {1, 3, 5, 7, 8, 11};
-        //Arrays.sort(array);  // 对数组就地排序
-        System.out.println(Arrays.toString(array));
-        BinarySearch<Integer, Integer> bs = new BinarySearch(array, array);
-        bs.show();
-        System.out.println(bs.rank(new Integer(6)));
-        //System.out.println(bs.rank(new Integer(5)));
-        //System.out.println(bs.rank(new Integer(9)));
+        //System.out.println(Arrays.toString(array1));
+        BinarySearch<Integer, Integer> bs1 = new BinarySearch<>(array1, array1);
+        //bs1.show();
+        //System.out.println(bs1.rank(6));
+        //System.out.println(bs1.rank(5));
+        //System.out.println(bs1.rank(9));
 
-        //BinarySearch bs = new BinarySearch(10);
-        //for(int i:array){
-        //    bs.put(i, i);
-        //}
-        //bs.print();
-
+        int[] array2 = {1, 8, 5, 7, 11, 3};
+        BinarySearch<Integer, Integer> bs2 = new BinarySearch<>(10);
+        for(int i:array2){
+            bs2.put(i, i);
+        }
+        bs2.show();
+        System.out.println(bs2.get(5));
+        bs2.put(6, 6);
+        bs2.show();
+        bs2.put(9, 9);
+        bs2.show();
 
     }
 
@@ -111,7 +117,7 @@ public class BinarySearch<Key extends Comparable<Key>, Value> {
      */
     public int rank(Key key){
         int low = 0, high = N-1;
-        // 下面 while 里 < 和 <= 都可以
+        // 下面 while 条件里 < 和 <= 都可以
         //while (low < high){
         while (low <= high){
             int mid = low + (high - low) / 2;
@@ -121,12 +127,16 @@ public class BinarySearch<Key extends Comparable<Key>, Value> {
             if (cmp == 0) return mid;  // 查找成功，返回 key 在 keys 中的下标值
             else {
                 // 下面的两种方式，区别很大，是二分查找的关键所在 -------------------------KEY
-                // 方式 1：错误
-                //if (cmp > 0) low = mid;
-                //else high = mid;
-                // 方法 2：正确
+                // 方式 1：正确
+                // cmp 计算完之后，只要 cmp!=0，说明 keys[mid] 处的元素不等于 key，下次折半，只需要从 mid-1 或者 mid + 1 处开始即可
                 if (cmp > 0) low = mid + 1;
                 else high = mid - 1;
+                // 方式 2：错误
+                //if (cmp > 0) low = mid;
+                //else high = mid;
+                // 这种方式的问题在于，查找未命中的元素时，会在最后相邻的两个元素中无限循环，无法退出 while
+                // 比如某次之后 low=3,high=4，进入while后 mid = (3+4)/2 = 3 = low，此时 array[mid] = array[low] < key < array[high]
+                // if 中，又执行 low = mid = 3，一直重复上面的循环，无法退出
             }
         }
         // 查找失败的时候，low == high，此时的 low 的下标值也就是该 key 应当插入的位置——用于put方法，也可以返回
@@ -142,14 +152,17 @@ public class BinarySearch<Key extends Comparable<Key>, Value> {
      * @return int
      */
     public int rank(Key key, int low, int high){
-        if (low >= high) return low;
+        if (low > high) return low;
         int mid = (low + high) / 2;
         int cmp = key.compareTo(keys[mid]);
         if (cmp == 0) return mid;
         else {
             // 这里采用 左右 递归的方式
-            if (cmp > 0) return rank(key, mid, high);
-            else return rank(key, low, mid);
+            if (cmp > 0) return rank(key, mid + 1, high);
+            else return rank(key, low, mid -1);
+            // 和迭代的实现方式一样，下面这种也会陷入死循环
+            //if (cmp > 0) return rank(key, mid, high);
+            //else return rank(key, low, mid);
         }
     }
 
