@@ -3,7 +3,7 @@ package SortAlgorithms;
 
 /**
  * 堆排序算法
- * 这里的堆是用数组实现的二叉堆的优先队列
+ * 这里的堆是用 数组 实现的 二叉堆（完全二叉树） 的优先队列
  */
 public class HeapSort<Key extends Comparable<Key>> {
 
@@ -27,7 +27,7 @@ public class HeapSort<Key extends Comparable<Key>> {
      * 排序算法的核心
      * 所有的排序算法都在这个函数实现
      * 注意，这里和二叉堆实现的优先序列不一样，那里自己定义数组时，第一个索引0是空出来的
-     * 但是传入的排序数组第一个索引0是使用的，执行exchange和less函数的时候需要注意
+     * 但是传入的排序数组 第一个索引0 是 使用的，执行exchange和less函数的时候需要注意
      */
     public static void sort(Comparable[] array){
         int N = array.length;
@@ -45,18 +45,21 @@ public class HeapSort<Key extends Comparable<Key>> {
     }
 
     /**
-     *二叉堆优先队列的下沉函数
+     * 二叉堆优先队列的下沉函数
+     * @param array 记录二叉堆的数组
+     * @param k 需要 下沉 的节点下标
+     * @param N 数组大小
      */
     private static void sink(Comparable[] array, int k, int N){
         while (2*k <= N){
-//            2*k是k结点对应的左子节点
+            //2*k 是 k 结点对应的 左子节点
             int j = 2*k;
-//            下面这句找出k节点左子节点和右子节点中较大的那个
-//            由于传入的数组index=0是使用的，所以j实际对应的元素位置要-1
+            //下面这句找出 k节点 的 左子节点 和 右子节点 中较大的那个
+            //由于传入的数组 index=0 是 使用 的，所以j实际对应的元素位置要 -1
             if(j < N && less(array[j-1], array[j+1-1])) j++;
-//            再判断子节点是否比父节点大
+            //再判断子节点是否比父节点大
             if(!less(array[k-1], array[j-1])) break;
-//            然后将k节点和较大的子节点交换
+            //然后将k节点和较大的子节点交换
             exchange(array, k, j);
             k = j;
         }
@@ -82,24 +85,24 @@ public class HeapSort<Key extends Comparable<Key>> {
 //  ---------下面的方法都是次要的-------------
     /**
      * 用于打印
-     * @param array
+     * @param array 待打印的数组
      */
     private static void show(Comparable[] array){
         for ( int i =0 ; i < array.length; i++){
             System.out.print(array[i]);
-            System.out.print(" ");
+            if (i < array.length-1) System.out.print(", ");
         }
         System.out.print("\n");
     }
 
     /**
-     * 测试数组元素是否有序
-     * @param array
-     * @return
+     * 检查数组元素是否有序
+     * @param array 待检查的数组
+     * @return boolean
      */
     private static boolean isSorted(Comparable[] array){
         for(int i = 1; i < array.length; i++){
-//            这里直接使用less方法，没有创建对象，就是因为less是静态方法
+            //这里直接使用less方法，没有创建对象，就是因为less是静态方法
             if ( less(array[i], array[i-1])) return false;
         }
         return true;
