@@ -6,8 +6,21 @@ package SortAlgorithms;
  */
 public class InsertingSort {
 
-    public static void sort(Comparable[] array){
+    public static void main(String[] args) {
 
+    }
+
+    public static void sort(Comparable[] array){
+        int length = array.length;
+        if (length < 2) return;
+        for (int i = 1; i < length; i++){
+            int cmp = array[i-1].compareTo(array[i]);
+            while ( cmp > 0){
+                exchange(array, i-1, i);
+                i--;
+                cmp = array[i-1].compareTo(array[i]);
+            }
+        }
     }
 
     /**
@@ -21,7 +34,6 @@ public class InsertingSort {
      * 用于交换元素
      */
     private static void exchange(Comparable[] array, int i, int j){
-
         Comparable t = array[i];
         array[i] = array[j];
         array[j] = t;

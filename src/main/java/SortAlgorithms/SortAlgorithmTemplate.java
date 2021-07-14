@@ -25,7 +25,6 @@ public class SortAlgorithmTemplate {
      * 用于交换元素
      */
     private static void exchange(Comparable[] array, int i, int j){
-
         Comparable t = array[i];
         array[i] = array[j];
         array[j] = t;
