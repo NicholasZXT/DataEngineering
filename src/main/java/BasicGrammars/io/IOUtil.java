@@ -8,6 +8,61 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class IOUtil {
+
+	public static void main(String[] args) {
+		test1();
+		test2();
+		test3();
+		test4();
+	}
+
+	public static void test1(){
+		try {
+			IOUtil.printHex("e:\\javaio\\FileUtils.java");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void test2(){
+		try {
+			long start = System.currentTimeMillis();
+			//IOUtil.printHexByByteArray("e:\\javaio\\FileUtils.java");
+			//IOUtil.printHex("e:\\javaio\\1.mp3");
+			IOUtil.printHexByByteArray("e:\\javaio\\1.mp3");
+			System.out.println();
+			long end = System.currentTimeMillis();
+			System.out.println(end - start);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void test3(){
+		try {
+			IOUtil.copyFile(new File("e:\\javaio\\imooc.txt"), new File(
+					"e:\\javaio\\imooc1.txt"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void test4(){
+		try {
+			long start = System.currentTimeMillis();
+			/*IOUtil.copyFileByByte(new File("e:\\javaio\\1.mp3"), new File(
+					"e:\\javaio\\2.mp3"));*/  //两万多毫秒
+			/*IOUtil.copyFileByBuffer(new File("e:\\javaio\\1.mp3"), new File(
+					"e:\\javaio\\3.mp3"));//一万多毫秒*/
+			IOUtil.copyFile(new File("e:\\javaio\\1.mp3"), new File(
+					"e:\\javaio\\4.mp3"));//7毫秒
+			long end = System.currentTimeMillis();
+			System.out.println(end - start );
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 读取指定文件内容，按照16进制输出到控制台
 	 * 并且每输出10个byte换行
