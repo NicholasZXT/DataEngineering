@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
-public class BufferIO_Demo {
+public class IO_04_BufferIO_Demo {
 	public static void main(String[] args) throws IOException{
 		 //对文件进行读写操作 
 		BufferedReader br = new BufferedReader(

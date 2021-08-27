@@ -7,7 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 
-public class DataInput_DataOutput_Demo {
+public class IO_05_DataInput_DataOutput_Demo {
 
 	/**
 	 * @param args

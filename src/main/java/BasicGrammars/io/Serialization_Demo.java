@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 
-public class ObjectSerializationDemo {
+public class Serialization_Demo {
 	public static void main(String[] args) throws Exception{
 		String file = "demo/obj.dat";
 		//1.对象的序列化

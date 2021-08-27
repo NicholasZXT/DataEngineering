@@ -1,14 +1,25 @@
 package BasicGrammars.io;
 
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
-public class FileOutDemo1 {
+public class IO_02_FileIO_Demo {
+	public static void main(String[] args) throws IOException{
+		FileReader fr = new FileReader("e:\\javaio\\imooc.txt");
+		FileWriter fw = new FileWriter("e:\\javaio\\imooc2.txt");
+		//FileWriter fw = new FileWriter("e:\\javaio\\imooc2.txt",true);
+		char[] buffer = new char[2056];
+		int c ;
+		while((c = fr.read(buffer,0,buffer.length))!=-1){
+			fw.write(buffer,0,c);
+			fw.flush();
+		}
+		fr.close();
+		fw.close();
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) throws IOException {
+
 		//如果该文件不存在，则直接创建，如果存在，删除后创建
 		FileOutputStream out = new FileOutputStream("demo/out.dat");
 		out.write('A');//写出了'A'的低八位
@@ -21,10 +32,8 @@ public class FileOutDemo1 {
 		byte[] gbk = "中国".getBytes("gbk");
 		out.write(gbk);
 		out.close();
-		
-		IOUtil.printHex("demo/out.dat");
-		
 
+		IOUtil.printHex("demo/out.dat");
 	}
 
 }
