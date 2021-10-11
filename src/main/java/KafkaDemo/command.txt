@@ -1,0 +1,24 @@
+kafka-topics.sh --bootstrap-server worker-1:19091 --list
+kafka-topics.sh --bootstrap-server worker-1:19091 --describe --topic
+
+# 创建输入输出的topic
+kafka-topics.sh --bootstrap-server worker-1:19091 --create --replication-factor 1 --partitions 1 --topic streams-word-count-input
+kafka-topics.sh --bootstrap-server worker-1:19091 --create --replication-factor 1 --partitions 1 --topic streams-word-count-output
+
+# 运行 WordCount 程序
+kafka-run-class.sh org.apache.kafka.streams.examples.wordcount.WordCountDemo
+
+# 打开一个Producer，输入一系列word
+kafka-console-producer.sh --bootstrap-server worker-1:19091 --topic streams-word-count-input
+<输入>
+
+# 打开一个Consumer，查看统计的结果
+kafka-console-consumer.sh --bootstrap-server worker-1:19091 \
+    --topic streams-wordcount-output \
+    --from-beginning \
+    --formatter kafka.tools.DefaultMessageFormatter \
+    --property print.key=true \
+    --property print.value=true \
+    --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
+    --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer
+<显示一系列结果>
