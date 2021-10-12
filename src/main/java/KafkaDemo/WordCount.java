@@ -23,7 +23,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 
 public class WordCount {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // 第 1 步：添加配置
         // 创建一个Properties对象，用于存放配置
         Properties props = new Properties();
@@ -38,17 +38,21 @@ public class WordCount {
 
         // 第 3 步：逐个添加处理节点，下面展示了 3 种
         // KStream 对象的每一步操作，都会返回一个新的 KStream 对象
-        // 3.1，单纯写回
-        source.to("streams-word-count-output");
-        // 3.2，对每一行的单词做切分
-        source.flatMapValues(value -> Arrays.asList(value.split("\\W+")))
-                .to("streams-word-count-output");
+        // 3.1，简单的写入另一个索引
+        //source.to("streams-word-count-output");
+        // 3.2，对每一行的单词做切分，然后直接写入topic
+        //source.flatMapValues(value -> Arrays.asList(value.split("\\W+"))).to("streams-word-count-output");
         // 3.3，真正实现统计单词个数
-        source.flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split("\\W+")))
+        //source.flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split("\\W+")))
+        //        .groupBy((key, value) -> value)
+        //        .count(Materialized.<String, Long, KeyValueStore<Bytes, byte[]>>as("counts-store"))
+        //        .toStream()
+        //        .to("streams-word-count-output", Produced.with(Serdes.String(), Serdes.Long()));
+        source.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
                 .groupBy((key, value) -> value)
                 .count(Materialized.<String, Long, KeyValueStore<Bytes, byte[]>>as("counts-store"))
                 .toStream()
-                .to("streams-wordcount-output", Produced.with(Serdes.String(), Serdes.Long()));
+                .to("streams-word-count-output", Produced.with(Serdes.String(), Serdes.Long()));
 
         // 第 4 步：构建拓扑
         final Topology topology = builder.build();
@@ -60,7 +64,8 @@ public class WordCount {
 
         // 第 6 步：启动 以及 关闭 KStream
         kstream.start();
-        kstream.close();
+        //Thread.sleep(5000L);
+        //kstream.close();
 
     }
 
