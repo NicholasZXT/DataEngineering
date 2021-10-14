@@ -11,6 +11,7 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.KeyValueStore;
 
@@ -28,13 +29,14 @@ public class WordCount {
         // 创建一个Properties对象，用于存放配置
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "Word-Count");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "worker-1:19092");
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 
         // 第 2 步： 首先创建一个 builder
         final StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, String> source = builder.stream("streams-word-count-input");
+        KStream<String, String> source = builder.stream("wordcount-input");
+        // source.print(Printed.<String, String>toSysOut().withLabel("word-count input"));
 
         // 第 3 步：逐个添加处理节点，下面展示了 3 种
         // KStream 对象的每一步操作，都会返回一个新的 KStream 对象
@@ -44,15 +46,13 @@ public class WordCount {
         //source.flatMapValues(value -> Arrays.asList(value.split("\\W+"))).to("streams-word-count-output");
         // 3.3，真正实现统计单词个数
         //source.flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split("\\W+")))
-        //        .groupBy((key, value) -> value)
-        //        .count(Materialized.<String, Long, KeyValueStore<Bytes, byte[]>>as("counts-store"))
-        //        .toStream()
-        //        .to("streams-word-count-output", Produced.with(Serdes.String(), Serdes.Long()));
-        source.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
+        KStream<String, Long> res = source.flatMapValues(value -> Arrays.asList(value.toLowerCase().split("\\W+")))
                 .groupBy((key, value) -> value)
-                .count(Materialized.<String, Long, KeyValueStore<Bytes, byte[]>>as("counts-store"))
-                .toStream()
-                .to("streams-word-count-output", Produced.with(Serdes.String(), Serdes.Long()));
+                .count(Materialized.as("WordCount"))
+                .toStream();
+
+        // res.print(Printed.<String,Long>toSysOut().withLabel("word-count res"));
+        res.to("wordcount-output", Produced.with(Serdes.String(), Serdes.Long()));
 
         // 第 4 步：构建拓扑
         final Topology topology = builder.build();
