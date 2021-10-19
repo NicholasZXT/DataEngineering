@@ -8,6 +8,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.0</version>
         <executions>
           <execution>
             <phase>compile</phase>
@@ -73,8 +74,7 @@
     <profile>
       <id>local</id>
       <properties>
-        <hadoop.version>2.8.5</hadoop.version>
-        <spark.version>2.4.7</spark.version>
+        <local.scope>runtime</local.scope>
       </properties>
     </profile>
   </profiles>
@@ -83,5 +83,6 @@
     <encoding>UTF-8</encoding>
     <hadoop.version>2.8.5</hadoop.version>
     <spark.version>2.4.7</spark.version>
+    <kafka.version>2.6.1</kafka.version>
   </properties>
 </project>

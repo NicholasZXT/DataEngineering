@@ -135,45 +135,6 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.68</version>
         </dependency>
-        <!--  spark依赖 -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.12</artifactId>
-            <version>${spark.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.12</artifactId>
-            <version>${spark.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming_2.12</artifactId>
-            <version>${spark.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <!--  spark机器学习  -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_2.12</artifactId>
-            <version>${spark.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <!--  XGBoost  -->
-        <dependency>
-            <groupId>ml.dmlc</groupId>
-            <artifactId>xgboost4j_2.11</artifactId>
-            <version>1.0.0</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>ml.dmlc</groupId>
-            <artifactId>xgboost4j-spark_2.11</artifactId>
-            <version>1.0.0</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
         <!-- Hadoop依赖 -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -193,6 +154,53 @@
             <version>${hadoop.version}</version>
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
+
+        <!--  spark依赖 -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.12</artifactId>
+            <version>${spark.version}</version>
+            <!--<scope>${local.scope}}</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.12</artifactId>
+            <version>${spark.version}</version>
+            <!--<scope>${local.scope}}</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming_2.12</artifactId>
+            <version>${spark.version}</version>
+            <!--<scope>${local.scope}}</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-kafka-0-10_2.12</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <!--  spark机器学习  -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-mllib_2.12</artifactId>
+            <version>${spark.version}</version>
+            <!--<scope>${local.scope}}</scope>-->
+        </dependency>
+
+        <!--  XGBoost  -->
+        <dependency>
+            <groupId>ml.dmlc</groupId>
+            <artifactId>xgboost4j_2.11</artifactId>
+            <version>1.0.0</version>
+            <!--<scope>${local.scope}}</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>ml.dmlc</groupId>
+            <artifactId>xgboost4j-spark_2.11</artifactId>
+            <version>1.0.0</version>
+            <!--<scope>${local.scope}}</scope>-->
+        </dependency>
+
         <!-- kafka 依赖 -->
         <dependency>
             <!-- 包含了 topic管理，Producer 和 Consumer 的API -->
