@@ -122,6 +122,7 @@
     
     
     <dependencies>
+        <!-- 下面导入依赖的顺序也很重要，当出现依赖冲突时，会以先导入的为准-->
         <!--  Junit测试框架 -->
         <dependency>
             <groupId>junit</groupId>
@@ -135,25 +136,6 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.68</version>
         </dependency>
-        <!-- Hadoop依赖 -->
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <version>${hadoop.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-client</artifactId>
-            <version>${hadoop.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-            <version>${hadoop.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
 
         <!--  spark依赖 -->
         <dependency>
@@ -163,24 +145,27 @@
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
         <dependency>
+            <!-- spakr sql 依赖-->
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.12</artifactId>
             <version>${spark.version}</version>
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
         <dependency>
+            <!-- spark streaming 依赖-->
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming_2.12</artifactId>
             <version>${spark.version}</version>
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
         <dependency>
+            <!-- spark streaming 接入 kafka-->
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming-kafka-0-10_2.12</artifactId>
             <version>${spark.version}</version>
         </dependency>
-        <!--  spark机器学习  -->
         <dependency>
+            <!--  spark机器学习  -->
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_2.12</artifactId>
             <version>${spark.version}</version>
@@ -216,7 +201,27 @@
             <version>${kafka.version}</version>
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
-    </dependencies>
 
+        <!-- Hadoop依赖 ，必须放在最后，否则前面的 spark 没法运行-->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <!--<scope>${local.scope}}</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+            <!--<scope>${local.scope}}</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+            <!--<scope>${local.scope}}</scope>-->
+        </dependency>
+
+    </dependencies>
 
 </project>

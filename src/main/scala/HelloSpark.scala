@@ -24,12 +24,12 @@ object HelloSpark {
     println("partition num: " + rdd1.partitions.size)
 
     // 从文本读取数据
-    val path1 = "hadoop_data/spark-test.csv"
-    val path2 = "hadoop_data/spark-README.md"
-    val rdd2 = sc.textFile(path1)
-    val rdd3 = sc.textFile(path2)
-    val df1 = spark.read.csv(path1)
-    val df2 = df1.rdd   // 这样返回的是 RDD[Row]
+    //val path1 = "hadoop_data/spark-test.csv"
+    //val path2 = "hadoop_data/spark-README.md"
+    //val rdd2 = sc.textFile(path1)
+    //val rdd3 = sc.textFile(path2)
+    //val df1 = spark.read.csv(path1)
+    //val df2 = df1.rdd   // 这样返回的是 RDD[Row]
     // 这里读取的数据分区数 = 1, rdd 和 DF 都是一样的
     // println("partition num: " + rdd2.partitions.size)
     // println("df partition num: " + df1.rdd.partitions.size)
@@ -37,8 +37,8 @@ object HelloSpark {
     // rdd2.foreach(println)
 
     // mapPartitionWithIndex 的使用
-    val rdd1_1 = rdd1.mapPartitionsWithIndex(foreach_partition_fun)
-    rdd1_1.foreach(println)
+    //val rdd1_1 = rdd1.mapPartitionsWithIndex(foreach_partition_fun)
+    //rdd1_1.foreach(println)
 
     sc.stop()
 
