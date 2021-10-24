@@ -41,7 +41,7 @@ kafka-server-start.bat C:\BigDataEnv\kafka_2.12-2.6.0\config\server.properties
 kafka-topics.bat --bootstrap-server localhost:9092 --list
 kafka-topics.bat --bootstrap-server localhost:9092 --describe --topic
 
-kafka-topics.bat --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1 --topic wordcount-input
-kafka-topics.bat --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1 --topic wordcount-output
+kafka-topics.bat --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 2 --topic wordcount-input
+kafka-topics.bat --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 2 --topic wordcount-output
 
 kafka-console-producer.bat --bootstrap-server localhost:9092 --topic wordcount-input
