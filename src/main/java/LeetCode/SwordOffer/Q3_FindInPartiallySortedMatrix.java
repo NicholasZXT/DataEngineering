@@ -10,14 +10,42 @@ import java.util.Arrays;
 public class Q3_FindInPartiallySortedMatrix {
     public static void main(String[] args){
         int [][] array = {{1,2,8,9}, {2,4,9,12}, {4,7,10,13}};
+        System.out.println("matrix to search:");
         System.out.println(Arrays.deepToString(array));
         Q3_FindInPartiallySortedMatrix solver = new Q3_FindInPartiallySortedMatrix();
         int target1 = 3;
-        boolean res1 = solver.findArray(array, target1);
-        System.out.println("search target '" + target1 +"' result: " + res1);
+        int target2 = 9;
+        int target3 = 1;
+        int target4 = 13;
+        int target5 = 18;
+        //boolean res1 = solver.findArray(array, target1);
+        solver.findArray(array, target1);
+        solver.findArray(array, target2);
+        solver.findArray(array, target3);
+        solver.findArray(array, target4);
+        solver.findArray(array, target5);
     }
 
     public boolean findArray(int [][] array, int target){
-        return true;
+        boolean result = false;
+        int row_length = array.length;
+        int col_length = array[0].length;
+        //System.out.println(row_length + ", " + col_length);
+        int i = 0;
+        int j = col_length - 1;
+        while (i < row_length && j >=0){
+            //if (i >= row_length || j < 0) break;
+            if (array[i][j] == target){
+                result = true;
+                break;
+            }else if (array[i][j] < target){
+                i++;
+            }else {
+                j--;
+            }
+        }
+        System.out.println("search target '" + target +"' result: " + result);
+        if (result) System.out.println("matching index is: [" + i + ", " + j + "].");
+        return result;
     }
 }
