@@ -35,6 +35,11 @@ public class CommonTricks {
         // 快速打印 List
         //String array_string = Arrays.toString(list.toArray());
         //System.out.println(Arrays.toString(array_1.toArray()));
+        // 数组切片
+        int[] array_slice;
+        array_slice = Arrays.copyOfRange(arr, 0, 3);
+        System.out.println(Arrays.toString(array));
+        System.out.println(Arrays.toString(array_slice));
 
         //如果要在for循环中多次修改一个String类型，应当使用StringBuilder类，这样不会产生一个新对象
         StringBuilder sBuffer = new StringBuilder();
