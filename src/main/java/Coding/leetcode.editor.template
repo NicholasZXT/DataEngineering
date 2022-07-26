@@ -1,0 +1,14 @@
+Q${question.frontendQuestionId}_$!velocityTool.camelCaseName(${question.titleSlug})
+
+${question.content}
+
+package Coding.leetcode.editor.en;
+public class Q${question.frontendQuestionId}_$!velocityTool.camelCaseName(${question.titleSlug}){
+  public static void main(String[] args) {
+       Solution solution = new Q${question.frontendQuestionId}_$!velocityTool.camelCaseName(${question.titleSlug})().new Solution();
+  }
+  ${question.code}
+}
+
+cookie登录教程网址
+https://github.com/shuzijun/leetcode-editor/blob/master/doc/LoginHelp_ZH.md
