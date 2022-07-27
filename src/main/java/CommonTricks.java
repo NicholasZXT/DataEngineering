@@ -22,10 +22,6 @@ public class CommonTricks {
         int[][] array = new int[3][3];
         System.out.println(array[0][0]);
 
-        //复制一个数组
-        int[] arr = {3, 1, 5, 6, 4, 8};
-        int[] arr_copy = Arrays.copyOf(arr, arr.length);
-
         // 快速初始化数组
         int[] nums = new int[] {-1,0,1,2,-1,-4};  // 一维数组
         int[][] nums2 = new int[][] {{-1,0,1}, {2,-1,-4}};  // 二维数组
@@ -35,6 +31,10 @@ public class CommonTricks {
         // 使用ArrayList初始化数组
         ArrayList<Integer> array_1 = new ArrayList<Integer>(Arrays.asList(1,2,3));
         //ArrayList<Integer> array_2 = new ArrayList<Integer>({1,2,3});  // 这个不行
+
+        //复制一个数组
+        int[] arr = {3, 1, 5, 6, 4, 8};
+        int[] arr_copy = Arrays.copyOf(arr, arr.length);
 
         // 快速打印 一维Array
         String array_string = Arrays.toString(array);
