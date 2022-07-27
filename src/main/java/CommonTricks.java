@@ -4,6 +4,15 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
+/**
+ * Arrays 类中封装了一系列操作（各种类型）数组的静态方法，常用的一些方法有：
+ * 1. 二分查找： BinarySearch()，它有多个类型签名，适用于整型，字符串等
+ * 2. 数组复制： copyOf(), copyOfRange()，同样有多个类型签名
+ * 3. 数组排序： sort()
+ * 4. 返回数组的字符串形式： toString(), deepToString()
+ * 5. 快速创建一个List： asList()，
+ */
+
 
 public class CommonTricks {
 
