@@ -58,6 +58,13 @@ public class CommonTricks {
         sBuffer.append("bcd");
         System.out.println(sBuffer);
 
+        // char 类型的加法实际上是转成它对应的 ASCII 码进行的
+        System.out.println( '3' - '1');
+        System.out.println( '3' - 1);
+        System.out.println( (int)('3' - 1));
+        System.out.println( '3' - '1' + 2);
+        System.out.println( 'c' - 'a');
+
 
     }
 }

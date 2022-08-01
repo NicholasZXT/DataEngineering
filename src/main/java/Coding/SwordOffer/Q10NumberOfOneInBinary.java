@@ -1,6 +1,6 @@
 package Coding.SwordOffer;
 
-public class Q9NumberOfOneInBinary {
+public class Q10NumberOfOneInBinary {
     public static void main(String[] args){
         //测试用例
         int a1 = 1;
@@ -10,7 +10,7 @@ public class Q9NumberOfOneInBinary {
         int a5 = -2147483648;
         int a6 = 8;
         int a7 = 12;
-        Q9NumberOfOneInBinary solver = new Q9NumberOfOneInBinary();
+        Q10NumberOfOneInBinary solver = new Q10NumberOfOneInBinary();
 
         System.out.println("number of 1 in " + a1 + " is : " + solver.numberof1(a1));
         System.out.println("number of 1 in " + a2 + " is : " + solver.numberof1(a2));
