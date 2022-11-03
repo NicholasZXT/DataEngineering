@@ -47,6 +47,10 @@ public class Q15FindKthNodeFromEnd {
     }
 }
 
+/*
+ * 下面两个类的可见性是在 package 范围内，也就是说当前package下的其他文件也可以访问这两个类，并且不能再重复定义了
+ */
+
 // 链表的节点定义
 class Node<T> {
     Node<T> next;
