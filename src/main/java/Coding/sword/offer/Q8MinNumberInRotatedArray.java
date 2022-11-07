@@ -1,7 +1,6 @@
-package Coding.SwordOffer;
+package Coding.sword.offer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Q8MinNumberInRotatedArray {

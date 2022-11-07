@@ -1,4 +1,4 @@
-package Coding.SwordOffer;
+package Coding.sword.offer;
 
 public class Q11Power {
     public static void main(String[] args){

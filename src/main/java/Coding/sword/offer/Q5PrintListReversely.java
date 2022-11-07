@@ -1,4 +1,4 @@
-package Coding.SwordOffer;
+package Coding.sword.offer;
 
 public class Q5PrintListReversely<Item> {
     public static void main(String[] args){

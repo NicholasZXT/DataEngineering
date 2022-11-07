@@ -1,4 +1,4 @@
-package Coding.SwordOffer;
+package Coding.sword.offer;
 
 public class Q12Print1ToMaxOfNDigits {
     public static void main(String[] args) {

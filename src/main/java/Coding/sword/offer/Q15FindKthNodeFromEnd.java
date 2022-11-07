@@ -1,11 +1,5 @@
-package Coding.SwordOffer;
+package Coding.sword.offer;
 
-import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
-import org.apache.spark.sql.sources.In;
-
-/**
- * 输入一个链表，返回这个链表的倒数第K个节点
- */
 public class Q15FindKthNodeFromEnd {
     public static void main(String[] args) {
         // 测试链表
@@ -16,14 +10,17 @@ public class Q15FindKthNodeFromEnd {
         list.show();
         // 测试
         Q15FindKthNodeFromEnd solver = new Q15FindKthNodeFromEnd();
-        solver.FindKthToTail(list, 3);
-        solver.FindKthToTail(list, 0);
-        solver.FindKthToTail(list, 1);
-        solver.FindKthToTail(list, 5);
-        solver.FindKthToTail(list, 6);
+        solver.findKthToTail(list, 3);
+        solver.findKthToTail(list, 0);
+        solver.findKthToTail(list, 1);
+        solver.findKthToTail(list, 5);
+        solver.findKthToTail(list, 6);
     }
 
-    public void FindKthToTail(LinkList<Integer> list, int k){
+    /**
+     * 输入一个链表，返回这个链表的倒数第K个节点
+     */
+    public void findKthToTail(LinkList<Integer> list, int k){
         Node<Integer> p1 = list.head;
         Node<Integer> p2 = list.head;
         if (k <= 0){

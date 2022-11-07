@@ -1,10 +1,5 @@
-package Coding.SwordOffer;
+package Coding.sword.offer;
 
-
-/**
- * 反转链表
- * 输入一个链表的头结点，反转该链表，并输出反转后链表的头结点
- */
 public class Q16ReverseList<T> {
     public static void main(String[] args) {
         //创建列表
@@ -15,12 +10,16 @@ public class Q16ReverseList<T> {
         list.show();
         // 反转链表
         Q16ReverseList<Integer> solver = new Q16ReverseList<>();
-        solver.ReverseList(list);
+        solver.reverseList(list);
         list.show();
 
     }
 
-    public void ReverseList(LinkList<T> list){
+    /**
+     * 反转链表
+     * 输入一个链表的头结点，反转该链表，并输出反转后链表的头结点
+     */
+    public void reverseList(LinkList<T> list){
         /**
          * 直接使用链表的头插法进行反转
          */
