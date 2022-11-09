@@ -2,7 +2,7 @@ package Coding.sword.offer;
 
 
 /**
- * 对比两个二叉树，看是否含有子结构：这一题有难度
+ * 对比两个二叉树，看是否含有子结构：这一题有一点难度，不过还是能自己写出来
  */
 public class Q18SubstructureInTree<T> {
     public static void main(String[] args){
@@ -22,32 +22,38 @@ public class Q18SubstructureInTree<T> {
 
         // 测试
         Q18SubstructureInTree<Integer> solver = new Q18SubstructureInTree<>();
-        boolean result = solver.hasSubtree(tree1, tree2);
+        boolean result = solver.searchSubtree(tree1, tree2);
         System.out.println("result: " + result);
     }
 
-    public boolean hasSubtree(BinaryTree<T> tree1, BinaryTree<T> tree2){
+    public boolean searchSubtree(BinaryTree<T> tree1, BinaryTree<T> tree2){
+        /**
+         * 先查找根节点相同的地方，找到之后在判断是否为子树
+         */
         boolean result = false;
         if (tree1 == null | tree2 == null)
             return result;
         if (tree1.data == tree2.data){
-            result = sameTree(tree1, tree2);
+            result = isSubtree(tree1, tree2);
         }
-        boolean left_result = hasSubtree(tree1.left, tree2);
-        boolean right_result = hasSubtree(tree1.right, tree2);
+        boolean left_result = searchSubtree(tree1.left, tree2);
+        boolean right_result = searchSubtree(tree1.right, tree2);
         result = result | left_result | right_result;
-        //result = result | hasSubtree(tree1.left, tree2) | hasSubtree(tree1.right, tree2);
+        //result = result | searchSubtree(tree1.left, tree2) | searchSubtree(tree1.right, tree2);
         return result;
     }
 
-    private boolean sameTree(BinaryTree<T> tree1, BinaryTree<T> tree2){
-        boolean result;
-        if (tree1 == null & tree2 == null)
+    private boolean isSubtree(BinaryTree<T> tree1, BinaryTree<T> tree2){
+        /**
+         * 判断是否为子树，这个写的时候需要注意一点
+         */
+        if (tree2 == null)
             return true;
-        else if (tree1 == null | tree2 == null)
+        if (tree1 == null)
             return false;
+        boolean result;
         if (tree1.data == tree2.data){
-            result = sameTree(tree1.left, tree2.left) & sameTree(tree1.right, tree2.right);
+            result = isSubtree(tree1.left, tree2.left) & isSubtree(tree1.right, tree2.right);
         }else {
             result = false;
         }
