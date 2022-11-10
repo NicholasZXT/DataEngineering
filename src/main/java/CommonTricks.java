@@ -28,6 +28,11 @@ public class CommonTricks {
         // 另一个快速初始化方式，更加简便
         int[] nums3 = {-1,0,1,2,-1,-4};  // 一维数组
         int[][] nums4 = {{-1,0,1}, {2,-1,-4}};  // 二维数组
+
+        // 二维数组里，第一个索引取的是第一行
+        System.out.println(nums4.length);      // 打印行数
+        System.out.println(nums4[0].length);   // 打印列数
+
         // 使用ArrayList初始化数组
         ArrayList<Integer> array_1 = new ArrayList<Integer>(Arrays.asList(1,2,3));
         //ArrayList<Integer> array_2 = new ArrayList<Integer>({1,2,3});  // 这个不行
