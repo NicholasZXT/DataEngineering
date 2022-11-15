@@ -1,8 +1,6 @@
 package DataStructures;
 
 import java.util.Scanner;
-
-
 /**
  * 顺序栈的示例，使用数组实现
  * 自动扩容，使用了泛型
@@ -13,18 +11,26 @@ public class SqStack<Item> {
 
 //	main函数，测试用例
 	public static void main(String[] args) {
-		Scanner scan = new Scanner(System.in);
-		System.out.println("请输入栈的初始容量：");
-		int cap = scan.nextInt();
-//		存贮String的栈	
-		System.out.println("存储String的栈示例：");
-//		注意泛型栈的使用
+		//Scanner scan = new Scanner(System.in);
+		//System.out.println("请输入栈的初始容量：");
+		//int cap = scan.nextInt();
+		////存贮String的栈
+		//System.out.println("存储String的栈示例：");
+		////注意泛型栈的使用
+		//SqStack<String> stackStr = new SqStack<String>(cap);
+		//System.out.println("请输入字符串(eof结束):");
+		//while(!scan.hasNext("eof")) {
+		//	stackStr.Push(scan.next());
+		//}
+		//scan.close();
+		int cap = 5;
 		SqStack<String> stackStr = new SqStack<String>(cap);
-		System.out.println("请输入字符串(eof结束):");
-		while(!scan.hasNext("eof")) {
-			stackStr.Push(scan.next());
-		}
-		scan.close();
+		stackStr.Push("item1");
+		stackStr.Push("item2");
+		stackStr.Push("item3");
+		// 下面这句就会报错，不知道为啥
+		//stackStr.stack[++stackStr.top] = "item4";
+
 		System.out.println("栈的大小为：" + stackStr.Size());
 		
 //		System.out.println(stackStr.Item<String>[stackStr.top]);
@@ -36,9 +42,13 @@ public class SqStack<Item> {
 	}
 	
 //	栈的内容，使用泛型数组，但是要注意，实际上Java是不支持泛型数组的，这里只是申明
-	private Item[] stack;
+//	private Item[] stack;
 //	栈顶指针
-	private int top;
+//	private int top;
+
+	public Item[] stack;
+	public int top;
+
 //	栈的最大容量
 	private int capacity;
 	
@@ -83,6 +93,7 @@ public class SqStack<Item> {
 			System.out.println("栈已扩容！");
 			stack[++top]=item;
 		}else {
+			// 这里赋值就可以，但是在外面就不行
 			stack[++top]=item;
 		}
 	}
