@@ -4,8 +4,8 @@ import java.util.Scanner;
 /**
  * 顺序栈的示例，使用数组实现
  * 自动扩容，使用了泛型
+ * 这个顺序栈的实现还可以参考 sword.offer 里的 Q21MinInStack
  * @author danielzhang
- *
  */
 public class SqStack<Item> {
 
@@ -57,7 +57,7 @@ public class SqStack<Item> {
 	public SqStack(int cap) {
 //	对于泛型数组不能直接构造，只能先构造Object的数组，然后进行类型转换
 		this.stack = (Item[]) new Object[cap];
-		this.top = -1;
+		this.top = -1;  // 特别要注意栈顶指针的初始值为 -1 ，不是0   -------------- KEY
 		this.capacity = cap;
 	}
 	
