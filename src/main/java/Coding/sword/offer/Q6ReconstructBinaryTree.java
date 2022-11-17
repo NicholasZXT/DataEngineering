@@ -46,34 +46,4 @@ public class Q6ReconstructBinaryTree {
     }
 }
 
-/***
- * 二叉树的实现类
- * 最好不要作为内部类实现，作为内部类的话，main() 方法里无法直接创建这个类的对象
- */
-class BinaryTreeNode{
-    int data;
-    BinaryTreeNode left;
-    BinaryTreeNode right;
-    public BinaryTreeNode(int data) {
-        this.data = data;
-        this.left = null;
-        this.right = null;
-    }
-    public BinaryTreeNode(int data, BinaryTreeNode left, BinaryTreeNode right) {
-        this.data = data;
-        this.left = left;
-        this.right = right;
-    }
-    public void firstRootShow(){
-        show(this);
-        System.out.println();
-    }
-    private void show(BinaryTreeNode root){
-        if (root != null){
-            System.out.print(root.data);
-            System.out.print(", ");
-            show(root.left);
-            show(root.right);
-        }
-    }
-}
+
