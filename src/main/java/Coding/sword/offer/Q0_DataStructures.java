@@ -145,15 +145,27 @@ class BinaryTreeNode{
         this.right = right;
     }
     public void firstRootShow(){
-        show(this);
+        firstShow(this);
         System.out.println();
     }
-    private void show(BinaryTreeNode root){
+    private void firstShow(BinaryTreeNode root){
         if (root != null){
             System.out.print(root.data);
             System.out.print(", ");
-            show(root.left);
-            show(root.right);
+            firstShow(root.left);
+            firstShow(root.right);
+        }
+    }
+    public void midOrderShow(){
+        midShow(this);
+        System.out.println();
+    }
+    public void midShow(BinaryTreeNode root){
+        if (root != null){
+            firstShow(root.left);
+            System.out.print(root.data);
+            System.out.print(", ");
+            firstShow(root.right);
         }
     }
 }
