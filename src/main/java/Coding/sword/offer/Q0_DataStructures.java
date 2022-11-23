@@ -162,10 +162,10 @@ class BinaryTreeNode{
     }
     public void midShow(BinaryTreeNode root){
         if (root != null){
-            firstShow(root.left);
+            midShow(root.left);
             System.out.print(root.data);
             System.out.print(", ");
-            firstShow(root.right);
+            midShow(root.right);
         }
     }
 }
