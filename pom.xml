@@ -222,6 +222,18 @@
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
 
+         <!--HBase依赖 -->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>2.4.15</version>
+        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.apache.hbase</groupId>-->
+        <!--    <artifactId>hbase-server</artifactId>-->
+        <!--    <version>2.4.15</version>-->
+        <!--</dependency>-->
+
     </dependencies>
 
 </project>
