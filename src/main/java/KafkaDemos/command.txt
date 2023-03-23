@@ -7,7 +7,7 @@ kafka-topics.sh --bootstrap-server worker-1:19091 --create --replication-factor 
 kafka-topics.sh --bootstrap-server worker-1:19091 --create --replication-factor 1 --partitions 1 --topic wordcount-output
 
 # 运行 WordCount 程序
-kafka-run-class.sh -cp DataEngineering-1.0-SNAPSHOT.jar KafkaDemo.WordCount
+kafka-run-class.sh -cp DataEngineering-1.0-SNAPSHOT.jar KafkaDemos.WordCount
 
 # 打开一个Producer，输入一系列word
 kafka-console-producer.sh --bootstrap-server worker-1:19091 --topic wordcount-input

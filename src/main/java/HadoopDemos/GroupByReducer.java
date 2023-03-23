@@ -1,4 +1,4 @@
-package Hadoop;
+package HadoopDemos;
 
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.io.Text;
