@@ -1,4 +1,4 @@
-package BasicGrammars.reflect;
+package BasicGrammars.reflection;
 
 import java.lang.reflect.Method;
 

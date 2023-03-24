@@ -1,4 +1,4 @@
-package BasicGrammars.reflect;
+package BasicGrammars.reflection;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

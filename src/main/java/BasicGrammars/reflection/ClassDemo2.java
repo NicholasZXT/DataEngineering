@@ -1,11 +1,11 @@
-package BasicGrammars.reflect;
+package BasicGrammars.reflection;
 
 public class ClassDemo2 {
 	public static void main(String[] args) {
 		
 		Class c1 = int.class;//int 的类类型
 		Class c2 = String.class;//String类的类类型   String类字节码（自己发明的)
-//		下面这两个不是同一回事
+		//下面这两个不是同一回事
 		Class c3 = double.class;
 		Class c4 = Double.class;
 		Class c5 = void.class;

@@ -1,4 +1,4 @@
-package BasicGrammars.reflect;
+package BasicGrammars.reflection;
 
 import java.lang.reflect.Method;
 
@@ -38,6 +38,7 @@ public class MethodDemo1 {
      
 	}
 }
+
 class A{
 	public void print(){
 		System.out.println("helloworld");

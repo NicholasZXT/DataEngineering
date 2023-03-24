@@ -1,4 +1,4 @@
-package BasicGrammars.reflections;
+package BasicGrammars;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,8 +10,8 @@ public class JunitDemo {
         System.out.println("demo1");
     }
 
-    /*正常情况下要运行上面的方法，需要在main函数中创建一个对象，通过对象调用方法
-
+    /*
+    正常情况下要运行上面的方法，需要在main函数中创建一个对象，通过对象调用方法
      */
     public static void main(String[] args) {
         JunitDemo junit = new JunitDemo();
@@ -28,7 +28,7 @@ public class JunitDemo {
         System.out.println("demo2");
     }
 
-//    下面这两个方法会在目标方法Test标注前后运行
+    //下面这两个方法会在目标方法Test标注前后运行
     @Before
     public void MyBefore(){
         System.out.println("MyBefore");

@@ -1,4 +1,5 @@
-package BasicGrammars.reflect;
+package BasicGrammars.reflection;
+
 //标准的JavaBean类有私有属性都对应有get/set方法，有无参数的构造方法
 public class User {
 	private String username;

@@ -1,4 +1,4 @@
-package BasicGrammars.reflect;
+package BasicGrammars.reflection;
 
 public class ClassDemo4 {
 
