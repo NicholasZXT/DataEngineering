@@ -4,16 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.zxt.idea</groupId>
+    <name>DataEngineering</name>
+    <groupId>pers.zxt.idea</groupId>
     <artifactId>DataEngineering</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
-    
+
     <properties>
-        <scala.version>2.12.10</scala.version>
-        <spark.version>2.4.7</spark.version>
         <hadoop.version>2.8.5</hadoop.version>
+        <spark.version>2.4.0</spark.version>
+        <!--scala的版本建议只需要写到2位，因为配合spark版本时，只需要前两位-->
+        <scala.version>2.11</scala.version>
         <kafka.version>2.6.0</kafka.version>
+        <hbase.version>2.4.15</hbase.version>
         <encoding>UTF-8</encoding>
     </properties>
     
@@ -25,10 +28,8 @@
             </properties>
         </profile>
     </profiles>
-    
 
     <build>
-
         <plugins>
             <plugin>
                 <!-- 编译插件 -->
@@ -115,12 +116,10 @@
                     </execution>
                 </executions>
             </plugin>
-            
         </plugins>
 
     </build>
-    
-    
+
     <dependencies>
         <!-- 下面导入依赖的顺序也很重要，当出现依赖冲突时，会以先导入的为准-->
         <!--  Junit测试框架 -->
@@ -140,21 +139,22 @@
         <!--  spark依赖 -->
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.12</artifactId>
+            <!--spark依赖的artifactId的后缀就是对应的scala版本-->
+            <artifactId>spark-core_${scala.version}</artifactId>
             <version>${spark.version}</version>
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
         <dependency>
             <!-- spakr sql 依赖-->
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.12</artifactId>
+            <artifactId>spark-sql_${scala.version}</artifactId>
             <version>${spark.version}</version>
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
         <dependency>
             <!-- spark streaming 依赖-->
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming_2.12</artifactId>
+            <artifactId>spark-streaming_${scala.version}</artifactId>
             <version>${spark.version}</version>
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
@@ -167,24 +167,24 @@
         <dependency>
             <!--  spark机器学习  -->
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_2.12</artifactId>
+            <artifactId>spark-mllib_${scala.version}</artifactId>
             <version>${spark.version}</version>
             <!--<scope>${local.scope}}</scope>-->
         </dependency>
 
         <!--  XGBoost  -->
-        <dependency>
-            <groupId>ml.dmlc</groupId>
-            <artifactId>xgboost4j_2.11</artifactId>
-            <version>1.0.0</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>ml.dmlc</groupId>
-            <artifactId>xgboost4j-spark_2.11</artifactId>
-            <version>1.0.0</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>ml.dmlc</groupId>-->
+        <!--    <artifactId>xgboost4j_2.11</artifactId>-->
+        <!--    <version>1.0.0</version>-->
+        <!--    &lt;!&ndash;<scope>${local.scope}}</scope>&ndash;&gt;-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--    <groupId>ml.dmlc</groupId>-->
+        <!--    <artifactId>xgboost4j-spark_2.11</artifactId>-->
+        <!--    <version>1.0.0</version>-->
+        <!--    &lt;!&ndash;<scope>${local.scope}}</scope>&ndash;&gt;-->
+        <!--</dependency>-->
 
         <!-- kafka 依赖 -->
         <dependency>
@@ -226,12 +226,12 @@
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-client</artifactId>
-            <version>2.4.15</version>
+            <version>${hbase.version}</version>
         </dependency>
         <!--<dependency>-->
         <!--    <groupId>org.apache.hbase</groupId>-->
         <!--    <artifactId>hbase-server</artifactId>-->
-        <!--    <version>2.4.15</version>-->
+        <!--    <version>${hbase.version}</version>-->
         <!--</dependency>-->
 
     </dependencies>

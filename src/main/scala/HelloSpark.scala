@@ -22,6 +22,7 @@ object HelloSpark {
     //   reduceByKey(_+_, 1).
     //   saveAsTextFile("output")
     println("partition num: " + rdd1.partitions.size)
+    rdd1.foreach(println)
 
     // 从文本读取数据
     //val path1 = "hadoop_data/spark-test.csv"

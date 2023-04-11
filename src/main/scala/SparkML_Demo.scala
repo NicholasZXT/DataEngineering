@@ -12,7 +12,7 @@ import org.apache.spark.ml.linalg.Vector
 
 
 // XGBoost库
-import ml.dmlc.xgboost4j.scala.spark.XGBoostClassifier
+//import ml.dmlc.xgboost4j.scala.spark.XGBoostClassifier
 
 
 object SparkML_Demo {
@@ -62,17 +62,17 @@ object SparkML_Demo {
       "num_round" -> 100
 //      "num_workers" -> 2
     )
-    val xgbClassifier = new XGBoostClassifier(xgbParam).
-      setFeaturesCol("features").
-      setLabelCol("classIndex")
-    val xgbClassificationModel = xgbClassifier.fit(xgbInput)
-
-
-//    预测单个样本
-    val features = xgbInput.head().getAs[Vector]("features")
-    val result = xgbClassificationModel.predict(features)
-    println(features)
-    println(result)
+//    val xgbClassifier = new XGBoostClassifier(xgbParam).
+//      setFeaturesCol("features").
+//      setLabelCol("classIndex")
+//    val xgbClassificationModel = xgbClassifier.fit(xgbInput)
+//
+//
+////    预测单个样本
+//    val features = xgbInput.head().getAs[Vector]("features")
+//    val result = xgbClassificationModel.predict(features)
+//    println(features)
+//    println(result)
 
     spark.stop()
 
