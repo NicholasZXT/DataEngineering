@@ -1,27 +1,26 @@
-import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.{SparkSession}
+import org.apache.spark.rdd.RDD
 
 
 object HelloSpark {
 
   def main(args: Array[String]): Unit = {
-    println("hello spark")
+    println("Hello Spark")
     val conf = new SparkConf()
       .setAppName("Hello Spark")
+      .set("spark.driver.memory", "1g")
+      .set("spark.driver.cores", "1")
+      .set("spark.executor.instances", "2")
+      .set("spark.executor.cores", "2")
+      .set("spark.executor.memory", "2g")
+      .set("spark.default.parallelism", "2")
       .setMaster("local")
     val sc = new SparkContext(conf)
-    // 从 SparkContext 创建 SparkSession
-    val spark = SparkSession.builder.config(sc.getConf).getOrCreate()
     // sc.setLogLevel("INFO")
-    sc.setLogLevel("WARN")
+    //sc.setLogLevel("WARN")
 
     val rdd1 = sc.parallelize(List(1,2,3,4,5,6), numSlices = 3)
-    // rdd1.foreach(println)
-    // rdd1.flatMap(_.split("")).map((_, 1)).
-    //   reduceByKey(_+_, 1).
-    //   saveAsTextFile("output")
-    println("partition num: " + rdd1.partitions.size)
+    println("partition num: " + rdd1.partitions.length)
     rdd1.foreach(println)
 
     // 从文本读取数据
