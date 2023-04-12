@@ -1,6 +1,5 @@
 package BasicGrammars.reflection;
 
-import org.junit.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,7 +19,6 @@ public class ReflectionDemo {
         方法内部通过变量名获得
      */
 
-    @Test
     public void demo1() throws ClassNotFoundException {
         //通过字符串获得Class
         Class clazz1 = Class.forName("BasicGrammars.reflection.Bean");
@@ -34,7 +32,6 @@ public class ReflectionDemo {
         System.out.println(clazz3);
     }
 
-    @Test
     public void demo2() throws Exception {
         //通过无参构造方法获得实例对象
         //获得class
@@ -45,7 +42,6 @@ public class ReflectionDemo {
         Object obj = cons.newInstance();
     }
 
-    @Test
     public void demo3() throws Exception {
         //通过有参构造方法获得实例对象
         //获得class
@@ -56,7 +52,6 @@ public class ReflectionDemo {
         Object obj = cons.newInstance("2020");
     }
 
-    @Test
     public void demo4() throws Exception {
         /*
         通过无参构造方法 快速 获得实例对象
@@ -67,7 +62,6 @@ public class ReflectionDemo {
         Object obj = clazz.newInstance();
     }
 
-    @Test
     public void demo5() throws Exception {
     /*
     通过 私有 构造方法来创建对象
@@ -86,7 +80,6 @@ public class ReflectionDemo {
         System.out.printf(obj.toString());
     }
 
-    @Test
     public void MethodDemo1() throws Exception {
     /*
     通过 反射 来使用公共方法，比如set和get方法
@@ -109,7 +102,6 @@ public class ReflectionDemo {
         System.out.println(id);
     }
 
-    @Test
     public void MethodDemo2() throws Exception {
     /*
     通过 反射 来执行静态方法 main
@@ -130,7 +122,6 @@ public class ReflectionDemo {
         method.invoke(null,new Object[] {args});
     }
 
-    @Test
     public void FieldDemo1() throws Exception {
     /*
     通过 反射 来获取 公共 字段
@@ -148,7 +139,6 @@ public class ReflectionDemo {
 
     }
 
-    @Test
     public void FieldDemo2() throws Exception {
         /*通过 反射 来获取 私有 字段*/
         //获得Class

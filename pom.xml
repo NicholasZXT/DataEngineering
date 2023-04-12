@@ -11,6 +11,10 @@
     <packaging>jar</packaging>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--指定编译的java版本-->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <hadoop.version>2.8.5</hadoop.version>
         <spark.version>2.4.0</spark.version>
         <!--scala的版本建议只需要写到2位，因为配合spark版本时，只需要前两位-->
@@ -25,96 +29,21 @@
             <id>local</id>
             <properties>
                 <local.scope>runtime</local.scope>
+                <hadoop.scope>compile</hadoop.scope>
+                <spark.scope>compile</spark.scope>
+                <kafka.scope>compile</kafka.scope>
+                <hbase.scope>compile</hbase.scope>
             </properties>
         </profile>
     </profiles>
 
     <build>
         <plugins>
-            <plugin>
-                <!-- 编译插件 -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.0</version>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- maven打包Scala代码必须要下面两个插件才行-->
+            <!-- maven打包Scala代码必须要下面的插件-->
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>4.5.2</version>
-                <executions>
-                    <execution>
-                        <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>scala-test-compile</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--<plugin>-->
-            <!--    <groupId>org.apache.maven.plugins</groupId>-->
-            <!--    <artifactId>maven-assembly-plugin</artifactId>-->
-            <!--    <version>2.4</version>-->
-                <!--<configuration>-->
-                <!--    <descriptorRefs>-->
-                <!--        <descriptorRef>jar-with-dependencies</descriptorRef>-->
-                <!--    </descriptorRefs>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                <!--    <execution>-->
-                <!--        <phase>package</phase>-->
-                <!--        <goals>-->
-                <!--            <goal>single</goal>-->
-                <!--        </goals>-->
-                <!--    </execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <!--在猎豹时使用的打包插件-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
 
@@ -127,13 +56,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <!--   alibaba fastJSON -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.68</version>
+            <scope>test</scope>
         </dependency>
 
         <!--  spark依赖 -->
@@ -142,34 +65,93 @@
             <!--spark依赖的artifactId的后缀就是对应的scala版本-->
             <artifactId>spark-core_${scala.version}</artifactId>
             <version>${spark.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
+            <scope>${spark.scope}</scope>
         </dependency>
         <dependency>
             <!-- spakr sql 依赖-->
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_${scala.version}</artifactId>
             <version>${spark.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
+            <scope>${spark.scope}</scope>
         </dependency>
         <dependency>
             <!-- spark streaming 依赖-->
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming_${scala.version}</artifactId>
             <version>${spark.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
+            <scope>${spark.scope}</scope>
         </dependency>
         <dependency>
             <!-- spark streaming 接入 kafka-->
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming-kafka-0-10_2.12</artifactId>
             <version>${spark.version}</version>
+            <scope>${spark.scope}</scope>
         </dependency>
         <dependency>
             <!--  spark机器学习  -->
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_${scala.version}</artifactId>
             <version>${spark.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
+            <scope>${spark.scope}</scope>
+        </dependency>
+
+        <!-- kafka 依赖 -->
+        <dependency>
+            <!-- 包含了 topic管理，Producer 和 Consumer 的API -->
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
+            <scope>${kafka.scope}</scope>
+        </dependency>
+        <dependency>
+            <!-- 流式处理的 API -->
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>${kafka.version}</version>
+            <scope>${kafka.scope}</scope>
+        </dependency>
+
+        <!-- Hadoop依赖 ，必须放在最后，否则前面的 spark 没法运行-->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>${hadoop.scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>${hadoop.scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>${hadoop.scope}</scope>
+        </dependency>
+
+         <!--HBase依赖 -->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>${hbase.version}</version>
+            <scope>${hbase.scope}</scope>
+        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.apache.hbase</groupId>-->
+        <!--    <artifactId>hbase-server</artifactId>-->
+        <!--    <version>${hbase.version}</version>-->
+        <!--    <scope>${hbase.scope}</scope>-->
+        <!--</dependency>-->
+
+        <!--   alibaba fastJSON -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.68</version>
+            <scope>compile</scope>
         </dependency>
 
         <!--  XGBoost  -->
@@ -184,54 +166,6 @@
         <!--    <artifactId>xgboost4j-spark_2.11</artifactId>-->
         <!--    <version>1.0.0</version>-->
         <!--    &lt;!&ndash;<scope>${local.scope}}</scope>&ndash;&gt;-->
-        <!--</dependency>-->
-
-        <!-- kafka 依赖 -->
-        <dependency>
-            <!-- 包含了 topic管理，Producer 和 Consumer 的API -->
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>${kafka.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <dependency>
-            <!-- 流式处理的 API -->
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams</artifactId>
-            <version>${kafka.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-
-        <!-- Hadoop依赖 ，必须放在最后，否则前面的 spark 没法运行-->
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <version>${hadoop.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-client</artifactId>
-            <version>${hadoop.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-            <version>${hadoop.version}</version>
-            <!--<scope>${local.scope}}</scope>-->
-        </dependency>
-
-         <!--HBase依赖 -->
-        <dependency>
-            <groupId>org.apache.hbase</groupId>
-            <artifactId>hbase-client</artifactId>
-            <version>${hbase.version}</version>
-        </dependency>
-        <!--<dependency>-->
-        <!--    <groupId>org.apache.hbase</groupId>-->
-        <!--    <artifactId>hbase-server</artifactId>-->
-        <!--    <version>${hbase.version}</version>-->
         <!--</dependency>-->
 
     </dependencies>

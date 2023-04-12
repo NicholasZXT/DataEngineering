@@ -1,6 +1,5 @@
 package BasicGrammars;
 
-import org.junit.Test;
 
 import java.io.*;
 import java.util.Map;
@@ -8,8 +7,14 @@ import java.util.Properties;
 import java.util.Set;
 
 public class PropertitiesDemo {
+    public static void main(String[] args) throws Exception {
+        PropertitiesDemo obj = new PropertitiesDemo();
+        obj.demo1();
+        obj.demo2();
+        obj.demo3();
+        obj.demo4();
+    }
 
-    @Test
     public void demo1(){
         //Propertities 是特殊的Map<String,String>
         //1. 创建对象
@@ -37,7 +42,6 @@ public class PropertitiesDemo {
         System.out.println(props);
     }
 
-    @Test
     public void demo2() throws Exception{
         //Propertities 对应于一种以 .properties 结尾的文件
         //一行表示一个键值对，格式是 key=value
@@ -60,7 +64,6 @@ public class PropertitiesDemo {
         }
     }
 
-    @Test
     public void demo3(){
         // 设置和获取系统配置
         System.setProperty("self-key", "self-value");
@@ -70,7 +73,6 @@ public class PropertitiesDemo {
         });
     }
 
-    @Test
     public void demo4(){
         // 设置环境变量 —— 这个方式没有用，也没找到其他的方式
         System.setProperty("SELF-ENV", "self-env-value");
