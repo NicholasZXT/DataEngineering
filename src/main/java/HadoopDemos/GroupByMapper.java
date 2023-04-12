@@ -14,8 +14,8 @@ public class GroupByMapper extends Mapper<LongWritable, Text, Text, DoubleWritab
     // 重写map方法
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-//        父类的map方法会直接将 key-value 写出
-//        super.map(key, value, context);
+        //父类的map方法会直接将 key-value 写出
+        //super.map(key, value, context);
         // 将 Text 类型转成 String
         String line = value.toString();
         String[] words = line.split(" ");

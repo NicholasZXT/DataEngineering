@@ -14,9 +14,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 public class GroupByDriver {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
-
+        // 输入为 src/main/resources/hadoop_data/groupby_input/data.txt
         System.out.println("args[0]: " + args[0]);
         System.out.println("args[1]: " + args[1]);
+        Path input_path = new Path(args[0]);
+        Path output_path = new Path(args[1]);
 
         Configuration config = new Configuration();
         Job job = Job.getInstance(config);
@@ -34,10 +36,10 @@ public class GroupByDriver {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
 
-        FileInputFormat.setInputPaths(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
-//        TextInputFormat.setInputPaths(job, new Path(args[0]));
-//        TextOutputFormat.setOutputPath(job, new Path(args[1]));
+        FileInputFormat.setInputPaths(job, input_path);
+        FileOutputFormat.setOutputPath(job, output_path);
+        //TextInputFormat.setInputPaths(job, input_path);
+        //TextOutputFormat.setOutputPath(job, output_path);
 
         boolean result = job.waitForCompletion(true);
 

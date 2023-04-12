@@ -13,7 +13,7 @@ public class GroupByReducer extends Reducer<Text, DoubleWritable, Text, DoubleWr
 
     @Override
     protected void reduce(Text key, Iterable<DoubleWritable> values, Context context) throws IOException, InterruptedException {
-//        super.reduce(key, values, context);
+        //super.reduce(key, values, context);
         // 只要对每一组的 values 计算均值即可 —— 奇怪的是，java.Math里居然没有计算均值的方法
         double average = 0.0;
         int len = 0;

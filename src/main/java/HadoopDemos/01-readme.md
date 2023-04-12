@@ -1,0 +1,1 @@
+在Windows上执行时，需要下载对应的hadoop-winutils，配置对应的HADOOP_HOME变量，同时还要在PATH变量中加入 %HADOOP_HOME%\bin

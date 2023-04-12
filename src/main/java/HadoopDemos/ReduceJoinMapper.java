@@ -16,7 +16,7 @@ public class ReduceJoinMapper extends Mapper<LongWritable, Text, Text, TableBean
     // 重写 set 方法，获取文件信息
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-//        super.setup(context);
+        //super.setup(context);
         FileSplit fileSplit = (FileSplit) context.getInputSplit();
         filename = fileSplit.getPath().getName();
 
