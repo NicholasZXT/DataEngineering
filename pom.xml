@@ -154,6 +154,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.apache.thrift/libthrift -->
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>0.17.0</version>
+        </dependency>
+
         <!--  XGBoost  -->
         <!--<dependency>-->
         <!--    <groupId>ml.dmlc</groupId>-->
