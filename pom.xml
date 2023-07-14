@@ -22,6 +22,8 @@
         <spark.scala.version>2.11</spark.scala.version>
         <kafka.version>2.6.0</kafka.version>
         <hbase.version>2.4.15</hbase.version>
+        <elasticsearch.version>7.17.8</elasticsearch.version>
+        <jackson.version>2.12.3</jackson.version>
         <encoding>UTF-8</encoding>
     </properties>
     
@@ -89,12 +91,12 @@
         <!--    <version>2.8.8</version>-->
         <!--</dependency>-->
         <!-- 本地执行spark，但是提交到远程的 YARN 集群时，需要下面的这个依赖-->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-yarn_${spark.scala.version}</artifactId>
-            <version>${spark.version}</version>
-            <scope>${spark.scope}</scope>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.apache.spark</groupId>-->
+        <!--    <artifactId>spark-yarn_${spark.scala.version}</artifactId>-->
+        <!--    <version>${spark.version}</version>-->
+        <!--    <scope>${spark.scope}</scope>-->
+        <!--</dependency>-->
         <dependency>
             <!-- Spark-SQL 依赖-->
             <groupId>org.apache.spark</groupId>
@@ -174,6 +176,23 @@
         <!--    <scope>${hbase.scope}</scope>-->
         <!--</dependency>-->
 
+        <!-- ElasticSearch依赖-->
+        <dependency>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.elasticsearch.client</groupId>-->
+        <!--    <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
+        <!--    <version>${elasticsearch.version}</version>-->
+        <!--</dependency>-->
+
         <!--   alibaba fastJSON -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -182,6 +201,7 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Thrift依赖-->
         <!-- https://mvnrepository.com/artifact/org.apache.thrift/libthrift -->
         <dependency>
             <groupId>org.apache.thrift</groupId>
