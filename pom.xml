@@ -17,7 +17,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <scala.version>2.11.12</scala.version>
         <hadoop.version>2.8.5</hadoop.version>
-        <spark.version>2.4.0</spark.version>
+        <spark.version>2.4.8</spark.version>
         <!--scala的版本建议只需要写到2位，因为配合spark版本时，只需要前两位-->
         <spark.scala.version>2.11</spark.scala.version>
         <kafka.version>2.6.0</kafka.version>
@@ -54,8 +54,17 @@
                 <!--必须要配置下面的executions才能将scala代码打入jar包-->
                 <executions>
                     <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
                         <goals>
+                            <goal>add-source</goal>
                             <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
                             <goal>testCompile</goal>
                         </goals>
                     </execution>
@@ -71,11 +80,11 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
 
-        <!--  spark依赖 -->
+        <!--  spark-core依赖 -->
         <!--<dependency>-->
         <!--    <groupId>org.apache.spark</groupId>-->
         <!--    &lt;!&ndash;spark依赖的artifactId的后缀就是对应的scala版本&ndash;&gt;-->
@@ -113,8 +122,10 @@
         </dependency>
         <dependency>
             <!-- Spark-Streaming 接入 kafka-->
+            <!-- 还有一个 Spark Project External Kafka 包提供的 spark-streaming-kafka_2.11，但是这个从2016年开始就不更新了，
+            好像是旧版的kafka接口-->
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming-kafka-0-10_2.12</artifactId>
+            <artifactId>spark-streaming-kafka-0-10_${spark.scala.version}</artifactId>
             <version>${spark.version}</version>
             <scope>${spark.scope}</scope>
         </dependency>
