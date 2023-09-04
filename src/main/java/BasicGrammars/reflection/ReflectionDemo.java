@@ -5,7 +5,24 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class ReflectionDemo {
-    /*
+    public static void main(String[] args) {
+        ReflectionDemo demo = new ReflectionDemo();
+        try{
+            demo.demo1();
+            demo.demo2();
+            demo.demo3();
+            demo.demo4();
+            demo.demo5();
+            demo.MethodDemo1();
+            demo.MethodDemo2();
+            demo.FieldDemo1();
+            demo.FieldDemo2();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
     有三种方式使用获得Class对象
     1. 通过字符串(全限定类名)获得
         Class clazz = Class.forName("字符串")
@@ -18,7 +35,6 @@ public class ReflectionDemo {
         Class clazz = obj.getClass()
         方法内部通过变量名获得
      */
-
     public void demo1() throws ClassNotFoundException {
         //通过字符串获得Class
         Class clazz1 = Class.forName("BasicGrammars.reflection.Bean");
@@ -32,8 +48,10 @@ public class ReflectionDemo {
         System.out.println(clazz3);
     }
 
+    /**
+     * 通过无参构造方法获得实例对象
+     */
     public void demo2() throws Exception {
-        //通过无参构造方法获得实例对象
         //获得class
         Class clazz = Class.forName("BasicGrammars.reflection.Bean");
         //获得构造对象
@@ -42,8 +60,10 @@ public class ReflectionDemo {
         Object obj = cons.newInstance();
     }
 
+    /**
+     * 通过有参构造方法获得实例对象
+     */
     public void demo3() throws Exception {
-        //通过有参构造方法获得实例对象
         //获得class
         Class clazz = Class.forName("BasicGrammars.reflection.Bean");
         //获得构造对象，指定形参
@@ -52,20 +72,20 @@ public class ReflectionDemo {
         Object obj = cons.newInstance("2020");
     }
 
+    /**
+    通过无参构造方法 快速 获得实例对象
+    * */
     public void demo4() throws Exception {
-        /*
-        通过无参构造方法 快速 获得实例对象
-        * */
         //获得class
         Class clazz = Class.forName("BasicGrammars.reflection.Bean");
         //获得clazz 直接创建对象
         Object obj = clazz.newInstance();
     }
 
-    public void demo5() throws Exception {
-    /*
-    通过 私有 构造方法来创建对象
+    /**
+     通过 私有 构造方法来创建对象
     */
+    public void demo5() throws Exception {
         //获得class
         Class clazz = Class.forName("BasicGrammars.reflection.Bean");
         //获得构造对象，指定形参
@@ -80,10 +100,10 @@ public class ReflectionDemo {
         System.out.printf(obj.toString());
     }
 
-    public void MethodDemo1() throws Exception {
-    /*
-    通过 反射 来使用公共方法，比如set和get方法
+    /**
+     通过 反射 来使用公共方法，比如set和get方法
     */
+    public void MethodDemo1() throws Exception {
         //获得Class
         Class clazz = Class.forName("BasicGrammars.reflection.Bean");
         //获得clazz 直接创建实例对象
@@ -102,10 +122,10 @@ public class ReflectionDemo {
         System.out.println(id);
     }
 
-    public void MethodDemo2() throws Exception {
-    /*
-    通过 反射 来执行静态方法 main
+    /**
+     通过 反射 来执行静态方法 main
     */
+    public void MethodDemo2() throws Exception {
         //获得Class
         Class clazz = Class.forName("BasicGrammars.reflection.Bean");
         //正常是需要通过Class新建一个实例对象，但是由于main是静态方法，所以不需要类的实例对象
@@ -122,10 +142,10 @@ public class ReflectionDemo {
         method.invoke(null,new Object[] {args});
     }
 
-    public void FieldDemo1() throws Exception {
-    /*
-    通过 反射 来获取 公共 字段
+    /**
+     通过 反射 来获取 公共 字段
     */
+    public void FieldDemo1() throws Exception {
         //获得Class
         Class clazz = Class.forName("BasicGrammars.reflection.Bean");
         Object obj = clazz.newInstance();
@@ -139,8 +159,10 @@ public class ReflectionDemo {
 
     }
 
+    /**
+     * 通过 反射 来获取 私有 字段
+     */
     public void FieldDemo2() throws Exception {
-        /*通过 反射 来获取 私有 字段*/
         //获得Class
         Class clazz = Class.forName("BasicGrammars.reflection.Bean");
         Object obj = clazz.newInstance();

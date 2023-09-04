@@ -10,7 +10,7 @@ public class ClassDemo1 {
 		//第一种获取方式--->实际在告诉我们任何一个类都有一个隐含的静态成员变量class
 		Class c1 = Foo.class;
 		
-		//第二中获取方式  已经知道该类的对象通过getClass方法
+		//第二种获取方式：调用该类的对象的getClass方法
 		Class c2 = foo1.getClass();
 		
 		/* c1 ,c2 表示了Foo类的类类型(class type)
@@ -23,6 +23,7 @@ public class ClassDemo1 {
 		
 		//第三种获取方式
 		Class c3 = null;
+		// ClassNotFoundException 是受检异常，这里不捕获的话，就要在 main 方法头部声明此受检异常
 		try {
 			c3 = Class.forName("BasicGrammars.reflection.Foo");
 		} catch (ClassNotFoundException e) {
@@ -35,9 +36,7 @@ public class ClassDemo1 {
 			//注意类型转换
 			Foo foo = (Foo)c1.newInstance(); //前提是需要有无参数的构造方法
 			foo.print();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}
