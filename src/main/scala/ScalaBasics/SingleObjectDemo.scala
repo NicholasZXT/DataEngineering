@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 // 单例对象就是使用object修饰的部分，
 // scala中使用单例对象实现Java中的静态类的功能，

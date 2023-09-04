@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 // 普通函数，比如 (x:Int)=>x+1 会对Int类型所有的值生效
 // 偏函数就是指只对某个类型的部分值生效的函数

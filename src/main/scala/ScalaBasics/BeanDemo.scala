@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 import scala.beans.BeanProperty
 

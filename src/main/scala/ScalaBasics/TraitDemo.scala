@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 trait Logger1{
   def log(msg:String)={

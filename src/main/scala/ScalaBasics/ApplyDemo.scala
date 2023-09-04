@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 // apply方法是应用于伴生对象上的，需要有一个伴生对象
 class ApplyDemo(val name:String,val age:Int,val country:String = "China"){

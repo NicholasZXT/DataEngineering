@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 class PointClass {
   //属性名要以“_”开始

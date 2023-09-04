@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 // 导入隐式类
 import ImplicitClassDemo._
 

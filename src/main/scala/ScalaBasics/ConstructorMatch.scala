@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 // 构造一棵二叉树
 trait Node

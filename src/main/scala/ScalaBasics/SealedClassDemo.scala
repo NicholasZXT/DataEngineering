@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 //密封类使用sealed关键字修饰
 //要求子类和父类都在同一个源文件中定义

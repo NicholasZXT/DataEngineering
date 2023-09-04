@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 class OuterClass {
 

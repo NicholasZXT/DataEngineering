@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 //伴生对象首先是一个单例对象
 //同一个源文件中如果有和单例对象同名的类，那么这个单例对象就变成了该类的伴生对象

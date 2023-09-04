@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 // 创建一个样例类
 // 查看编译后的Java源码可以发现，创建样例类后会自动生成apply，unapply等方法

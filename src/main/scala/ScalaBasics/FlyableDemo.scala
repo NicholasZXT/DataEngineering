@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 trait FlyableDemo {
 //  特质，定义属性和方法

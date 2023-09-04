@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 //首先要有一个抽象类，匿名类就是抽象类的对象
 abstract class Monster{

@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 class StudentClass {
   //定义属性，同时初始化

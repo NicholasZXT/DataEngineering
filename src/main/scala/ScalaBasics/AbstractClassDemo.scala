@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 //定义一个抽象类
 abstract class Person(){

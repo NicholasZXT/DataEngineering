@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 /*
 模式匹配语法类似于Java中的switch case
 变量 match{

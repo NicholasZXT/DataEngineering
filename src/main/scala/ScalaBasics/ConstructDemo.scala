@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 //构造方法：主构造方法，辅助构造方法
 //主构造方法会执行类定义中的所有语句

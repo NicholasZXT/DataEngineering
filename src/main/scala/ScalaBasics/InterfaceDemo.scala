@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 // 演示作为借口使用的特质
 trait Logger{

@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 // 定义一个隐式类
 object ImplicitClassDemo extends App {

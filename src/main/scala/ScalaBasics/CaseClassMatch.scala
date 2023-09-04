@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 //样例类的模式匹配
 abstract class Notification2

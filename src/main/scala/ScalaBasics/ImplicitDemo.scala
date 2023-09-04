@@ -1,4 +1,4 @@
-package qianfeng
+package ScalaBasics
 
 object ImplicitDemo extends App {
 
