@@ -7,9 +7,9 @@ public class TryCatchTest {
 	 */
 	public static void main(String[] args) {
 		TryCatchTest tct = new TryCatchTest();
-//		int result = tct.test();
-//		System.out.println("test()方法，执行完毕！返回值为：" + result);
-//		int result2 = tct.test2();
+		//int result = tct.test();
+		//System.out.println("test()方法，执行完毕！返回值为：" + result);
+		//int result2 = tct.test2();
 		int result = tct.test3();
 		System.out.println("我想大声告诉你！test3()执行完毕！！~ 返回值为：" + result);
 	}

@@ -1,6 +1,5 @@
 package BasicGrammars;
 
-import KafkaDemos.HelloConsumer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
