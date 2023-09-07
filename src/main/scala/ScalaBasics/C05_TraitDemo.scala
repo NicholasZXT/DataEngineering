@@ -1,6 +1,6 @@
 package ScalaBasics
 
-trait Logger1{
+trait LoggerV1{
   def log(msg:String)={
     println(msg)
   }
@@ -11,7 +11,7 @@ class Account{
   protected var balance = 0.0
 }
 
-class SavingAccount extends Account with Logger1{
+class SavingAccount extends Account with LoggerV1{
   def withdraw(amount:Double)={
     if (amount> balance) log("余额不足")
     else balance = balance - amount
