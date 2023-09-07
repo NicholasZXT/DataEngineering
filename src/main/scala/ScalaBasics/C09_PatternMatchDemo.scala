@@ -77,10 +77,25 @@ object C09_PatternMatchDemo {
   }
 
   // 序列和元组的匹配，类型匹配，模式守卫
-  def seq_mathc(x: Any): String = x match {
+  def seq_match(x: Any): String = x match {
+    //匹配以0开始的列表
+    case 0::tail =>"0..."
     case List(0, _*) => "sequence start with 0"
+    //匹配只有一个0元素的列表
+    case 0::Nil =>"0"
+    //匹配含有两个元素的列表
+    case x::y::Nil =>s"$x,$y"
+    // 数组匹配
+    //匹配包含0的数组
+    case Array(0) => "0"
+    //匹配任何带有两个元素的数组
+    case Array(x, y) => s"$x $y"
+    //匹配以0作为第一个元素的数组
+    case Array(0, _*) => "0>>>"
+    // 元组匹配
     case (a, b, c) => "tuple with length 3"
-    // 带有模式守卫——也就是if语句
+    case (0, _) => "0..."
+    // 类型匹配，带有模式守卫——也就是if语句
     case s: String if s.startsWith("string") => "String class with 'string' start"
     case _ => "nothing"
   }
