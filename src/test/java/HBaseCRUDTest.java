@@ -27,7 +27,7 @@ public class HBaseCRUDTest {
 
     @Test
     public void getClusterInfosTest() throws IOException {
-        hbase.getClusterInfos();
+        hbase.getClusterInfo();
     }
 
     @Test

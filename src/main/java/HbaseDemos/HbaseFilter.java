@@ -49,6 +49,15 @@ public class HbaseFilter {
     private Connection connection;
     private Admin admin;
 
+    public void setConfig() throws IOException {
+        this.config = HBaseConfiguration.create();
+        this.config.set("hbase.zookeeper.property.clientPort", "2181");
+        this.config.set("hbase.zookeeper.quorum", "hadoop101,hadoop102,hadoop103");  // master 所在服务器的IP或者主机名均可以
+        // 必须要通过如下的方式获取 Admin 客户端
+        this.connection = ConnectionFactory.createConnection(config);
+        this.admin =  connection.getAdmin();
+    }
+
     public List<String> readCompanies(String filepath) throws IOException {
         FileReader fileReader = new FileReader(filepath);
         BufferedReader reader = new BufferedReader(fileReader);
@@ -63,15 +72,6 @@ public class HbaseFilter {
             line = reader.readLine();
         }
         return companies;
-    }
-
-    public void setConfig() throws IOException {
-        this.config = HBaseConfiguration.create();
-        this.config.set("hbase.zookeeper.property.clientPort", "2181");
-        this.config.set("hbase.zookeeper.quorum", "hadoop101,hadoop102,hadoop103");  // master 所在服务器的IP或者主机名均可以
-        // 必须要通过如下的方式获取
-        this.connection = ConnectionFactory.createConnection(config);
-        this.admin =  connection.getAdmin();
     }
 
     public void extractByAccurateFilter(SimpleDateFormat dateFormat, List<String> companies, BufferedWriter writer, int limit)
@@ -103,7 +103,7 @@ public class HbaseFilter {
                 String applicant_name = Bytes.toString(result.getValue(Bytes.toBytes("extra"), Bytes.toBytes("applicant_Name")));
                 writer.write('\t');
                 writer.write(applicant_name);
-                for(String col: columns){
+                for(String col: columns) {
                     byte[] data_bytes = result.getValue(Bytes.toBytes(colFamily), Bytes.toBytes(col));
                     String data = Bytes.toString(data_bytes);
                     if (data != null){
@@ -197,7 +197,7 @@ public class HbaseFilter {
     }
 
 
-    public void test() throws IOException {
+    public void scanTable() throws IOException {
         this.setConfig();
         String tableName = "idata:patent_info_alter_ah";
         Table table = this.connection.getTable(TableName.valueOf(tableName));
@@ -206,19 +206,16 @@ public class HbaseFilter {
         ResultScanner scanner = table.getScanner(scan);
         System.out.println("scan table[" + tableName + "]...");
         for(Result result: scanner){
-            //System.out.print("result: ");
-            //System.out.println(result.toString());
-            //得到单元格集合
-            List<Cell> cs=result.listCells();
+            List<Cell> cs = result.listCells();
             System.out.println("result cells: ");
             for(Cell cell: cs){
-                String rowKey=Bytes.toString(CellUtil.cloneRow(cell));
-                long timestamp = cell.getTimestamp();
+                String rowKey = Bytes.toString(CellUtil.cloneRow(cell));
                 String family = Bytes.toString(CellUtil.cloneFamily(cell));
                 String qualifier  = Bytes.toString(CellUtil.cloneQualifier(cell));
                 String value = Bytes.toString(CellUtil.cloneValue(cell));
-                System.out.println(" ===> rowKey: " + rowKey + ",  timestamp: " + timestamp +
-                        ", family: " + family + ", qualifier: " + qualifier + ", value: " + value);
+                long timestamp = cell.getTimestamp();
+                System.out.println(" ===> rowKey: {" + rowKey + ", family: " + family + ", qualifier: " + qualifier +
+                        ", value: " + value + ",  timestamp: " + timestamp + "}");
             }
         }
     }
