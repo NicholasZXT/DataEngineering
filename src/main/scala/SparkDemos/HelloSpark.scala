@@ -1,6 +1,6 @@
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.rdd.RDD
+package SparkDemos
 
+import org.apache.spark.{SparkConf, SparkContext}
 
 object HelloSpark {
 
@@ -19,7 +19,7 @@ object HelloSpark {
     // sc.setLogLevel("INFO")
     //sc.setLogLevel("WARN")
 
-    val rdd1 = sc.parallelize(List(1,2,3,4,5,6), numSlices = 3)
+    val rdd1 = sc.parallelize(List(1, 2, 3, 4, 5, 6), numSlices = 3)
     println("partition num: " + rdd1.partitions.length)
     rdd1.foreach(println)
 
@@ -45,10 +45,10 @@ object HelloSpark {
   }
 
   // 用于 mapPartitionWithIndex 的函数，
-  def foreach_partition_fun(index:Int, iter:Iterator[Int]): Iterator[String] ={
+  def foreach_partition_fun(index: Int, iter: Iterator[Int]): Iterator[String] = {
     // 第一个参数是分区数，第二个是该分区元素的迭代器（不能是 Iterable）
     // 函数的返回值必须也是一个迭代器，所以不能使用 foreach
-    iter.map(x => "[partID:" +  index + ", val: " + x + "]")
+    iter.map(x => "[partID:" + index + ", val: " + x + "]")
   }
 
 }

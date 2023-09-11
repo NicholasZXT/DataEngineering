@@ -1,13 +1,12 @@
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.streaming.{Seconds, StreamingContext}
-import org.apache.spark.streaming.dstream.{DStream, InputDStream}
-import org.apache.spark.storage.StorageLevel
-import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord}
-import org.apache.commons.codec.StringDecoder
-//import org.apache.spark.streaming.kafka010._
+package SparkDemos
+
+import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
-import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
+import org.apache.spark.streaming.{Seconds, StreamingContext}
+import org.apache.spark.{SparkConf, SparkContext}
+
 import java.util.UUID
 
 object StreamingWordCount {
@@ -23,7 +22,7 @@ object StreamingWordCount {
     val brokers = "localhost:9092"
     val topics = Array("wordcount-input")
     //val group = "spark-streaming"
-    val group = UUID.randomUUID().toString  // 使用随机的group id，保证每次都是从topic的开始地方消费
+    val group = UUID.randomUUID().toString // 使用随机的group id，保证每次都是从topic的开始地方消费
     println("group id: " + group)
     // 3. 将kafka参数映射为map
     val kafkaParams = Map[String, Object](
@@ -53,7 +52,7 @@ object StreamingWordCount {
 
     // 5.2 实现 有状态的 word count
     // 状态更新函数
-    val updateFunc = (values:Seq[Int], oldstate:Option[Int]) => {
+    val updateFunc = (values: Seq[Int], oldstate: Option[Int]) => {
       val old_cnt = oldstate.getOrElse(0)
       val add_cnt = values.sum
       val new_cnt = old_cnt + add_cnt
