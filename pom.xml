@@ -206,6 +206,11 @@
         <!--    <version>${hbase.version}</version>-->
         <!--    <scope>${hbase.scope}</scope>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-mapreduce</artifactId>
+            <version>${hbase.version}</version>
+        </dependency>
 
         <!-- ElasticSearch依赖-->
         <dependency>
