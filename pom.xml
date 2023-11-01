@@ -21,7 +21,10 @@
         <!--scala的版本建议只需要写到2位，因为配合spark版本时，只需要前两位-->
         <spark.scala.version>2.11</spark.scala.version>
         <hbase.version>2.4.15</hbase.version>
-        <kafka.version>2.6.0</kafka.version>
+        <!--<kafka.version>2.6.0</kafka.version>-->
+        <!-- 调试 Flink 1.17 版本时，需要使用下面的kafka版本 -->
+        <kafka.version>3.2.3</kafka.version>
+        <flink.version>1.17.1</flink.version>
         <elasticsearch.version>7.17.8</elasticsearch.version>
         <jackson.version>2.12.3</jackson.version>
         <encoding>UTF-8</encoding>
@@ -36,6 +39,7 @@
                 <spark.scope>compile</spark.scope>
                 <kafka.scope>compile</kafka.scope>
                 <hbase.scope>compile</hbase.scope>
+                <flink.scope>compile</flink.scope>
             </properties>
         </profile>
     </profiles>
@@ -235,6 +239,49 @@
         <!--    <artifactId>jackson-databind</artifactId>-->
         <!--    <version>${jackson.version}</version>-->
         <!--</dependency>-->
+
+        <!-- Flink 依赖 -->
+        <!-- core 会被自动引入，所以一般不需要手动引入 -->
+        <!--<dependency>-->
+        <!--    <groupId>org.apache.flink</groupId>-->
+        <!--    <artifactId>flink-core</artifactId>-->
+        <!--    <version>${flink.version}</version>-->
+        <!--    <scope>${flink.scope}</scope>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java</artifactId>
+            <version>${flink.version}</version>
+            <scope>${flink.scope}</scope>
+        </dependency>
+        <dependency>
+            <!-- 从 1.10 版本开始，使用上面的 flink-stream-java 时，必须要引入这个客户端了 -->
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-clients</artifactId>
+            <version>${flink.version}</version>
+            <scope>${flink.scope}</scope>
+        </dependency>
+        <!-- 从文件读取数据需要这个依赖 -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-files</artifactId>
+            <version>${flink.version}</version>
+            <scope>${flink.scope}</scope>
+        </dependency>
+        <!-- 连接kafka依赖 -->
+        <dependency>
+            <!-- 这里依赖的kafka版本和上面我自己设置的版本有冲突-->
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka</artifactId>
+            <version>${flink.version}</version>
+            <scope>${flink.scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-common</artifactId>
+            <version>${flink.version}</version>
+            <scope>${flink.scope}</scope>
+        </dependency>
 
         <!--   alibaba fastJSON -->
         <dependency>
