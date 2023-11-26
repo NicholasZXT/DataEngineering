@@ -249,6 +249,7 @@
         <!--    <scope>${flink.scope}</scope>-->
         <!--</dependency>-->
         <dependency>
+            <!-- flink的Java api, scala api是另外一个依赖-->
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-streaming-java</artifactId>
             <version>${flink.version}</version>
@@ -261,16 +262,23 @@
             <version>${flink.version}</version>
             <scope>${flink.scope}</scope>
         </dependency>
-        <!-- 从文件读取数据需要这个依赖 -->
         <dependency>
+            <!-- 从文件读取数据需要这个依赖 -->
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-files</artifactId>
             <version>${flink.version}</version>
             <scope>${flink.scope}</scope>
         </dependency>
-        <!-- 连接kafka依赖 -->
         <dependency>
-            <!-- 这里依赖的kafka版本和上面我自己设置的版本有冲突-->
+            <!-- 数据生成器的依赖-->
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-datagen</artifactId>
+            <version>${flink.version}</version>
+            <scope>${flink.scope}</scope>
+        </dependency>
+        <dependency>
+            <!-- 连接kafka依赖 -->
+            <!-- 这里依赖的kafka版本和上面我自己设置的 kafka 版本有冲突-->
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kafka</artifactId>
             <version>${flink.version}</version>

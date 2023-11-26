@@ -9,7 +9,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
 
 /**
- * 演示Flink 基本的Transform算子使用
+ * 演示Flink基本的Transform算子使用
  */
 public class Transform {
     public static void main(String[] args) throws Exception {

@@ -1,12 +1,14 @@
 package FlinkDemos;
 
+import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
 /**
- * 演示Flink 基本的聚合算子使用
+ * 演示Flink基本聚合算子使用
  */
 public class Aggregate {
     public static void main(String[] args) throws Exception {
@@ -35,10 +37,27 @@ public class Aggregate {
                 }
             });
         // 此时直接打印没啥区别
-        sensorKS1.print("KeyedStream");
+        //sensorKS1.print("KeyedStream");
 
         // ------------------------------------------------------------------------------------------------
-        // 先分组，返回的是 一个 KeyedStream，注意，keyBy不是 转换算子，只是对数据进行重分区，不能设置并行度
+        // 简单聚合
+        SingleOutputStreamOperator<WaterSensor> result1 = sensorKS1.max("vc");
+        SingleOutputStreamOperator<WaterSensor> result2 = sensorKS1.min("vc");
+        SingleOutputStreamOperator<WaterSensor> result3 = sensorKS1.maxBy("vc");
+        SingleOutputStreamOperator<WaterSensor> result4 = sensorKS1.minBy("vc");
+
+        // ------------------------------------------------------------------------------------------------
+        // reduce
+        SingleOutputStreamOperator<WaterSensor> reduce = sensorKS1.reduce(new ReduceFunction<WaterSensor>() {
+            @Override
+            public WaterSensor reduce(WaterSensor value1, WaterSensor value2) throws Exception {
+                System.out.println("value1=" + value1);
+                System.out.println("value2=" + value2);
+                return new WaterSensor(value1.id, value2.ts, value1.vc + value2.vc);
+            }
+        });
+        reduce.print("reduce");
+
         env.execute();
 
     }
