@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-public class IO_03_Input_Output_Stream_Demo {
+public class P3_InputOutputStreamDemo {
 	public static void main(String[] args)throws IOException {
 		FileInputStream in = new FileInputStream("e:\\javaio\\imoocutf8.txt");
 		InputStreamReader isr = new InputStreamReader(in,"utf-8");//默认项目的编码,操作的时候，要写文件本身的编码格式

@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class IO_02_FileIO_Demo {
+public class P2_Basic_IO {
 	public static void main(String[] args) throws IOException{
 		FileReader fr = new FileReader("e:\\javaio\\imooc.txt");
 		FileWriter fw = new FileWriter("e:\\javaio\\imooc2.txt");
@@ -18,7 +18,6 @@ public class IO_02_FileIO_Demo {
 		}
 		fr.close();
 		fw.close();
-
 
 		//如果该文件不存在，则直接创建，如果存在，删除后创建
 		FileOutputStream out = new FileOutputStream("demo/out.dat");

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 
-public class IO_06_RandomAccessDemo {
+public class P6_RandomAccessDemo {
 
 	/**
 	 * @param args
