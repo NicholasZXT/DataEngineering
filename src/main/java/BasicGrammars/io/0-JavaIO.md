@@ -1,92 +1,78 @@
 [TOC]
 
 # 文件与路径表示
-java里对文件和路径的表示有两个包：
-1. `java.io.File`类，同时表示文件/目录
-2. `java.nio.file.Files`, `java.nio.file.Path`类，分别表示文件和路径
+java里对文件和路径的操作有如下选择：
+1. `java.io.File`类，同时表示文件/目录，它**只用于表示文件（目录）的信息（名称、大小等），不能用于文件内容的访问**
+2. `java.nio.file.Path`类，也同时表示文件/目录
+3. **`java.nio.file.Files` 类封装了一系列操作文件内容的静态方法**
 
-注意，这里**只用于表示文件（目录）的信息（名称、大小等），不能用于文件内容的访问**。
+`nio`中的`Path`（配合`Paths`）相当于`io`中的`File`类，而`nio.Files`类在此之上还提供更多功能的封装，例如下面的方法：
++ `Files.readAllBytes()`
++ `Files.readAllLines()`
++ `Files.readAllBytes()` 
++ `Files.readAllLines()` 
++ `Files.createFile()` 
++ `Files.createDirectory()` 
++ `Files.createDirectory()`
 
 `java.io`是jdk 1.0就存在的API，`java.nio`中的`nio`是 *new input output* 的缩写，是jdk 1.5 引入的新API。   
 `nio` 相比于 `io`，主要有下面几个特点：
 1. `io`主要是面向流的读写，`nio`主要是面向缓冲的读写，效率更高一点
 2. `io`主要是阻塞式IO，`nio`支持非阻塞式IO
 
-当然，最主要的是，**`nio`提供的`Files`、`Path`比`io`的`File`类要好用一些**。
-
-
 -----------------------------------------
 
 # 字节流读写
 
-IO流(输入流、输出流)
-字节流、字符流
-1.字节流
-1)InputStream、OutputStream——>都是抽象类
-InputStream抽象了应用程序读取数据的方式
-OutputStream抽象了应用程序写出数据的方式
-2)EOF = End   读到-1就读到结尾
-3)输入流基本方法
-int  b = in.read();读取一个字节无符号填充到int低八位.-1是 EOF
-in.read(byte[] buf)  // 读取的字节直接填充到字节数组
-in.read(byte[] buf,int start,int size)
-4)输出流基本方法
-out.write(int b)  写出一个byte到流，b的低8位
-out.write(byte[] buf)将buf字节数组都写入到流
-out.write(byte[] buf,int start,int size)
+两个抽象基类：InputStream、OutputStream
++ `InputStream`抽象了应用程序读取数据的方式   
+  输入流基本方法
+  + `read()`: 读取一个字节无符号填充到int低八位.-1是 EOF
+  + `read(byte[] buf)`: 读取的字节直接填充到字节数组
+  + `read(byte[] buf, int start, int size)`
++ `OutputStream`抽象了应用程序写出数据的方式
+  输出流基本方法
+  + `write(int b)`: 写出一个byte到流，b的低8位
+  + `write(byte[] buf)`: 将buf字节数组都写入到流
+  + `write(byte[] buf,int start,int size)`
 
-5)FileInputStream--->具体实现了在文件上读取数据
-6)FileOutputStream 实现了向文件中写出byte数据的方法
-7)DataOutputStream/DataInputStream
-对"流"功能的扩展，可以更加方面的读取int,long，字符等类型数据
-DataOutputStream
-writeInt()/writeDouble()/writeUTF()
+其他方法：
++ `flush()`输出流刷新缓存区，写出
++ `close()`关闭输入/输出流，释放资源
 
-8)BufferedInputStream&BufferedOutputStream
-这两个流类位IO提供了带缓冲区的操作，一般打开文件进行写入
-或读取操作时，都会加上缓冲，这种流模式提高了IO的性能
+常用的输入/输出流实现类：
++ `FileInputStream`: 实现了在文件上读取数据
++ `FileOutputStream`: 实现了向文件中写出byte数据的方法
++ `DataInputStream`/`DataOutputStream`: 对"流"功能的扩展，可以更加方面的读取int,long，字符等类型数据
++ `BufferedInputStream`/`BufferedOutputStream`: 这两个IO类提供了带缓冲区的操作，一般打开文件进行写入或读取操作时，都会加上缓冲，这种流模式提高了IO的性能
++ `RandomAccessFile`支持随机访问文件，可以访问文件的任意位置，既可以读文件，也可以写文件。
+
 从应用程序中把输入放入文件，相当于将一缸水倒入到另一个缸中:
-FileOutputStream--->write()方法相当于一滴一滴地把水“转移”过去
-DataOutputStream-->writeXxx()方法会方便一些，相当于一瓢一瓢把水“转移”过去
-BufferedOutputStream--->write方法更方便，相当于一飘一瓢先放入桶中，再从桶中倒入到另一个缸中，性能提高了
+`FileOutputStream.write()`方法相当于一滴一滴地把水“转移”过去
+`DataOutputStream.writeXxx()`方法会方便一些，相当于一瓢一瓢把水“转移”过去
+`BufferedOutputStream.write()`方法更方便，相当于一飘一瓢先放入桶中，再从桶中倒入到另一个缸中，性能提高了
 
-
-
-RandomAccessFile java提供的对文件内容的访问，既可以读文件，也可以写文件。
-RandomAccessFile支持随机访问文件，可以访问文件的任意位置
-
-(1)java文件模型
-在硬盘上的文件是按照 byte 存储的,是数据的集合
-(2)打开文件
-有两种模式"rw"(读写)  "r"（只读)
-RandomAccessFile raf = new RandomeAccessFile(file,"rw")
-文件指针，打开文件时指针在开头 pointer = 0;
-(3)写方法
-raf.write(int)--->只写一个字节（后8位),同时指针指向下一个位置，准备再次写入
-(4)读方法
-int b = raf.read()--->读一个字节
-(5)文件读写完成以后一定要关闭（Oracle官方说明）
+注意：**文件读写完成以后一定要关闭（Oracle官方说明）**
 
 -----------------------------------------
 
 # 字符流读写
-2.字符流
-1) 编码问题
-   2)认识文本和文本文件
-   java的文本(char)是16位无符号整数，是字符的unicode编码（双字节编码)
-   文件是byte byte byte ...的数据序列
-   文本文件是文本(char)序列按照某种编码方案(utf-8,utf-16be,gbk)序列化为byte的存储结果
-   3)字符流(Reader Writer)---->操作的是文本文本文件
-   字符的处理，一次处理一个字符
-   ----->字符的底层仍然是基本的字节序列
-   字符流的基本实现
-   InputStreamReader   完成byte流解析为char流,按照编码解析
-   OutputStreamWriter  提供char流到byte流，按照编码处理
+文本和文本文件   
++ java的文本(char)是16位无符号整数，是字符的unicode编码（双字节编码)
++ 文件是byte byte byte ...的数据序列 
++ 文本文件是文本(char)序列按照某种编码方案(utf-8,utf-16be,gbk)序列化为byte的存储结果
 
-FileReader/FileWriter
-字符流的过滤器
-BufferedReader   ---->readLine 一次读一行
-BufferedWriter/PrintWriter   ---->写一行
+字符流(Reader Writer)操作的是文本文本文件，一次处理一个字符，字符的底层仍然是基本的字节序列，基本抽象类如下：
++ `Reader`
++ `Writer`
+
+字符流的基本实现
++ `InputStreamReader`，完成byte流解析为char流,按照编码解析
++ `OutputStreamWriter`，提供char流到byte流，按照编码处理
++ `FileReader`，它是 `InputStreamReader` 的子类
++ `FileWriter`，它是 `OutputStreamWriter` 的子类
++ `BufferedReader`，它的`readLine()`方法一次读一行
++ `BufferedWriter`，其中的`write()`一次写一行
 
 -----------------------------------------
 

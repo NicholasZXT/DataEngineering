@@ -1,7 +1,7 @@
-package BasicGrammars;
-
+package BasicGrammars.io;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -51,12 +51,12 @@ public class PropertitiesDemo {
         props.setProperty("k1","v1");
         props.setProperty("k2","v2");
         //3. 写入到文件
-        Writer writer = new OutputStreamWriter(new FileOutputStream("app.properties"),"UTF-8");
+        Writer writer = new OutputStreamWriter(new FileOutputStream("app.properties"), StandardCharsets.UTF_8);
         //写入到当前工程下的目录
         props.store(writer,"description");
         writer.close();
         //4. 从properties文件中加载数据
-        Reader reader = new InputStreamReader(new FileInputStream("app.properties"), "UTF-8");
+        Reader reader = new InputStreamReader(new FileInputStream("app.properties"), StandardCharsets.UTF_8);
         props.load(reader);
         for (String name : props.stringPropertyNames()){
             String value = props.getProperty(name);

@@ -20,9 +20,21 @@ public class P1_NIO_FilePath {
         System.out.println(path2.isAbsolute());
         System.out.println(path2.getRoot());
 
+        Path path_in = Paths.get("src","main", "resources", "hadoop_data", "wordcount_input", "wordcount.txt");
+
         System.out.println("------------------------------");
         // Files类 也不能直接构造对象，需要通过提供的静态方法构造
         boolean flag = Files.isRegularFile(path1);
         System.out.println(Files.exists(path2));
+        // 其他的一些方法如下：
+        //Files.readAllBytes();
+        //Files.readAllLines();
+        //Files.createFile();
+        //Files.createDirectory();
+        //Files.createDirectory();
+        //Files.write();
+        //Files.copy();
+        //Files.delete();
+        //Files.deleteIfExists();
     }
 }

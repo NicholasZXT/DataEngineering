@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-public class P7_RandomAccessFileSerDemo {
+public class P5_RandomAccessFileSerDemo {
 
 	/**
 	 * @param args
