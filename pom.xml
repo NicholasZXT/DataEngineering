@@ -165,33 +165,6 @@
             <scope>${spark.scope}</scope>
         </dependency>
         <!-- ***************************************************** -->
-        <!-- Hadoop相关依赖，必须放在最后，否则前面的spark没法运行-->
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <version>${hadoop.version}</version>
-            <scope>${hadoop.scope}</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-client</artifactId>
-            <version>${hadoop.version}</version>
-            <scope>${hadoop.scope}</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-            <version>${hadoop.version}</version>
-            <scope>${hadoop.scope}</scope>
-            <!-- 这里依赖的 netty 和 spark-sql 的冲突，可以使用 mvn -P "local" dependency:tree > dep.txt 查看 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty-all</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- ***************************************************** -->
         <!-- kafka 依赖 -->
         <dependency>
             <!-- 包含了 topic管理，Producer 和 Consumer 的API -->
@@ -372,6 +345,40 @@
         <!--    <version>1.13.6</version>-->
         <!--    <scope>provided</scope>-->
         <!--</dependency>-->
+        <dependency>
+            <!--和Hadoop配合时，可能需要这个兼容性依赖的帮助-->
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-hadoop-compatibility_2.12</artifactId>
+            <version>${flink.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- ***************************************************** -->
+        <!-- Hadoop相关依赖，强烈建议放在所有大数据组件依赖的后面，因为手动指定的hadoop版本很可能会和前面某个组件冲突 -->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>${hadoop.scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>${hadoop.scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>${hadoop.scope}</scope>
+            <!-- 这里依赖的 netty 和 spark-sql 的冲突，可以使用 mvn -P "local" dependency:tree > dep.txt 查看 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-all</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- ***************************************************** -->
         <dependency>
             <!-- alibaba fastJSON -->
