@@ -1,24 +1,16 @@
-package BasicGrammars.collection;
+package BasicGrammars.collection.beans;
 
-/**
- * ¿Î³ÌÀà
- * @author Administrator
- *
- */
 public class Course {
 
 	public String id;
 	
 	public String name;
-	
+
+	public Course() {}
+
 	public Course(String id, String name) {
 		this.id = id ;
-		
 		this.name = name;
-	}
-	
-	public Course() {
-		
 	}
 	
 	@Override

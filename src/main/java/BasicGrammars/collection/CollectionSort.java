@@ -4,14 +4,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Comparator;
+import BasicGrammars.collection.beans.Student;
 
 /**
- * 将要完成：
+ * 展示：
  * 1.通过Collections.sort()方法，对Integer泛型的List进行排序；
  * 2.对String泛型的List进行排序；
  * 3.对其他类型泛型的List进行排序，以Student为例。
  */
-public class CollectionsTest {
+public class CollectionSort {
+
+	public static void main(String[] args) {
+		CollectionSort ct = new CollectionSort();
+		ct.testSort1();
+		ct.testSort2();
+		ct.testSort3();
+	}
 
 	/**
 	 * 1.通过Collections.sort()方法，对Integer泛型的List进行排序；
@@ -87,15 +96,13 @@ public class CollectionsTest {
 			System.out.println("学生：" + student.id + ":" + student.name);
 		}
 	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		CollectionsTest ct = new CollectionsTest();
-//		ct.testSort1();
-//		ct.testSort2();
-		ct.testSort3();
-	}
 
+}
+
+
+class StudentComparator implements Comparator<Student> {
+	@Override
+	public int compare(Student o1, Student o2) {
+		return o1.name.compareTo(o2.name);
+	}
 }

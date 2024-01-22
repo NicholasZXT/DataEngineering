@@ -5,18 +5,31 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
+import BasicGrammars.collection.beans.Student;
 
-public class MapTest {
+public class MapDemo {
+
+	public static void main(String[] args) {
+		MapDemo mt = new MapDemo();
+		mt.testPut();
+		mt.testForEachMethod();
+		mt.testKeySet();
+		mt.testRemove();
+		mt.testEntrySet();
+		mt.testModify();
+		mt.testEntrySet();
+		mt.testContainsKeyOrValue();
+	}
 
 	/**
-	 * 用来承装学生类型对象
+	 * 用来存放学生类型对象
 	 */
 	public Map<String, Student> students;
 	
 	/**
 	 * 在构造器中初始化students属性
 	 */
-	public MapTest() {
+	public MapDemo() {
 		this.students = new HashMap<String, Student>();
 	}
 	
@@ -46,16 +59,20 @@ public class MapTest {
 				i++;
 			} else {
 				System.out.println("该学生ID已被占用！");
-				continue;
 			}
 		}
+	}
+
+	public void testForEachMethod(){
+		// Map 最有用的方法之一
+		this.students.forEach((k, v) -> System.out.println("key=" + k + ", value=" + v));
 	}
 	
 	/**
 	 * 测试Map的keySet方法
 	 */
 	public void testKeySet() {
-		// 通过keySet方法，返回Map中的所有“键”的Set集合
+		// 通过keySet方法，返回Map中的所有“键”的Set集合——实际上这是一个视图
 		Set<String> keySet = students.keySet();
 		// 取得students的容量
 		System.out.println("总共有：" + students.size() + "个学生！");
@@ -152,20 +169,6 @@ public class MapTest {
 			System.out.println("在学生映射表中，确实包含学生：" + name);
 		else
 			System.out.println("在学生映射表中不存在该学生！");
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		MapTest mt = new MapTest();
-		mt.testPut();
-		mt.testKeySet();
-//		mt.testRemove();
-//		mt.testEntrySet();
-//		mt.testModify();
-//		mt.testEntrySet();
-		mt.testContainsKeyOrValue();
 	}
 
 }

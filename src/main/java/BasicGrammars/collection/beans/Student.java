@@ -1,13 +1,8 @@
-package BasicGrammars.collection;
+package BasicGrammars.collection.beans;
 
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Ñ§ÉúÀà
- * @author Administrator
- *
- */
 public class Student implements Comparable<Student> {
 
 	public String id;

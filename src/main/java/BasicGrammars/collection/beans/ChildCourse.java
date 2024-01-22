@@ -1,4 +1,4 @@
-package BasicGrammars.collection;
+package BasicGrammars.collection.beans;
 
 public class ChildCourse extends Course {
 

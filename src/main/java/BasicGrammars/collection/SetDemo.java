@@ -4,8 +4,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import BasicGrammars.collection.beans.Course;
+import BasicGrammars.collection.beans.Student;
 
-public class SetTest {
+public class SetDemo {
+
+	public static void main(String[] args) {
+		SetDemo st = new SetDemo();
+		st.testAdd();
+		st.testListContains();
+		st.testForEach();
+		st.createStudentAndSelectCours();
+		st.testSetContains();
+		st.testForEachForSet();
+	}
 
 	public List<Course> coursesToSelect;
 	
@@ -13,7 +25,7 @@ public class SetTest {
 	
 	public Student student;
 	
-	public SetTest() {
+	public SetDemo() {
 		coursesToSelect = new ArrayList<Course>();
 		console = new Scanner(System.in);
 	}
@@ -26,47 +38,42 @@ public class SetTest {
 		Course cr1 = new Course("1" , "数据结构");
 		coursesToSelect.add(cr1);
 		Course temp = (Course) coursesToSelect.get(0);
-//		System.out.println("添加了课程：" + temp.id + ":" + temp.name); 
+		//System.out.println("添加了课程：" + temp.id + ":" + temp.name);
 		
 		Course cr2 = new Course("2", "C语言");
 		coursesToSelect.add(0, cr2);
 		Course temp2 = (Course) coursesToSelect.get(0);
-//		System.out.println("添加了课程：" + temp2.id + ":" + temp2.name);
+		//System.out.println("添加了课程：" + temp2.id + ":" + temp2.name);
 		
-//		coursesToSelect.add(cr1);
-//		Course temp0 = (Course) coursesToSelect.get(2);
-//		System.out.println("添加了课程：" + temp.id + ":" + temp.name); 
-		
-		
+		//coursesToSelect.add(cr1);
+		//Course temp0 = (Course) coursesToSelect.get(2);
+		//System.out.println("添加了课程：" + temp.id + ":" + temp.name);
+
 		//以下方法会抛出数组下标越界异常
-//		Course cr3 = new Course("3", "test");
-//		coursesToSelect.add(4, cr3);
+		//Course cr3 = new Course("3", "test");
+		//coursesToSelect.add(4, cr3);
 		
 		Course[] course = {new Course("3", "离散数学"), new Course("4", "汇编语言")};
 		coursesToSelect.addAll(Arrays.asList(course));
 		Course temp3 = (Course) coursesToSelect.get(2);
 		Course temp4 = (Course) coursesToSelect.get(3);
 		
-//		System.out.println("添加了两门课程：" + temp3.id + ":" + 
-//				temp3.name + ";" + temp4.id + ":" + temp4.name);
+		System.out.println("添加了两门课程：" + temp3.id + ":" + temp3.name + ";" + temp4.id + ":" + temp4.name);
 		
 		Course[] course2 = {new Course("5", "高等数学"), new Course("6", "大学英语")};
 		coursesToSelect.addAll(2, Arrays.asList(course2));
 		Course temp5 = (Course) coursesToSelect.get(2);
 		Course temp6 = (Course) coursesToSelect.get(3);
-//		System.out.println("添加了两门课程：" + temp5.id + ":" + 
-//				temp5.name + ";" + temp6.id + ":" + temp6.name);
+		System.out.println("添加了两门课程：" + temp5.id + ":" + temp5.name + ";" + temp6.id + ":" + temp6.name);
 		
 	}
 	
 	/**
-	 * 通过for each方法访问集合元素
-	 * @param args
+	 * 通过 for each语法 访问集合元素
 	 */
 	public void testForEach() {
 		System.out.println("有如下课程待选(通过for each访问)：");
-		for (Object obj : coursesToSelect) {
-			Course cr = (Course) obj;
+		for (Course cr : coursesToSelect) {
 			System.out.println("课程：" + cr.id + ":" + cr.name);
 		}
 	}
@@ -79,8 +86,7 @@ public class SetTest {
 		Course course = coursesToSelect.get(0);
 		// 打印输出coursesToSelected是否包含course对象
 		System.out.println("取得课程：" + course.name);
-		System.out.println("备选课程中是否包含课程：" + course.name + ", " + 
-				coursesToSelect.contains(course));
+		System.out.println("备选课程中是否包含课程：" + course.name + ", " + coursesToSelect.contains(course));
 		// 提示输入课程名称
 		System.out.println("请输入课程名称：");
 		String name = console.next();
@@ -88,12 +94,10 @@ public class SetTest {
 		Course course2 = new Course();
 		course2.name = name;
 		System.out.println("新创建课程：" + course2.name);
-		System.out.println("备选课程中是否包含课程：" + course2.name + ", " +
-				coursesToSelect.contains(course2));
+		System.out.println("备选课程中是否包含课程：" + course2.name + ", " + coursesToSelect.contains(course2));
 		// 通过indexOf方法来取得某元素的索引位置
 		if (coursesToSelect.contains(course2))
-			System.out.println("课程：" + course2.name + "的索引位置为：" + 
-					coursesToSelect.indexOf(course2));
+			System.out.println("课程：" + course2.name + "的索引位置为：" + coursesToSelect.indexOf(course2));
 	}
 	
 	// 创建学生对象并选课
@@ -115,8 +119,8 @@ public class SetTest {
 					 * 最终只会保留一个该对象（的引用），
 					 * 并且，保留的是第一次添加的那一个
 					 */
-//					student.courses.add(null);
-//					student.courses.add(cr);
+					//student.courses.add(null);
+					//student.courses.add(cr);
 				}
 			}
 		}
@@ -133,26 +137,10 @@ public class SetTest {
 		Course course2 = new Course();
 		course2.name = name;
 		System.out.println("新创建课程：" + course2.name);
-		System.out.println("备选课程中是否包含课程：" + course2.name + ", " +
-				student.courses.contains(course2));
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		SetTest st = new SetTest();
-		st.testAdd();
-		st.testListContains();
-		st.testForEach();
-
-//		st.createStudentAndSelectCours();
-//		st.testSetContains();
-//		
-//		st.testForEachForSet(student);
+		System.out.println("备选课程中是否包含课程：" + course2.name + ", " + student.courses.contains(course2));
 	}
 
-	public void testForEachForSet(Student student) {
+	public void testForEachForSet() {
 		//打印输出，学生所选的课程！
 		System.out.println("共选择了：" + student.courses.size() + "门课程！");
 		for (Course cr : student.courses) {
