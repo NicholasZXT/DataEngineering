@@ -1,12 +1,12 @@
-package BasicGrammars;
+package BasicGrammars.log;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class LogDemo {
+public class JulLogDemo {
     public static void main(String[] args) {
-        LogDemo logDemo = new LogDemo();
+        JulLogDemo logDemo = new JulLogDemo();
         logDemo.utilLogger();
 
     }
