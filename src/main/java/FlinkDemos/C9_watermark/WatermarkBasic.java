@@ -1,5 +1,6 @@
-package FlinkDemos;
+package FlinkDemos.C9_watermark;
 
+import FlinkDemos.WaterSensor;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -12,7 +13,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
-public class WaterMarkBasic {
+public class WatermarkBasic {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);

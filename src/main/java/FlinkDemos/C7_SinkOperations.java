@@ -14,7 +14,6 @@ import org.apache.flink.streaming.api.functions.sink.filesystem.OutputFileConfig
 import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.DateTimeBucketAssigner;
 import org.apache.flink.streaming.api.functions.sink.filesystem.rollingpolicies.DefaultRollingPolicy;
 import org.apache.flink.configuration.MemorySize;
-import org.apache.flink.api.connector.sink.Sink;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
 import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
@@ -24,7 +23,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 /**
  * 演示Flink的Sink算子使用
  */
-public class SinkOperations {
+public class C7_SinkOperations {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         // 每个目录中，都有 并行度个数的 文件在写入

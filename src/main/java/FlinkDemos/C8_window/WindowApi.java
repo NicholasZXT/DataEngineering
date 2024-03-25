@@ -1,5 +1,6 @@
-package FlinkDemos;
+package FlinkDemos.C8_window;
 
+import FlinkDemos.WaterSensor;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
