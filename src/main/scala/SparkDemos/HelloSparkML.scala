@@ -5,7 +5,7 @@ import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 
-object SparkML_Demo {
+object HelloSparkML {
 
   def main(args: Array[String]): Unit = {
 
