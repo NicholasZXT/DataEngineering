@@ -23,7 +23,7 @@ import org.apache.kafka.common.TopicPartition;
 /**
  * 演示Flink的源算子使用
  */
-public class SourceOperations {
+public class C1_SourceOperations {
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();

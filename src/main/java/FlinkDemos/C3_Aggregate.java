@@ -10,7 +10,7 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 /**
  * 演示Flink基本聚合算子使用
  */
-public class Aggregate {
+public class C3_Aggregate {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);

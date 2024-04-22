@@ -11,7 +11,7 @@ import org.apache.flink.util.Collector;
 /**
  * 演示Flink基本的Transform算子使用
  */
-public class Transform {
+public class C2_Transform {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
