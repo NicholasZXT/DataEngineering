@@ -31,7 +31,7 @@ object SparkStreamingWithKafka {
     val kafkaParams = Map[String, Object](
       ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG -> brokers,
       ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG -> "org.apache.kafka.common.serialization.StringDeserializer",
-      ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG -> "org.apache.kafka.common.serialization.StringDeserializer",
+      ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG -> classOf[StringDeserializer],  // 推荐使用这种方式设置，不容易错
       ConsumerConfig.GROUP_ID_CONFIG -> group,
       ConsumerConfig.AUTO_OFFSET_RESET_CONFIG -> "earliest",
       ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG -> (true: java.lang.Boolean)

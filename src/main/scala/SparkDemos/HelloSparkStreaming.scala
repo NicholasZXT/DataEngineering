@@ -1,10 +1,20 @@
 package SparkDemos
 
 import org.apache.spark.SparkConf
-import org.apache.spark.streaming.{StreamingContext, Seconds}
+import org.apache.spark.streaming.{StreamingContext, Seconds, Duration}
 import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 
 object HelloSparkStreaming {
+  //val checkpointDirectory = "hdfs://path/to/ck"
+  val checkpointDirectory = "./tmp/ssc/ck"
+
+  // 用于创建 StreamingContext 的函数，配合检查点容错使用
+  def createStreamingContext(): StreamingContext = {
+    val conf = new SparkConf().setMaster("local[4]").setAppName("HelloSparkStreaming")
+    val ssc = new StreamingContext(conf = conf, batchDuration = Seconds(5))
+    ssc.checkpoint(this.checkpointDirectory)
+    ssc
+  }
 
   def main(args: Array[String]): Unit = {
     // 1. 初始化 SparkConf
@@ -20,6 +30,8 @@ object HelloSparkStreaming {
     // 3. 监听本地 socket 端口，统计word count
     // 这里返回的是 ReceiverInputStream
     val lineStream: ReceiverInputDStream[String] = ssc.socketTextStream("localhost", 8900)
+    // 检查点的生成间隔需要在具体的流之后设置
+    //lineStream.checkpoint(Duration(1000*10))
     val wordStream: DStream[(String, Int)] = lineStream.flatMap(_.split(" ")).map((_, 1))
     //wordStream.foreachRDD(_.foreach(println))
     // 3.1 实现无状态转化的word count，统计每个时间批次内的word count
@@ -44,18 +56,7 @@ object HelloSparkStreaming {
     ssc.start()
     // 必须要await，等待作业完成，因为会在另一个线程中执行，主线程需要进行等待
     ssc.awaitTermination()
-    //ssc.awaitTerminationOrTimeout(60)
-  }
-
-  //val checkpointDirectory = "hdfs://path/to/ck"
-  val checkpointDirectory = "./tmp/ssc/ck"
-
-  // 用于创建 StreamingContext 的工厂函数
-  def createStreamingContext(): StreamingContext = {
-    val conf = new SparkConf().setMaster("local[4]").setAppName("HelloSparkStreaming")
-    val ssc = new StreamingContext(conf = conf, batchDuration = Seconds(5))
-    ssc.checkpoint(checkpointDirectory)
-    ssc
+    //ssc.awaitTerminationOrTimeout(1000*60)  // 可以使用这个方式进行调试，它只会等待指定时间（单位是毫秒）
   }
 
 }
