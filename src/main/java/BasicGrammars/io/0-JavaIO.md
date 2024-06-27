@@ -17,20 +17,22 @@ java里对文件和路径的操作有如下选择：
 
 `java.io`是jdk 1.0就存在的API，`java.nio`中的`nio`是 *new input output* 的缩写，是jdk 1.5 引入的新API。   
 `nio` 相比于 `io`，主要有下面几个特点：
-1. `io`主要是面向流的读写，`nio`主要是面向缓冲的读写，效率更高一点
-2. `io`主要是阻塞式IO，`nio`支持非阻塞式IO
+1. `io`主要是面向 *流(Stream)*的读写，`nio`主要是面向 *缓冲(Buffer)* 的读写，可以使用零拷贝的方式，效率更高
+2. `io`主要是阻塞式IO，`nio`支持非阻塞式IO——Netty底层就是使用的NIO
 
 -----------------------------------------
 
 # 字节流读写
 
 两个抽象基类：InputStream、OutputStream
-+ `InputStream`抽象了应用程序读取数据的方式   
++ `InputStream`抽象了应用程序读取数据的方式，它**表示一个可以从中读入字节序列（到用户程序）的对象**   
   输入流基本方法
-  + `read()`: 读取一个字节无符号填充到int低八位.-1是 EOF
-  + `read(byte[] buf)`: 读取的字节直接填充到字节数组
-  + `read(byte[] buf, int start, int size)`
-+ `OutputStream`抽象了应用程序写出数据的方式
+  + `read()`: 从**流对象**中读取一个字节无符号填充到int低八位. 读到 EOF 时返回 -1。
+  + `read(byte[] buf)`: 读取的字节直接填充到字节数组，并返回实际读取的字节数；读到 EOF 返回 -1；最多读取 buf.length 个字节
+  + `read(byte[] buf, int start, int size)`: 读取的字节直接填充到字节数组的 start 位置开始
+  + `int available()`: 返回非阻塞情况下可读取的字节数
+
++ `OutputStream`抽象了应用程序写出数据的方式，它**表示一个可以写入（来自用户程序）字节序列的对象**
   输出流基本方法
   + `write(int b)`: 写出一个byte到流，b的低8位
   + `write(byte[] buf)`: 将buf字节数组都写入到流
@@ -40,19 +42,23 @@ java里对文件和路径的操作有如下选择：
 + `flush()`输出流刷新缓存区，写出
 + `close()`关闭输入/输出流，释放资源
 
+> 注意：
+> 1. 上述的 `InputStream.read()` 和 `OutputStream.write()` 方法都是阻塞的，直至字节序列被读入/写出。
+> 2. 上述的输入输出流也适用于网络编程的Socket对象
+
 常用的输入/输出流实现类：
 + `FileInputStream`: 实现了在文件上读取数据
 + `FileOutputStream`: 实现了向文件中写出byte数据的方法
 + `DataInputStream`/`DataOutputStream`: 对"流"功能的扩展，可以更加方面的读取int,long，字符等类型数据
 + `BufferedInputStream`/`BufferedOutputStream`: 这两个IO类提供了带缓冲区的操作，一般打开文件进行写入或读取操作时，都会加上缓冲，这种流模式提高了IO的性能
-+ `RandomAccessFile`支持随机访问文件，可以访问文件的任意位置，既可以读文件，也可以写文件。
++ `RandomAccessFile`: 支持随机访问文件，可以访问文件的任意位置，既可以读文件，也可以写文件。
 
 从应用程序中把输入放入文件，相当于将一缸水倒入到另一个缸中:
 `FileOutputStream.write()`方法相当于一滴一滴地把水“转移”过去
 `DataOutputStream.writeXxx()`方法会方便一些，相当于一瓢一瓢把水“转移”过去
 `BufferedOutputStream.write()`方法更方便，相当于一飘一瓢先放入桶中，再从桶中倒入到另一个缸中，性能提高了
 
-注意：**文件读写完成以后一定要关闭（Oracle官方说明）**
+注意：**文件读写完成以后一定要关闭（Oracle官方说明）**。
 
 -----------------------------------------
 
