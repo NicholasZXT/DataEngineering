@@ -3,19 +3,35 @@
 # 文件与路径表示
 java里对文件和路径的操作有如下选择：
 1. `java.io.File`类，同时表示文件/目录，它**只用于表示文件（目录）的信息（名称、大小等），不能用于文件内容的访问**
-2. `java.nio.file.Path`类，也同时表示文件/目录
-3. **`java.nio.file.Files` 类封装了一系列操作文件内容的静态方法**
+2. `java.nio.file.Path`**接口**，用于表示文件/目录的路径
+3. `java.nio.file.Paths`类，用于将字符串路径或者URI对象转成 `Path`   
+   它只有两个静态方法
+   + `static Path get(String first, String... more)`
+   + `static Path get(URI uri)`
+4. **`java.nio.file.Files`类**封装了一系列操作文件/目录的**静态**方法——这个类用的最多
 
-`nio`中的`Path`（配合`Paths`）相当于`io`中的`File`类，而`nio.Files`类在此之上还提供更多功能的封装，例如下面的方法：
-+ `Files.readAllBytes()`
-+ `Files.readAllLines()`
-+ `Files.readAllBytes()` 
-+ `Files.readAllLines()` 
-+ `Files.createFile()` 
-+ `Files.createDirectory()` 
-+ `Files.createDirectory()`
+**`java.io.File`类的官方文档里，推荐使用`java.nio.file`包里的相关类来访问文件/目录**。
 
-`java.io`是jdk 1.0就存在的API，`java.nio`中的`nio`是 *new input output* 的缩写，是jdk 1.5 引入的新API。   
+使用`java.nio.file`包操作文件/目录时，一般会先使用`Paths.get()`方法获取`Path`对象，然后传递给`Files`类的静态方法。   
+常用静态方法如下：
++ `Files.exists(Path path, LinkOption... options)`：检查文件/目录是否存在，返回boolean
++ `Files.isDirectory(Path path, LinkOption... options)`：检查路径是否为目录，返回boolean
++ `Files.createFile(Path path, FileAttribute<?>... attrs)`：创建文件，返回值为`Path`
++ `Files.createDirectory(Path dir, FileAttribute<?>... attrs)`：创建目录，返回值为`Path`
++ `Files.delete(Path path)`：删除路径，返回值为`void`
++ `Files.deleteIfExists(Path path)`：删除路径，返回值为`boolean`
++ `Files.list(Path dir)`：列出内容，返回值为`Stream<Path>`
++ `Files.lines(Path path)`、`Files.lines(Path path, Charset cs)`：按行读取内容，返回值为`Stream<String>`
++ `Files.readAllLines()`：按行读取文件内容，返回值为`List<String>`
++ `Files.readAllBytes()`：读取文件内容，返回值为`byte[]`
++ `Files.write(Path path, byte[] bytes, OpenOption... options)`：将字节数组写入文件，返回值为`Path`
++ `Files.write(Path path, Iterable<? extends CharSequence> lines, Charset cs, OpenOption... options)`：将lines写入文件，返回值为`Path`
++ `Files.newInputStream(Path path, OpenOption... options)`：返回值`InputStream`
++ `Files.newOutputStream(Path path, OpenOption... options)`：返回值`OutputStream`
++ `Files.newBufferedReader(Path path)`：返回值`BufferedReader`
++ `Files.newBufferedWriter(Path path, Charset cs, OpenOption... options)`：返回值`BufferedWriter`
+
+`java.io`是 jdk 1.0 就存在的API，`java.nio`中的`nio`是 *new input output* 的缩写，是jdk 1.4 引入的新API（但是`java.nio.file`是 1.7 引入的）。   
 `nio` 相比于 `io`，主要有下面几个特点：
 1. `io`主要是面向 *流(Stream)*的读写，`nio`主要是面向 *缓冲(Buffer)* 的读写，可以使用零拷贝的方式，效率更高
 2. `io`主要是阻塞式IO，`nio`支持非阻塞式IO——Netty底层就是使用的NIO
