@@ -307,4 +307,10 @@ Logback 整体是基于如下 3 个组件（和Log4j-1.x一样）：
 + `Appender`：日志输出，属于 logback-core 依赖
 + `Layout`：日志格式，属于 logback-core 依赖
 
+Logback配置文件名称是`logback.xml`，其中的子项目也对应上面的组件：
++ 根节点`configuration`
+  + `appender`节点
+  + `logger`节点
+  + `root`节点
+
 

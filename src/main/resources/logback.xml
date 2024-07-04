@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 根节点必须是 configuration，可配置的属性有 3 个-->
+<!-- scan: true表示配置文件如果发生改变，自动加载；scanPeriod: 配置自动加载的事件间隔，默认单位为毫秒；debug: false表示不打印Logback内部日志-->
+<configuration scan="true" scanPeriod="600 seconds" debug="false">
+
+    <!-- property 节点的 name, value 属性用于自定义一些变量-->
+    <property name="" value=""/>
+    <property name="" value=""/>
+
+    <!-- appender 有两个属性：name是自定义名称，class是对应的appender全限定类名-->
+    <!-- Logback 提供的常见 appender 如下:
+    ch.qos.logback.core.ConsoleAppender: 输出到控制台
+    ch.qos.logback.core.FileAppender: 输出到文件
+    ch.qos.logback.core.rolling.RollingFileAppender: 输出到文件并进行轮换
+    -->
+    <!--控制台日志， 控制台输出 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度,%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--文件日志， 按照每天生成日志文件 -->
+    <appender name="roll.file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>${LOG_HOME}/TestWeb.log.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--日志文件保留天数-->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <!--日志文件最大的大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- contextName 节点用于设置上下文，-->
+    <contextName>
+
+    </contextName>
+
+    <!-- 配置具体的Logger，name设置名称，对应于某一个包或具体的某一个类的日志；level设置日志级别；additivity=false不继承上级Logger的配置-->
+    <logger name="" level="info" additivity="false">
+        <appender-ref></appender-ref>
+    </logger>
+
+    <!-- root 也是 Logger，但是它最顶层的Logger，所以没有name属性，只有一个level属性用于设置日志级别-->
+    <root level="info">
+        <!-- 指定 appender 的两种方式-->
+        <appender-ref>console</appender-ref>
+        <appender-ref ref="roll.file"/>
+    </root>
+</configuration>
