@@ -268,10 +268,43 @@ log4j-2.x 的日志级别和优先级为：OFF > FATAL > ERROR > WARN> INFO > DE
 ---
 # Slf4j阵营
 
-## Logback
+Logback 和 Slf4j 是同一个作者开发的，这两个组件一般一起使用，似乎没有单独使用 Logback 的教程——Logback官方文档也是配合Slf4j一起用，因此这里就不分开介绍了。
 
----
+官方文档:
++ [Logback](https://logback.qos.ch/index.html)
++ [Slf4j](https://www.slf4j.org/index.html)
 
-## Slf4j
+
+## Maven依赖
+Logback分为 3 个依赖：
++ logback-core：核心依赖，它是其他两个依赖的基础
++ logback-classic：它实现了Slf4j的API，所以当想配合Slf4j使用时，需要将logback-classic加入classpath
++ logback-access：为了集成Servlet环境而准备的，可提供HTTP-access的日志接口
+
+```xml
+<dependency>
+  <groupId>ch.qos.logback</groupId>
+  <artifactId>logback-core</artifactId>
+  <version>1.2.6</version>
+</dependency>
+<dependency>
+  <groupId>org.slf4j</groupId>
+  <artifactId>slf4j-api</artifactId>
+  <version>1.7.30</version>
+  <scope>test</scope>
+</dependency>
+<dependency>
+  <groupId>ch.qos.logback</groupId>
+  <artifactId>logback-classic</artifactId>
+  <version>1.2.6</version>
+</dependency>
+```
+
+## 架构
+
+Logback 整体是基于如下 3 个组件（和Log4j-1.x一样）：
++ `Logger`：日志记录器，属于 logback-classic 依赖
++ `Appender`：日志输出，属于 logback-core 依赖
++ `Layout`：日志格式，属于 logback-core 依赖
 
 
