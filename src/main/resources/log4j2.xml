@@ -9,40 +9,46 @@
 - packages: 用于查找plugin的全限定包名，多个之间用逗号隔开 —— 这个属性已经被标记为 deprecated 并将在 Log4j 3.0 中被移除
 - schema:
 -->
+<!--根节点 configuration 只有两个可配置属性：status 用于指定Log4j本身的日志级别，monitorinterval 指定自动重新配置的监测间隔时间，单位s，最小5s-->
 <configuration status="OFF">
     <!-- Properties 中自定义要用到的一些常量，后续会引用这些变量 -->
     <Properties>
-        <!-- 定义日志格式 -->
+        <!-- 定义日志格式，Appender里设置 Layout 时会用到 -->
         <!--
         常见的 Layout 有 CSV, JSON, Pattern等，详细参考 https://logging.apache.org/log4j/2.x/manual/layouts.html.
         PatternLayout 常用的格式设置符如下：
           %d{YYYY-MM-dd HH:mm:ss.SSS} / %date{YYYY-MM-dd HH:mm:ss.SSS} : 表示输出到毫秒的时间
           %t : 输出当前线程名称
-          %-5level : 输出日志级别，-5表示左对齐并且固定输出5个字符，如果不足在右边补0
+          %-5level : 输出日志级别，-5表示左对齐并且固定输出5个字符，如果不足在右边补空格
           %logger{precision} / %c{precision} : 输出logger名称，precision用于限制logger的名称.
             %c{2} 下，org.apache.commons.Foo	会输出成 commons.Foo
           %n 换行
-          %msg 日志文本
+          %msg 日志文本内容
           %F 输出所在的类文件名，如Client.java
           %L 输出行号
           %M 输出所在方法名
           %l  输出语句所在的行数, 包括类名、方法名、文件名、行数
         -->
-        <Property name="log.pattern">[%d{YYYY-MM-dd HH:mm:ss}] [%t] %-5level %logger{8} %msg%n</Property>
+        <Property name="log.pattern">[%d{YYYY-MM-dd HH:mm:ss}][%t%L][%-5level] %logger{8} %msg%n</Property>
         <!-- 定义文件名变量 -->
+        <Property name="file.info.filename">logs/info.log</Property>
         <Property name="file.err.filename">logs/err.log</Property>
         <Property name="file.err.pattern">logs/err.%i.log.gz</Property>
     </Properties>
 
     <!-- 定义Appender，即目的地 -->
     <Appenders>
-    <!--常见的有三种子节点: Console、RollingFile、File，参考 https://logging.apache.org/log4j/2.x/manual/appenders.html-->
-
+    <!--常见的有三种子节点: Console、File、RollingFile，参考 https://logging.apache.org/log4j/2.x/manual/appenders.html-->
         <!-- 定义输出到控制台 -->
         <Console name="console" target="SYSTEM_OUT">
             <!-- 日志格式引用上面定义的log.pattern -->
             <PatternLayout pattern="${log.pattern}" />
         </Console>
+
+        <File name="info" fileName="${file.info.filename}" >
+            <!-- 日志格式引用上面定义的log.pattern -->
+            <PatternLayout pattern="${log.pattern}" />
+        </File>
 
         <!-- 定义输出到文件,文件名引用上面定义的file.err.filename -->
         <RollingFile name="err" bufferedIO="true" fileName="${file.err.filename}" filePattern="${file.err.pattern}">
@@ -51,30 +57,32 @@
                 <!-- 根据文件大小自动切割日志 -->
                 <SizeBasedTriggeringPolicy size="1 MB" />
             </Policies>
-            <!-- 保留最近10份 -->
-            <DefaultRolloverStrategy max="10" />
+            <!-- 保留最近5份 -->
+            <DefaultRolloverStrategy max="5" />
         </RollingFile>
-
     </Appenders>
 
+    <!--定义Logger-->
     <Loggers>
-    <!--常见的有两种: Root 和 Logger-->
+        <!--常见的有两种: Root 和 Logger-->
         <!-- Root 节点用来指定项目的根日志，如果没有指定Logger（LogManager.getLogger()）或者
           LogManager.getLogger(name) 中 name 指定的 Logger 不存在，那么就会使用此Root Logger -->
         <!-- Root Logger 没有 name 属性（也不需要），也不支持 additivity 属性，因为它没有父级-->
         <Root level="info">
-            <!-- 对info级别的日志，输出到console -->
+            <!-- 指定使用哪个 Appender，ref对应于下面某个 <Appender> 里的名称，这里设置为输出到console，level设置日志级别为info-->
             <AppenderRef ref="console" level="info" />
         </Root>
 
         <!-- Logger 节点用于配置自定义的 Logger，它必须有 name 属性，这个 name 属性和 LogManager.getLogger(name) 是对应的，
-             通常取使用这个 Logger 的类全限定名称-->
+             通常用这个 Logger 的类全限定名称-->
         <!-- additivity 可以取值 "true" 或 "false"，默认 "true"，表示是否继承 Root Logger 的配置. -->
-        <!--<Logger name="Log4jDemo" additivity="true">-->
-        <Logger name="Log4jDemo" additivity="false">
+        <!--<Logger name="Log4j2Demo" additivity="true">-->
+        <Logger name="Log4j2Demo" additivity="false">
             <!--如果继承了 Root Logger 的配置(additivity="true")，由于 Root Logger 也配置了 Console 的 Appender，对于 info 级别
             以上的日志，会看到同一条日志被输出了两次！-->
             <AppenderRef ref="console" level="trace"/>
+            <!-- 对info级别的日志，输出到info文件 -->
+            <AppenderRef ref="info" level="info" />
             <!-- 对error级别的日志，输出到err文件，即上面定义的RollingFile -->
             <AppenderRef ref="err" level="error" />
         </Logger>

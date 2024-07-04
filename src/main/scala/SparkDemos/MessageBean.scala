@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSON
 
 class MessageBean {
   @BeanProperty
-  var mid: Int = null
+  var mid: Int = 0
 
   @BeanProperty
   var content: String = null
