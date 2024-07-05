@@ -265,6 +265,8 @@ log4j-2.x 的日志级别和优先级为：OFF > FATAL > ERROR > WARN> INFO > DE
 ---
 ## JCL(Commons Logging)
 
+
+
 ---
 # Slf4j阵营
 
@@ -272,7 +274,7 @@ Logback 和 Slf4j 是同一个作者开发的，这两个组件一般一起使�
 
 官方文档:
 + [Logback](https://logback.qos.ch/index.html)
-+ [Slf4j](https://www.slf4j.org/index.html)
++ [Slf4j](https://www.slf4j.org/index.html), 里面只有一个 [SLF4J user manual](https://www.slf4j.org/manual.html) 文档比较有用
 
 
 ## Maven依赖
@@ -304,13 +306,25 @@ Logback分为 3 个依赖：
 
 Logback 整体是基于如下 3 个组件（和Log4j-1.x一样）：
 + `Logger`：日志记录器，属于 logback-classic 依赖
-+ `Appender`：日志输出，属于 logback-core 依赖
++ `Appender`：日志输出目的地，属于 logback-core 依赖
+  + 比如输出到控制台、文件、远程socket服务器、MySQL等
+  + 一个`Logger`可以配置多个`Appender`
 + `Layout`：日志格式，属于 logback-core 依赖
+  + `Layout`对象需要附加在某个`Appender`上，用于设置输出的日志格式
 
-Logback配置文件名称是`logback.xml`，其中的子项目也对应上面的组件：
-+ 根节点`configuration`
-  + `appender`节点
-  + `logger`节点
-  + `root`节点
+Logback中所有的`Logger`都是由一个`LoggerContext`对象（默认名称为`default`）来管理的，它以一个树形的层次结构来组织所有的`Logger`，最顶层的是`Root` Logger。
+
+
+Logback配置文件名称是`logback.xml`，配置语法参考官方文档 [Chapter3: Logback configuration ->Configuration file syntax](https://logback.qos.ch/manual/configuration.html#syntax)。    
+有如下配置节点：
++ 根节点`<configuration>`
+  + `<contextName>`节点：应用上下文名称，可选
+  + `<root>`节点：最顶层的Logger（名称就是`ROOT`），单独一个节点，只能有一个
+  + `<logger>`节点：具体的Logger，定义日志从哪里获取以及级别，可以有多个
+  + `<appender>`节点：配置日志格式、如何过滤、文件处理，可以有多个
+    + `<layout>`节点：配置日志输出形式的类，class属性设置输出格式的全限定类名
+    + `<encoder>`节点：配置日志编码的类，class属性设置输出格式的全限定类名
+    + `<filter>`节点
+  + `property`节点：定义常用变量，可选
 
 
