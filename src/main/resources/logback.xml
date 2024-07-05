@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 根节点必须是 configuration，可配置的属性有 3 个-->
 <!-- scan: true表示配置文件如果发生改变，自动加载；scanPeriod: 配置自动加载的事件间隔，默认单位为毫秒；debug: false表示不打印Logback内部日志-->
-<configuration scan="true" scanPeriod="600 seconds" debug="false">
+<configuration scan="false" scanPeriod="600 seconds" debug="false">
     <!-- contextName 节点用于设置上下文对象 LoggerContext 的名称，默认是default，用于标识应用 -->
     <contextName>MyLoggerContext</contextName>
 
     <!-- property 节点， name 和 value 属性用于自定义一些变量-->
-    <property name="file.info.name" value="info.log"/>
-    <property name="file.error.name" value="error.log"/>
+    <property name="log.home" value="logs"/>
+    <property name="file.appender.name" value="logback.fileAppender.log"/>
+    <property name="file.roll.name" value="logback.fileRolling.log"/>
+    <property name="log.format" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread][%-5level][%logger{50}] %msg%n"/>
 
     <!-- appender 有两个必须提供的属性：name是自定义名称，class是对应的appender全限定类名-->
     <!-- Logback 提供的常见 appender 如下:
@@ -17,53 +19,77 @@
     -->
     <!-- 输出到控制台 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoder 设置格式的类 -->
+        <!-- 设置Encoder，常用的 Encoder 有如下几种：
+        ch.qos.logback.classic.encoder.LayoutWrappingEncoder
+        ch.qos.logback.classic.encoder.PatternLayoutEncoder —— 使用最广泛
+        ch.qos.logback.classic.encoder.JsonEncoder，
+         -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!-- PatternLayoutEncoder 只有 pattern 和 outputPatternAsHeader 两个设置项-->
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度,%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread][%-5level][%logger{50}] %msg%n</pattern>
+            <!-- outputPatternAsHeader 设置是否在日志头部输出当前使用的 pattern，方便后续解析，默认是 false-->
+            <outputPatternAsHeader>false</outputPatternAsHeader>
         </encoder>
     </appender>
 
     <!-- 输出到文件 -->
     <appender name="file" class="ch.qos.logback.core.FileAppender">
         <!-- 设置输出的文件名称 -->
-        <file>${file.info.name}</file>
+        <file>${log.home}/${file.appender.name}</file>
         <!-- 追加写入 -->
         <append>true</append>
-        <!-- 设置格式 -->
+        <!-- 设置Encoder -->
         <encoder>
-            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+            <pattern>${log.format}</pattern>
         </encoder>
     </appender>
 
     <!-- 输出到文件，并进行轮换，轮换策略为每天生成日志文件 -->
-    <appender name="roll.file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
-        </encoder>
-        <file></file>
+    <appender name="roll" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 设置当前活跃的日志文件名称，而轮换的日志文件名称见下面的 rollingPolicy 里，如果不设置，也会使用下面 rollingPolicy 里设置的文件名-->
+        <file>${log.home}/${file.roll.name}</file>
+        <append>true</append>
+        <!-- rollingPolicy 用于设置轮换的策略，常见策略（实现类）如下：
+         ch.qos.logback.core.rolling.TimeBasedRollingPolicy，时间轮换 —— 这个用的比较多
+         ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy，时间+大小轮换
+         ch.qos.logback.core.rolling.FixedWindowRollingPolicy，固定窗口轮换
+        -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!--日志文件输出的文件名-->
-            <FileNamePattern>${LOG_HOME}/TestWeb.log.%d{yyyy-MM-dd}.log</FileNamePattern>
-            <!--日志文件保留天数-->
-            <MaxHistory>30</MaxHistory>
+            <!--日志轮换输出的文件名规则，必须设置，而且文件必须有  %d{} 指定日期格式，以此来推断轮换时间-->
+            <!-- %d{} 指定轮换时间间隔，yyyy-MM-dd 表示按天轮换（这也是默认值）-->
+            <!-- 由于上面的 file 设置了当前活跃的日志文件名，这里设置的就是轮换的历史日志文件名-->
+            <!-- 如果文件名称以 .gz 或者 .zip 结尾，还会开启历史日志压缩的功能-->
+            <!--<FileNamePattern>${log.home}/logback.fileRolling.%d{yyyy-MM-dd}.log</FileNamePattern>-->
+            <FileNamePattern>${log.home}/logback.fileRolling.%d{yyyy-MM-dd_HH-mm}.log</FileNamePattern>
+            <!--历史日志最大数量-->
+            <MaxHistory>5</MaxHistory>
+            <!-- 日志总大小 -->
+            <TotalSizeCap>50MB</TotalSizeCap>
         </rollingPolicy>
-        <!--日志文件最大的大小-->
+        <!-- triggeringPolicy 用于设置轮换的时机，常用的有 ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy，基于文件大小触发轮换-->
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <!--日志文件最大的大小-->
             <MaxFileSize>10MB</MaxFileSize>
         </triggeringPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${log.format}</pattern>
+        </encoder>
     </appender>
 
     <!-- 配置具体的Logger，name设置名称，对应于某一个包名或者某个类名；level设置日志级别；additivity=false不继承上级Logger的配置-->
-    <logger name="" level="info" additivity="false">
-        <!-- 指定 Appender 的两种方式-->
-        <appender-ref>console</appender-ref>
-        <appender-ref ref="roll.file"/>
+    <logger name="BasicGrammars.log.LogbackDemo" level="debug" additivity="true">
+        <!-- 指定 Appender -->
+        <!-- additivity=true 时，如果设置了下面的 console，会和 ROOT 重复，导致控制台上 info 以上的信息输出2次-->
+        <!--<appender-ref ref="console"/>-->
+        <appender-ref ref="file"/>
+        <appender-ref ref="roll"/>
+        <!-- 注意，下面的方式不会生效-->
+        <!--<appender-ref>console</appender-ref>-->
     </logger>
 
     <!-- root 也是 Logger，但是它最顶层的Logger，所以没有name属性，只有一个level属性用于设置日志级别-->
     <root level="info">
-        <appender-ref>console</appender-ref>
+        <appender-ref ref="console"/>
     </root>
 </configuration>
