@@ -88,6 +88,11 @@
         <!--<appender-ref>console</appender-ref>-->
     </logger>
 
+    <!-- 配合 lombok 使用-->
+    <logger name="BasicGrammars.log.Slf4jDemo" level="debug" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
     <!-- root 也是 Logger，但是它最顶层的Logger，所以没有name属性，只有一个level属性用于设置日志级别-->
     <root level="info">
         <appender-ref ref="console"/>

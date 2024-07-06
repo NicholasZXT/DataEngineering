@@ -91,6 +91,11 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.22</version>
+        </dependency>
         <!-- ***************************************************** -->
         <!-- log4j 依赖 -->
         <!-- 下面这个是 log4j 1.x 版本的最新依赖，但是也在 2012 年就停止维护， 建议转向 2.x 版本的-->

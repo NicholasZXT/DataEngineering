@@ -15,3 +15,6 @@ app.properties
 /src/main/java/Coding/leetcode/editor/en/
 data/wordcount_result/
 logs
+tmp
+flink-out
+hadoop_data
