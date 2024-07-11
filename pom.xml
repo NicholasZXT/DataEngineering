@@ -15,20 +15,26 @@
         <!--指定编译的java版本-->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <scala.version>2.11.12</scala.version>
-        <hadoop.version>2.8.5</hadoop.version>
+        <!--<scala.version>2.11.12</scala.version>-->
+        <scala.version>2.12.18</scala.version>
+        <!--<hadoop.version>2.8.5</hadoop.version>-->
+        <hadoop.version>3.1.1</hadoop.version>
+        <mapreduce.version>3.1.1</mapreduce.version>
         <spark.version>2.4.8</spark.version>
         <!--scala的版本建议只需要写到2位，因为配合spark版本时，只需要前两位-->
-        <spark.scala.version>2.11</spark.scala.version>
-        <hbase.version>2.4.15</hbase.version>
+        <spark.scala.version>2.12</spark.scala.version>
+        <elasticsearch.version>7.17.8</elasticsearch.version>
         <!--<kafka.version>2.6.0</kafka.version>-->
         <!-- 调试 Flink 1.17 版本时，需要使用下面的kafka版本 -->
         <kafka.version>3.2.3</kafka.version>
-        <!-- Flink 建议使用 1.13.6 或者 1.15.0 之后的版本-->
+        <!-- Flink 建议使用 1.13.6 或者 1.15.0 之后的版本；flink java api在1.15版本之前需要一个scala版本后缀，1.15开始去掉了-->
+        <!--<flink.version>1.13.6</flink.version>-->
+        <!--<flink.java.suffix>_2.12</flink.java.suffix>-->
         <flink.version>1.17.1</flink.version>
-        <!-- flink java包后面的scala版本后缀，从 flink 1.15 版本开始不需要这个后缀，但是之前的版本需要-->
-        <flink.scala.suffix></flink.scala.suffix>
-        <elasticsearch.version>7.17.8</elasticsearch.version>
+        <flink.java.suffix></flink.java.suffix>
+        <!-- flink scala api的scala版本后缀，一直需要-->
+        <flink.scala.suffix>_2.12</flink.scala.suffix>
+        <hbase.version>2.4.15</hbase.version>
         <jackson.version>2.12.3</jackson.version>
         <encoding>UTF-8</encoding>
     </properties>
@@ -37,13 +43,27 @@
         <profile>
             <id>local</id>
             <properties>
-                <local.scope>runtime</local.scope>
+                <local.scope>compile</local.scope>
                 <hadoop.scope>compile</hadoop.scope>
+                <mapreduce.scope>compile</mapreduce.scope>
                 <spark.scope>compile</spark.scope>
                 <kafka.scope>compile</kafka.scope>
                 <elasticsearch.scope>compile</elasticsearch.scope>
                 <hbase.scope>compile</hbase.scope>
                 <flink.scope>compile</flink.scope>
+            </properties>
+        </profile>
+        <profile>
+            <id>deploy</id>
+            <properties>
+                <local.scope>provided</local.scope>
+                <hadoop.scope>provided</hadoop.scope>
+                <mapreduce.scope>compile</mapreduce.scope>
+                <spark.scope>provided</spark.scope>
+                <kafka.scope>provided</kafka.scope>
+                <elasticsearch.scope>provided</elasticsearch.scope>
+                <hbase.scope>provided</hbase.scope>
+                <flink.scope>provided</flink.scope>
             </properties>
         </profile>
     </profiles>
@@ -75,6 +95,51 @@
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- 大数据打包需要用到这个插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <!-- 排除掉日志相关的依赖-->
+                                    <exclude>com.google.code.findbugs:jsr305</exclude>
+                                    <exclude>org.slf4j:*</exclude>
+                                    <exclude>log4j:*</exclude>
+                                    <exclude>ch.qos.logback:*</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <!-- 排除掉一些敏感资源和日志配置文件 -->
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>log4j2.properties</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <!-- 设置jar包的主入口类 -->
+                                    <mainClass>HelloJava</mainClass>
+                                </transformer>
+                                <!-- Flink部署打包时需要这个资源转换器-->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -110,11 +175,13 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.20.0</version>
+            <scope>${local.scope}</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.20.0</version>
+            <scope>${local.scope}</scope>
         </dependency>
         <!-- ***************************************************** -->
         <!-- Logback + Slf4j 依赖 -->
@@ -122,16 +189,19 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>1.2.13</version>
+            <scope>${local.scope}</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.13</version>
+            <scope>${local.scope}</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.36</version>
+            <scope>${local.scope}</scope>
         </dependency>
         <!-- ***************************************************** -->
         <!--  spark-core依赖 -->
@@ -243,11 +313,19 @@
         <!--</dependency>-->
         <!-- ***************************************************** -->
         <!-- Flink 相关依赖 -->
+        <!-- Flink DataStream依赖-->
         <dependency>
-            <!-- flink的Java api, scala api是另外一个依赖-->
+            <!-- Flink DataStream 的 Java API-->
             <groupId>org.apache.flink</groupId>
             <!-- 从1.15版本之后，flink-java依赖不需要后面的scala版本后缀，在此之前的版本需要，其他的flink依赖类似-->
-            <artifactId>flink-streaming-java${flink.scala.suffix}</artifactId>
+            <artifactId>flink-streaming-java${flink.java.suffix}</artifactId>
+            <version>${flink.version}</version>
+            <scope>${flink.scope}</scope>
+        </dependency>
+        <dependency>
+            <!-- Flink DataStream 的 Scala API, scala相关的所有依赖，都需要版本后缀 -->
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-scala${flink.scala.suffix}</artifactId>
             <version>${flink.version}</version>
             <scope>${flink.scope}</scope>
         </dependency>
@@ -255,10 +333,11 @@
             <!-- 本地从 main 方法运行作业时，需要这个依赖，用于提交作业-->
             <!-- 从 1.10 版本开始，使用上面的 flink-stream-java 时，必须要引入这个客户端了 -->
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-clients${flink.scala.suffix}</artifactId>
+            <artifactId>flink-clients${flink.java.suffix}</artifactId>
             <version>${flink.version}</version>
             <scope>${flink.scope}</scope>
         </dependency>
+        <!-- Flink Connector 相关依赖-->
         <dependency>
             <!-- 从文件读取数据需要这个依赖，从1.12版本开始才有 -->
             <groupId>org.apache.flink</groupId>
@@ -268,109 +347,88 @@
             <scope>${flink.scope}</scope>
         </dependency>
         <dependency>
-            <!-- 数据生成器的依赖-->
+            <!-- 数据生成器的依赖, 1.17 版本才开始有-->
             <groupId>org.apache.flink</groupId>
             <!-- 一直不需要scala版本后缀-->
             <artifactId>flink-connector-datagen</artifactId>
             <version>${flink.version}</version>
-            <scope>${flink.scope}</scope>
+            <scope>compile</scope>
         </dependency>
+        <!-- hive连接器依赖 -->
         <dependency>
-            <!-- 连接kafka依赖 -->
-            <!-- 这里依赖的kafka版本和上面我自己设置的 kafka 版本有冲突-->
             <groupId>org.apache.flink</groupId>
-            <!-- 需要scala版本后缀-->
-            <artifactId>flink-connector-kafka${flink.scala.suffix}</artifactId>
+            <artifactId>flink-connector-hive${flink.scala.suffix}</artifactId>
             <version>${flink.version}</version>
-            <scope>${flink.scope}</scope>
+            <scope>compile</scope>
         </dependency>
-        <!--
-        Part I: 参见官方文档（1.13版本才有此说明） https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/dev/table/overview/.
-        关于 Flink Table API/SQL，有几点需要注意：
-        1. 从1.9开始，Flink 提供了两个 Table Planner 实现来执行 Table API 和 SQL 程序：Blink Planner 和 Old Planner，Old Planner 在1.9之前就已经存在了
-        2. 对于生产环境，建议使用在 1.11 版本之后已经变成默认的Blink Planner
-
-        Part II: 参见 1.14 版本更新日志 https://nightlies.apache.org/flink/flink-docs-master/release-notes/flink-1.14/#table-api-sql
-        要注意的是：
-        1. Table API/SQL 的 Old Planner 在这个版本正式被移除
-        2. 有 3 个依赖包因为上述变动进行了改名：
-           flink-table-planner-blink -> flink-table-planner
-           flink-table-runtime-blink -> flink-table-runtime
-           flink-table-uber-blink -> flink-table-uber
-        -->
-        <!-- flink-table/sql的依赖，只需要使用table时选这个，用的不多，一般直接用下面的 DataStream + Table/SQL -->
+        <!-- kafka连接器依赖，用于配合 DataStream API 使用 -->
+        <!-- 这里依赖的kafka版本和上面我自己设置的 kafka 版本有冲突-->
         <!--<dependency>-->
         <!--    <groupId>org.apache.flink</groupId>-->
-        <!--    &lt;!&ndash; 不需要scala版本后缀 &ndash;&gt;-->
+        <!--    &lt;!&ndash; 1.15版本之前需要scala版本后缀，之后不需要&ndash;&gt;-->
+        <!--    <artifactId>flink-connector-kafka${flink.java.suffix}</artifactId>-->
+        <!--    <version>${flink.version}</version>-->
+        <!--    <scope>compile</scope>-->
+        <!--</dependency>-->
+        <!-- kafka连接器 SQL依赖，它会自动引入kafka依赖 -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-sql-connector-kafka${flink.java.suffix}</artifactId>
+            <version>${flink.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Flink Table API/SQL 依赖-->
+        <!-- Flink-table/sql的java依赖，只需要使用table时选这个，用的不多，一般直接用下面的 Table/SQL + DataStream -->
+        <!--<dependency>-->
+        <!--    <groupId>org.apache.flink</groupId>-->
         <!--    <artifactId>flink-table-api-java</artifactId>-->
         <!--    <version>${flink.version}</version>-->
         <!--    <scope>${flink.scope}</scope>-->
         <!--</dependency>-->
+        <!-- Flink-table/sql + DataStream 交互操作的java依赖，它会引入上面的 flink-table-api-java -->
         <dependency>
-            <!-- flink-table/sql 和 DataStream 交互操作的依赖，它引入了上面的 flink-table-api-java-->
             <groupId>org.apache.flink</groupId>
-            <!-- 需要scala版本后缀-->
-            <artifactId>flink-table-api-java-bridge${flink.scala.suffix}</artifactId>
+            <!-- 1.15之前需要scala版本后缀，1.15之后不需要-->
+            <artifactId>flink-table-api-java-bridge${flink.java.suffix}</artifactId>
             <version>${flink.version}</version>
             <scope>${flink.scope}</scope>
         </dependency>
-        <!-- 下面是 两类 Flink Table/SQL 的查询计划引擎，1.11之后，优先选择 blink版本，1.14.0 之后，就只剩一个blink引擎了；
-        但是 1.15 之后，引入方式又变成了使用一个封装的 查询计划加载器，见下面-->
+        <!-- Flink-Table API/SQL 的 Scala 依赖，始终需要指定 scala 版本后缀，一般会直接用下面的 -->
         <!--<dependency>-->
-        <!--    &lt;!&ndash; 1.13.6之前是 Old Planner 依赖，1.14.0开始，由下面的 flink-table-planner-blink 更名而来 &ndash;&gt;-->
         <!--    <groupId>org.apache.flink</groupId>-->
-        <!--    &lt;!&ndash; 这个一直使用 2.12 的scala版本后缀，一般都没啥问题&ndash;&gt;-->
-        <!--    <artifactId>flink-table-planner_2.12</artifactId>-->
-        <!--    <version>${flink.version}</version>-->
-        <!--    <scope>test</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--    &lt;!&ndash; blink Planner 引擎，但是只到 1.13.6，1.14.0 之后改成了上面的包名称 &ndash;&gt;-->
-        <!--    <groupId>org.apache.flink</groupId>-->
-        <!--    <artifactId>flink-table-planner-blink${flink.scala.suffix}</artifactId>-->
-        <!--    <version>${flink.version}</version>-->
+        <!--    <artifactId>flink-table-api-scala${flink.scala.suffix}</artifactId>-->
+        <!--    <version>${flink.version}}</version>-->
         <!--    <scope>${flink.scope}</scope>-->
         <!--</dependency>-->
-        <!--
-        Part III: 参考官方文档： https://nightlies.apache.org/flink/flink-docs-release-1.18/zh/docs/dev/configuration/advanced/
-        1. 从 Flink 1.15.0 版本开始，又对查询计划引擎搞了一个下面的 查询计划加载器，用于解决scala版本问题。
-        2. 它和上面 flink-table-planner 功能一样，但是打包方式不同，下面的这个加载器会自己处理scala版本问题 —— 两者不能同时存在！！！
-        3. 从 1.15 之后，推荐使用下面的这个查询计划加载器，并且在未来的版本中，会考虑移除上面的 flink-table-planner
-        -->
+        <!-- Flink-Table API/SQL + DataStream 的 Scala 依赖，始终需要 scala 版本后缀-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-api-scala-bridge${flink.scala.suffix}</artifactId>
+            <version>${flink.version}</version>
+            <scope>${flink.scope}</scope>
+        </dependency>
+        <!-- Flink-Table API/SQL 的查询计划引擎依赖 -->
+        <!-- 1.15版本之后，直接使用这个即可；1.15之前，需要使用 flink-table-planner${flink.scala.suffix} -->
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner-loader</artifactId>
             <version>${flink.version}</version>
-            <scope>provided</scope>
+            <scope>${flink.scope}</scope>
         </dependency>
-
-        <!-- table/sql 公共模块，比如自定义函数、自定义格式等扩展功能需要的最小依赖，这个会被很多flink依赖自动引入，通常不需要手动引入-->
-        <!--<dependency>-->
-        <!--    <groupId>org.apache.flink</groupId>-->
-        <!--    <artifactId>flink-table-common</artifactId>-->
-        <!--    <version>${flink.version}</version>-->
-        <!--    <scope>${flink.scope}</scope>-->
-        <!--</dependency>-->
+        <!-- 其他依赖 -->
+        <!-- table/sql 在TaskManager上运行需要的环境依赖，一般来说本地调试需要，集群上会提供 -->
+        <!-- 需要注意的是 flink-table-runtime 的版本是从 1.14.0 开始的，它是由 flink-table-runtime-blink 在 1.14 版本改名而来 -->
         <dependency>
-            <!-- table/sql 在TaskManager上运行需要的环境依赖，一般来说本地调试需要，集群上会提供 -->
-            <!-- 需要注意的是 flink-table-runtime 的版本是从 1.14.0 开始的，它是由下面的 flink-table-runtime-blink 在 1.14 版本改名而来 -->
             <groupId>org.apache.flink</groupId>
             <!-- 需要scala后缀-->
-            <artifactId>flink-table-runtime${flink.scala.suffix}</artifactId>
+            <artifactId>flink-table-runtime${flink.java.suffix}</artifactId>
             <version>${flink.version}</version>
-            <scope>provided</scope>
+            <scope>${flink.scope}</scope>
         </dependency>
-        <!-- 下面这个也是 table/sql 在TaskManager上运行需要的环境依赖，blink引擎，但是版本只到 1.13.6，在这之后改名为上面的 flink-table-runtime -->
-        <!--<dependency>-->
-        <!--    <groupId>org.apache.flink</groupId>-->
-        <!--    <artifactId>flink-table-runtime-blink_2.12</artifactId>-->
-        <!--    <version>1.13.6</version>-->
-        <!--    <scope>provided</scope>-->
-        <!--</dependency>-->
         <dependency>
-            <!--和Hadoop配合时，可能需要这个兼容性依赖的帮助-->
+            <!--和Hadoop配合时，可能需要这个兼容性依赖的帮助，scope必须是compile-->
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-hadoop-compatibility_2.12</artifactId>
+            <artifactId>flink-hadoop-compatibility${flink.scala.suffix}</artifactId>
             <version>${flink.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -388,48 +446,64 @@
             <version>${hadoop.version}</version>
             <scope>${hadoop.scope}</scope>
         </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.apache.hadoop</groupId>-->
+        <!--    <artifactId>hadoop-hdfs</artifactId>-->
+        <!--    <version>${hadoop.version}</version>-->
+        <!--    <scope>${hadoop.scope}</scope>-->
+        <!--    &lt;!&ndash; 这里依赖的 netty 和 spark-sql 的冲突，可以使用 mvn -P "local" dependency:tree > dep.txt 查看 &ndash;&gt;-->
+        <!--    <exclusions>-->
+        <!--        <exclusion>-->
+        <!--            <groupId>io.netty</groupId>-->
+        <!--            <artifactId>netty-all</artifactId>-->
+        <!--        </exclusion>-->
+        <!--    </exclusions>-->
+        <!--</dependency>-->
+        <!-- Flink 需要下面的hadoop组件，而且必须是compile-->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-            <version>${hadoop.version}</version>
-            <scope>${hadoop.scope}</scope>
-            <!-- 这里依赖的 netty 和 spark-sql 的冲突，可以使用 mvn -P "local" dependency:tree > dep.txt 查看 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty-all</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>hadoop-mapreduce-client-core</artifactId>
+            <version>${mapreduce.version}</version>
+            <scope>${mapreduce.scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-common</artifactId>
+            <version>${mapreduce.version}</version>
+            <scope>${mapreduce.scope}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+            <version>${mapreduce.version}</version>
+            <scope>${mapreduce.scope}</scope>
         </dependency>
         <!-- ***************************************************** -->
+        <!-- Alibaba fastJSON -->
         <dependency>
-            <!-- alibaba fastJSON -->
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.68</version>
             <scope>compile</scope>
         </dependency>
         <!-- ***************************************************** -->
+        <!-- Thrift依赖：https://mvnrepository.com/artifact/org.apache.thrift/libthrift -->
         <dependency>
-            <!-- Thrift依赖：https://mvnrepository.com/artifact/org.apache.thrift/libthrift -->
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
             <version>0.17.0</version>
         </dependency>
         <!-- ***************************************************** -->
+        <!-- XGBoost 和 XGBoost for Spark 依赖 -->
         <!--<dependency>-->
-        <!--    &lt;!&ndash; XGBoost &ndash;&gt;-->
         <!--    <groupId>ml.dmlc</groupId>-->
         <!--    <artifactId>xgboost4j_2.11</artifactId>-->
         <!--    <version>1.0.0</version>-->
-        <!--    &lt;!&ndash;<scope>${local.scope}}</scope>&ndash;&gt;-->
         <!--</dependency>-->
         <!--<dependency>-->
-        <!--    &lt;!&ndash; XGBoost for spark&ndash;&gt;-->
         <!--    <groupId>ml.dmlc</groupId>-->
         <!--    <artifactId>xgboost4j-spark_2.11</artifactId>-->
         <!--    <version>1.0.0</version>-->
-        <!--    &lt;!&ndash;<scope>${local.scope}}</scope>&ndash;&gt;-->
         <!--</dependency>-->
     </dependencies>
 
