@@ -1,6 +1,5 @@
 package FlinkDemos.C8_window;
 
-import FlinkDemos.WaterSensor;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -11,6 +10,7 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTime
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.GlobalWindow;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import FlinkDemos.beans.WaterSensor;
 
 /**
  * 演示Flink窗口分配函数的使用

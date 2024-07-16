@@ -8,6 +8,8 @@ import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.util.Collector;
 
+import FlinkDemos.beans.WaterSensor;
+
 /**
  * 演示Flink基本的Transform算子使用
  */
@@ -22,6 +24,7 @@ public class C2_Transform {
             new WaterSensor("s2", 2.0, 2),
             new WaterSensor("s3", 3.0, 3)
         );
+
         // -----------------------------------------------------------------------------------------------
         // 使用 map 算子提取其中的 id 字段：返回流的泛型可能会变化
         // 方法1：使用lambda表达式

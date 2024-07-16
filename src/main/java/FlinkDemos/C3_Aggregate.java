@@ -1,11 +1,13 @@
 package FlinkDemos;
 
-import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
-import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.api.java.functions.KeySelector;
+import org.apache.flink.api.common.functions.ReduceFunction;
+
+import FlinkDemos.beans.WaterSensor;
 
 /**
  * 演示Flink基本聚合算子使用
@@ -23,6 +25,7 @@ public class C3_Aggregate {
         );
 
         // ------------------------------------------------------------------------------------------------
+        // 聚合之前必须要先做分区（分组）操作
         // 先分组，返回的是 一个 KeyedStream，注意，keyBy不是 转换算子，只是对数据进行重分区，不能设置并行度
         // 使用 lambda 表达式
         KeyedStream<WaterSensor, String> sensorKS1 = sensorDS.keyBy(WaterSensor::getId);

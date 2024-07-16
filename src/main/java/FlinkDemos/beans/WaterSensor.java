@@ -1,4 +1,4 @@
-package FlinkDemos;
+package FlinkDemos.beans;
 
 import java.util.Objects;
 
@@ -57,9 +57,7 @@ public class WaterSensor {
             return false;
         }
         WaterSensor that = (WaterSensor) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(ts, that.ts) &&
-                Objects.equals(vc, that.vc);
+        return Objects.equals(id, that.id) && Objects.equals(ts, that.ts) && Objects.equals(vc, that.vc);
     }
     @Override
     public int hashCode() {

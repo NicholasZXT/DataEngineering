@@ -2,7 +2,7 @@ package FlinkDemos.C8_window;
 
 import java.lang.Integer;
 
-import FlinkDemos.WaterSensor;
+import FlinkDemos.beans.WaterSensor;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;

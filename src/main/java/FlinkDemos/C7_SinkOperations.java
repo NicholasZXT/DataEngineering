@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.ZoneId;
 
 
+import FlinkDemos.beans.WaterSensor;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;

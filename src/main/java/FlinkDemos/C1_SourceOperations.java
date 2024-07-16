@@ -4,21 +4,22 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
-import org.apache.flink.api.common.typeinfo.Types;
+import org.apache.flink.api.common.typeinfo.Types;  // Flink提供的数据类型申明
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.connector.source.util.ratelimit.RateLimiterStrategy;
 import org.apache.flink.connector.file.src.FileSource;
 import org.apache.flink.connector.file.src.reader.TextLineInputFormat;
 import org.apache.flink.connector.datagen.source.DataGeneratorSource;
 import org.apache.flink.connector.datagen.source.GeneratorFunction;
-import org.apache.flink.api.connector.source.util.ratelimit.RateLimiterStrategy;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.kafka.common.TopicPartition;
+
+import FlinkDemos.beans.WaterSensor;
 
 /**
  * 演示Flink的源算子使用
@@ -26,7 +27,18 @@ import org.apache.kafka.common.TopicPartition;
 public class C1_SourceOperations {
 
     public static void main(String[] args) throws Exception {
+        // Flink程序起点，获取执行环境
+        // 方法1：获取本地执行环境
+        //StreamExecutionEnvironment envLocal = StreamExecutionEnvironment.createLocalEnvironment();
+        // 方法2：获取集群执行环境，需要设置JobManager的IP+Port，还有执行jar包
+        //StreamExecutionEnvironment envCluster = StreamExecutionEnvironment.createRemoteEnvironment(
+        //        "JobManager-host",
+        //        1234,
+        //        "path/to/jar"
+        //);
+        // 方法3：以下方式会自动判断当前运行环境，可以返回一个本地执行环境，或者一个集群执行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(1);
 
         // 从集合中读取数据
         List<Integer> data = Arrays.asList(1, 22, 3);
@@ -37,7 +49,7 @@ public class C1_SourceOperations {
                 new WaterSensor("sensor_1", 1.0, 1),
                 new WaterSensor("sensor_2", 2.0, 2)
         );
-        //sensorSource.print();
+        sensorSource.print();
 
         // 从文件中读取，需要 flink-connector-files 依赖
         FileSource<String> fileSource = FileSource.forRecordStreamFormat(new TextLineInputFormat(),
@@ -46,7 +58,7 @@ public class C1_SourceOperations {
         //fileStream.print();
 
         // 从 socket读取
-        // linux 使用 nc -lk 7890 命令；Windows下，可以使用mobaXterm
+        // linux 使用 nc -lk 7890 命令；Windows下，可以使用MobaXterm
         DataStreamSource<String> socketStream = env.socketTextStream("localhost", 7890);
         //socketStream.print("socketStream");
 
@@ -67,8 +79,7 @@ public class C1_SourceOperations {
                 Types.STRING
         );
         DataStreamSource<String> dgStream = env.fromSource(dgSource, WatermarkStrategy.noWatermarks(), "data-generator");
-        dgStream.print();
-
+        //dgStream.print();
 
         // 从kafka读取数据，需要 flink-connector-kafka 依赖
         TopicPartition partition = new TopicPartition("first", 0);
@@ -87,6 +98,7 @@ public class C1_SourceOperations {
         // Flink 好像没有提供类似于 limit 这样的API
         //kafkaStream.print("kafka");
 
+        // 最后要触发上述任务的执行
         env.execute();
     }
 }

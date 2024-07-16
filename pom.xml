@@ -136,7 +136,7 @@
                                     <!-- 设置jar包的主入口类 -->
                                     <mainClass>HelloJava</mainClass>
                                 </transformer>
-                                <!-- Flink部署打包时需要这个资源转换器-->
+                                <!-- Flink SQL Connector部署打包时需要这个资源转换器-->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
                         </configuration>
@@ -363,14 +363,14 @@
         </dependency>
         <!-- kafka连接器依赖，用于配合 DataStream API 使用 -->
         <!-- 这里依赖的kafka版本和上面我自己设置的 kafka 版本有冲突-->
-        <!--<dependency>-->
-        <!--    <groupId>org.apache.flink</groupId>-->
-        <!--    &lt;!&ndash; 1.15版本之前需要scala版本后缀，之后不需要&ndash;&gt;-->
-        <!--    <artifactId>flink-connector-kafka${flink.java.suffix}</artifactId>-->
-        <!--    <version>${flink.version}</version>-->
-        <!--    <scope>compile</scope>-->
-        <!--</dependency>-->
-        <!-- kafka连接器 SQL依赖，它会自动引入kafka依赖 -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <!-- 1.15版本之前需要scala版本后缀，之后不需要-->
+            <artifactId>flink-connector-kafka${flink.java.suffix}</artifactId>
+            <version>${flink.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- kafka连接器 SQL依赖，这个不会引入上面的kafka依赖 -->
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-sql-connector-kafka${flink.java.suffix}</artifactId>
