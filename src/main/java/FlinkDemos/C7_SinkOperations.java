@@ -2,9 +2,6 @@ package FlinkDemos;
 
 import java.time.Duration;
 import java.time.ZoneId;
-
-
-import FlinkDemos.beans.WaterSensor;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -21,6 +18,7 @@ import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
+import FlinkDemos.beans.WaterSensor;
 /**
  * 演示Flink的Sink算子使用
  */
@@ -45,10 +43,11 @@ public class C7_SinkOperations {
                 // 输出行式存储的文件，指定路径、指定编码
                 .<String>forRowFormat(new Path("flink-out"), new SimpleStringEncoder<>("UTF-8"))
                 // 输出文件的一些配置： 文件名的前缀、后缀
-                .withOutputFileConfig(OutputFileConfig.builder()
-                        .withPartPrefix("file-sink-")
-                        .withPartSuffix(".log")
-                        .build()
+                .withOutputFileConfig(
+                        OutputFileConfig.builder()
+                                .withPartPrefix("file-sink-")
+                                .withPartSuffix(".log")
+                                .build()
                 )
                 // 按照目录分桶：如下，就是每个小时一个目录
                 .withBucketAssigner(new DateTimeBucketAssigner<>("yyyy-MM-dd HH", ZoneId.systemDefault()))

@@ -1,19 +1,19 @@
 package FlinkDemos.C8_window;
 
 import java.lang.Integer;
-
-import FlinkDemos.beans.WaterSensor;
-import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.windowing.windows.GlobalWindow;
+import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.functions.AggregateFunction;
-import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.util.Collector;
+import org.apache.commons.lang3.time.DateFormatUtils;
+
+import FlinkDemos.beans.WaterSensor;
 
 /**
  * 演示Flink窗口函数的使用
@@ -92,7 +92,7 @@ public class WindowAgg {
  * 使用逻辑：
  * 1、属于本窗口的第一条数据来，创建窗口，创建累加器
  * 2、增量聚合： 来一条计算一条， 调用一次add方法
- * 3、窗口输出时调用一次getresult方法
+ * 3、窗口输出时调用一次getResult方法
  * 4、输入、中间累加器、输出 类型可以不一样，非常灵活
  */
 class MyAggregateFunction implements AggregateFunction<WaterSensor, Integer, String>{

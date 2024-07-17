@@ -44,7 +44,8 @@ public class C6_StreamMerge {
         DataStreamSource<Integer> source2 = env.fromElements(4, 5, 6);
         // 使用 connect 方法合流，一次只能合并两个流ConnectedStreams的泛型参数分别是第1个和第2个流的元素类型
         ConnectedStreams<WaterSensor, Integer> connectedStreams = source1.connect(source2);
-        // 合流之后，还需要做一次合并数据类型的操作，这里使用 CoMapFunction 接口来描述此操作
+        // 合流之后，还需要做一次合并数据类型的操作，这里使用了 map 方法
+        // map 方法此时使用 CoMapFunction 接口来描述此操作，它的3个泛型参数依次是：第1条流元素，第2条流元素，合并后的流元素
         SingleOutputStreamOperator<WaterSensor> result = connectedStreams.map(new CoMapFunction<WaterSensor, Integer, WaterSensor>() {
             //map1 方法处理第1个流的元素
             @Override
@@ -55,7 +56,7 @@ public class C6_StreamMerge {
             //map2 方法处理第2个流的元素
             @Override
             public WaterSensor map2(Integer value) throws Exception {
-                // 第2个流的元素做一下封装
+                // 第2个流的元素做一下封装，转换成 WaterSensor 类型
                 return new WaterSensor("s4", 4.0, value);
             }
         });

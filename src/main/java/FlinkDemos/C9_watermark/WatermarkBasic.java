@@ -1,6 +1,8 @@
 package FlinkDemos.C9_watermark;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.flink.api.common.eventtime.TimestampAssignerSupplier;
+import org.apache.flink.api.common.eventtime.WatermarkGeneratorSupplier;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -25,29 +27,37 @@ public class WatermarkBasic {
                 new WaterSensor("s3", 3.0, 3)
         );
 
+        // WatermarkStrategy 是一个定义水位线生成方式的接口，它继承了两个接口：
+        //  (1) TimestampAssignerSupplier<T>: createTimestampAssigner() 方法负责从流数据的某个字段中提取时间戳，作为水位线的依据
+        //  (2) WatermarkGeneratorSupplier<T>: createWatermarkGenerator() 方法负责根据时间戳来生成水位线
+        // 此接口里有一些静态方法可供调用，来配置生成对应的 WatermarkStrategy 接口实现类，不过调用顺序需要注意：
+        // 必须要先设置水位线生成方式，再设置时间戳提取器
         // 1. 定义 watermark 生成策略
         WatermarkStrategy<WaterSensor> watermarkStrategy = WatermarkStrategy
-            //1.1 指定watermark生成方式：单调升序的watermark，没有等待时间
-            .<WaterSensor>forMonotonousTimestamps()
-            // 1.2 指定 时间戳分配器，从数据中提取
-            .withTimestampAssigner(new SerializableTimestampAssigner<WaterSensor>() {
-                /**
-                 * extractTimestamp 接口参数
-                 * @param element The element that the timestamp will be assigned to.
-                 * @param recordTimestamp The current internal timestamp of the element,
-                 *                        or a negative value, if no timestamp has been assigned yet.
-                 * @return
-                 */
-                @Override
-                public long extractTimestamp(WaterSensor element, long recordTimestamp) {
-                    //返回的时间戳，要 毫秒
-                    System.out.println("[extractTimestamp] element=" + element + ", recordTs@" + recordTimestamp);
-                    System.out.println("element.ts=" + element.getTs().longValue());
-                    long ts = element.getTs().longValue() + recordTimestamp;
-                    System.out.println("ts=" + ts);
-                    return ts;
-                }
-            });
+                //1.1 指定watermark生成方式：
+                //.noWatermarks()  // 无水位线
+                //.forBoundedOutOfOrderness()  // 无序流水位线
+                // 单调升序的watermark，没有等待时间 —— 只适用于有序流
+                .<WaterSensor>forMonotonousTimestamps()
+                // 1.2 指定 时间戳分配器，从数据中提取
+                .withTimestampAssigner(new SerializableTimestampAssigner<WaterSensor>() {
+                    /**
+                     * extractTimestamp 接口参数
+                     * @param element The element that the timestamp will be assigned to.
+                     * @param recordTimestamp The current internal timestamp of the element,
+                     *                        or a negative value, if no timestamp has been assigned yet.
+                     * @return
+                     */
+                    @Override
+                    public long extractTimestamp(WaterSensor element, long recordTimestamp) {
+                        //返回的时间戳，要 毫秒
+                        System.out.println("[extractTimestamp] element=" + element + ", recordTs@" + recordTimestamp);
+                        System.out.println("element.ts=" + element.getTs().longValue());
+                        long ts = element.getTs().longValue() + recordTimestamp;
+                        System.out.println("ts=" + ts);
+                        return ts;
+                    }
+                });
 
         // 2. 指定 watermark 策略
         SingleOutputStreamOperator<WaterSensor> sensorDSwithWM = sensorDS.assignTimestampsAndWatermarks(watermarkStrategy);

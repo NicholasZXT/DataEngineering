@@ -45,7 +45,7 @@ public class C5_StreamSplit {
         OutputTag<WaterSensor> oddTag = new OutputTag<>("odd", Types.POJO(WaterSensor.class));
 
         // 调用process方法
-        SingleOutputStreamOperator<WaterSensor> processStream = sensorDS.process(new SplitProcessFunction());
+        SingleOutputStreamOperator<WaterSensor> processStream = sensorDS.process(new SplitProcessFunction(evenTag, oddTag));
 
         // 从主流中，根据标签 获取 侧输出流
         SideOutputDataStream<WaterSensor> evenStream = processStream.getSideOutput(evenTag);
@@ -65,13 +65,18 @@ class SplitProcessFunction extends ProcessFunction<WaterSensor, WaterSensor> {
     private OutputTag<WaterSensor> evenTag;
     private OutputTag<WaterSensor> oddTag;
 
-    @Override
-    public void open(Configuration parameters) throws Exception {
-        super.open(parameters);
-        // Tag 的定义不要放在 processElement 方法里
-        evenTag = new OutputTag<>("even", Types.POJO(WaterSensor.class));
-        oddTag = new OutputTag<>("odd", Types.POJO(WaterSensor.class));
+    public SplitProcessFunction(OutputTag<WaterSensor> evenTag, OutputTag<WaterSensor> oddTag){
+        this.evenTag = evenTag;
+        this.oddTag = oddTag;
     }
+
+    //@Override
+    //public void open(Configuration parameters) throws Exception {
+    //    super.open(parameters);
+    //    // Tag 的定义不要放在 processElement 方法里
+    //    evenTag = new OutputTag<>("even", Types.POJO(WaterSensor.class));
+    //    oddTag = new OutputTag<>("odd", Types.POJO(WaterSensor.class));
+    //}
 
     @Override
     public void processElement(WaterSensor value, ProcessFunction<WaterSensor, WaterSensor>.Context ctx, Collector<WaterSensor> out) throws Exception {

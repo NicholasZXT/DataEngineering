@@ -1,9 +1,9 @@
 package FlinkDemos.C8_window;
 
-import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
+import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.windowing.assigners.ProcessingTimeSessionWindows;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
@@ -40,7 +40,7 @@ public class WindowApi {
         // 1. 基于计数的窗口，比较简单，只有 countWindow 一个api
         sensorKS.countWindow(5);  // 滚动窗口，窗口长度=5个元素
         sensorKS.countWindow(5,2); // 滑动窗口，窗口长度=5个元素，滑动步长=2个元素
-        // 2. 基于时间的窗口，比较丰富，一般要通过 org.apache.flink.streaming.api.windowing.assigners.xxx 提供的窗口分配器来定义窗口
+        // 2. 基于时间的窗口，比较丰富，一般要通过 org.apache.flink.streaming.api.windowing.assigners.XXX 提供的窗口分配器来定义窗口
         sensorKS.window(TumblingProcessingTimeWindows.of(Time.seconds(10))); // 滚动窗口，窗口长度10s
         sensorKS.window(SlidingProcessingTimeWindows.of(Time.seconds(10), Time.seconds(2))); // 滑动窗口，窗口长度10s，滑动步长2s
         sensorKS.window(ProcessingTimeSessionWindows.withGap(Time.seconds(5))); // 会话窗口，超时间隔5s
