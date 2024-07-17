@@ -15,6 +15,7 @@
         <!--指定编译的java版本-->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- 指定编译的scala版本，这个设置会被 scala-maven-plugin 使用，不太推荐手动设置 scala 版本，原因参见插件的说明-->
         <!--<scala.version>2.11.12</scala.version>-->
         <scala.version>2.12.18</scala.version>
         <!--<hadoop.version>2.8.5</hadoop.version>-->
@@ -76,7 +77,12 @@
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>4.5.2</version>
                 <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
+                    <!-- 不推荐在这里设置 scala 的版本，默认下插件会从依赖中自己推断，也不推荐在 properties 中通过 scala.version 属性设置 -->
+                    <!-- 因为此插件会从Maven依赖中寻找设置的scala版本，如果引入的依赖里（比如spark-streaming的传递依赖里）没找到，
+                    那么刷新Maven时IDEA会报错（但不一定影响编译过程）；
+                    如果非要手动设置scala版本，要么设置成Maven依赖里能找到的scala版本，要么在 dependencies 里手动引入 scala-library
+                    -->
+                    <!--<scalaVersion>${scala.version}</scalaVersion>-->
                     <recompileMode>incremental</recompileMode>
                 </configuration>
                 <!--必须要配置下面的executions才能将scala代码打入jar包-->
@@ -204,6 +210,14 @@
             <scope>${local.scope}</scope>
         </dependency>
         <!-- ***************************************************** -->
+        <!-- 手动加入 Scala 的依赖，仅在强制设置 scala 版本时需要手动引入-->
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+            <scope>${local.scope}</scope>
+        </dependency>
+        <!-- ***************************************************** -->
         <!--  spark-core依赖 -->
         <!--<dependency>-->
         <!--    <groupId>org.apache.spark</groupId>-->
@@ -239,6 +253,12 @@
             <artifactId>spark-streaming_${spark.scala.version}</artifactId>
             <version>${spark.version}</version>
             <scope>${spark.scope}</scope>
+            <!--<exclusions>-->
+            <!--    <exclusion>-->
+            <!--        <groupId>org.scala-lang</groupId>-->
+            <!--        <artifactId>scala-library</artifactId>-->
+            <!--    </exclusion>-->
+            <!--</exclusions>-->
         </dependency>
         <dependency>
             <!-- Spark-Streaming 接入 kafka-->
@@ -328,6 +348,20 @@
             <artifactId>flink-streaming-scala${flink.scala.suffix}</artifactId>
             <version>${flink.version}</version>
             <scope>${flink.scope}</scope>
+            <!--<exclusions>-->
+            <!--    <exclusion>-->
+            <!--        <groupId>org.scala-lang</groupId>-->
+            <!--        <artifactId>scala-library</artifactId>-->
+            <!--    </exclusion>-->
+            <!--    <exclusion>-->
+            <!--        <groupId>org.scala-lang</groupId>-->
+            <!--        <artifactId>scala-reflect</artifactId>-->
+            <!--    </exclusion>-->
+            <!--    <exclusion>-->
+            <!--        <groupId>org.scala-lang</groupId>-->
+            <!--        <artifactId>scala-compiler</artifactId>-->
+            <!--    </exclusion>-->
+            <!--</exclusions>-->
         </dependency>
         <dependency>
             <!-- 本地从 main 方法运行作业时，需要这个依赖，用于提交作业-->
