@@ -26,8 +26,10 @@
          -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!-- PatternLayoutEncoder 只有 pattern 和 outputPatternAsHeader 两个设置项-->
+            <!-- 详细的格式化设置参考官方文档 [Chapter 6: Layouts](https://logback.qos.ch/manual/layouts.html) -->
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度,%msg：日志消息，%n是换行符-->
-            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread][%-5level][%logger{50}] %msg%n</pattern>
+            <!--<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread][%-5level][%logger{50}] %msg%n</pattern>-->
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%level][%logger{50}] %msg%n</pattern>
             <!-- outputPatternAsHeader 设置是否在日志头部输出当前使用的 pattern，方便后续解析，默认是 false-->
             <outputPatternAsHeader>false</outputPatternAsHeader>
         </encoder>
@@ -90,6 +92,14 @@
 
     <!-- 配合 lombok 使用-->
     <logger name="BasicGrammars.log.Slf4jDemo" level="debug" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <!-- 调试 Flink 时减少输出-->
+    <logger name="org.apache.flink.runtime" level="WARN">
+        <appender-ref ref="console"/>
+    </logger>
+    <logger name="flink-akka.actor" level="WARN">
         <appender-ref ref="console"/>
     </logger>
 

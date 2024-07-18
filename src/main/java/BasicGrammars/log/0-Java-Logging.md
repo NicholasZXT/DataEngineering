@@ -323,7 +323,7 @@ Logback配置文件名称是`logback.xml`，配置语法参考官方文档 [Chap
   + `<logger>`节点：具体的Logger，定义日志从哪里获取以及级别，可以有多个
   + `<appender>`节点：配置日志格式、如何过滤、文件处理，可以有多个，它内部有如下节点：
     + `<encoder>`节点：负责转换日志事件为字节数组并将字节数组写入到输出流中，class属性设置输出格式的全限定类名
-    + `<layout>`节点：配置日志输出形式的类，class属性设置输出格式的全限定类名
+    + `<layout>`节点：配置日志输出形式的类，class属性设置输出格式的全限定类名，详细的配置格式可以参考官方文档 [Chapter 6: Layouts](https://logback.qos.ch/manual/layouts.html)
     + `<filter>`节点
   + `property`节点：定义常用变量，可选
 
