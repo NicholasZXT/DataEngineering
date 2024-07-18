@@ -4,12 +4,14 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.WindowedStream;
-import org.apache.flink.streaming.api.windowing.assigners.ProcessingTimeSessionWindows;
-import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows;
-import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.GlobalWindow;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.apache.flink.streaming.api.windowing.assigners.GlobalWindows;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.SlidingProcessingTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.ProcessingTimeSessionWindows;
 import FlinkDemos.beans.WaterSensor;
 
 /**
@@ -21,9 +23,11 @@ public class WindowApi {
         // 从集合中创建源数据
         DataStreamSource<WaterSensor> sensorDS = env.fromElements(
                 new WaterSensor("s1", 1.0, 1),
-                new WaterSensor("s1", 11.0, 11),
                 new WaterSensor("s2", 2.0, 2),
-                new WaterSensor("s3", 3.0, 3)
+                new WaterSensor("s1", 3.0, 3),
+                new WaterSensor("s2", 4.0, 4),
+                new WaterSensor("s1", 5.0, 5),
+                new WaterSensor("s2", 6.0, 6)
         );
 
         KeyedStream<WaterSensor, String> sensorKS = sensorDS.keyBy(WaterSensor::getId);
@@ -38,15 +42,23 @@ public class WindowApi {
         // ------------ 第1步：指定窗口 ------------------
         // 窗口的类型如下：
         // 1. 基于计数的窗口，比较简单，只有 countWindow 一个api
-        sensorKS.countWindow(5);  // 滚动窗口，窗口长度=5个元素
-        sensorKS.countWindow(5,2); // 滑动窗口，窗口长度=5个元素，滑动步长=2个元素
-        // 2. 基于时间的窗口，比较丰富，一般要通过 org.apache.flink.streaming.api.windowing.assigners.XXX 提供的窗口分配器来定义窗口
-        sensorKS.window(TumblingProcessingTimeWindows.of(Time.seconds(10))); // 滚动窗口，窗口长度10s
-        sensorKS.window(SlidingProcessingTimeWindows.of(Time.seconds(10), Time.seconds(2))); // 滑动窗口，窗口长度10s，滑动步长2s
-        sensorKS.window(ProcessingTimeSessionWindows.withGap(Time.seconds(5))); // 会话窗口，超时间隔5s
+        // 滚动窗口，窗口长度=5个元素
+        sensorKS.countWindow(5);
+        // 滑动窗口，窗口长度=5个元素，滑动步长=2个元素
+        sensorKS.countWindow(5,2);
 
         // 全局窗口，计数窗口的底层就是用的这个，需要自定义的时候才会用
-        //sensorKS.window(GlobalWindows.create());
+        sensorKS.window(GlobalWindows.create());
+
+        // 2. 基于时间的窗口，比较丰富，一般要通过 org.apache.flink.streaming.api.windowing.assigners.XXX 提供的窗口分配器来定义窗口
+        // 滚动窗口，窗口长度 5s
+        sensorKS.window(TumblingProcessingTimeWindows.of(Time.seconds(5)));
+        // 滚动事件窗口，窗口长度 5s
+        sensorKS.window(TumblingEventTimeWindows.of(Time.seconds(5)));
+        // 滑动窗口，窗口长度 size=10s，滑动步长 slide=5s
+        sensorKS.window(SlidingProcessingTimeWindows.of(Time.seconds(10), Time.seconds(5)));
+        // 处理时间会话窗口，超时间隔5s
+        sensorKS.window(ProcessingTimeSessionWindows.withGap(Time.seconds(5)));
 
         // 窗口函数返回的是一个 WindowedStream 类型：第1个泛型是流的数据类型，第2个泛型是key的类型，第3个泛型是窗口分配器的类型
         WindowedStream<WaterSensor, String, GlobalWindow> sensorCountStream = sensorKS.countWindow(5);
