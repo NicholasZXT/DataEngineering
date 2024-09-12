@@ -1,0 +1,14 @@
+<configuration>
+    <property>
+        <name>test.flower</name>
+        <value>rose</value>
+        <description>flower name</description>
+    </property>
+
+    <property>
+        <name>test.color</name>
+        <value>red</value>
+        <final>true</final>
+        <description>flower color,final value, unmodified</description>
+    </property>
+</configuration>

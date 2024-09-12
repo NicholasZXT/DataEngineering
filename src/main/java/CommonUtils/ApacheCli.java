@@ -43,7 +43,7 @@ public class ApacheCli {
         options.addOption(f);
 
         // 这里手动设置需要解析的命令行参数
-        String [] args_str = {"-p", "p-value", "-y", "y-value", "-f", "f-value"};
+        String [] args_str = {"-p", "p-value", "-y", "y-value", "-f", "f-value", "other-args", "some_args"};
 
         // 第2步：使用解析器来解析命令行内容
         // CommandLineParser 接口有多个实现，一般用下面的即可
@@ -53,21 +53,22 @@ public class ApacheCli {
 
         // 第3步：使用 CommandLine 对象提供的方法检查有无参数，并获取参数值
         System.out.println("args_parse:");
-        String[] args_parse = cmd.getArgs();
-        System.out.println(Arrays.toString(args_parse));
         System.out.println("------------------------------------");
         System.out.println("has option p: " + cmd.hasOption("p"));
-        System.out.println("option p value: " +cmd.getOptionValue("p"));
+        System.out.println("option p value: " + cmd.getOptionValue("p"));
         System.out.println("has option y: " + cmd.hasOption("y"));
-        System.out.println("option y value: " +cmd.getOptionValue("y"));
+        System.out.println("option y value: " + cmd.getOptionValue("y"));
         System.out.println("has option f: " + cmd.hasOption("f"));
-        System.out.println("option f value: " +cmd.getOptionValue("f"));
+        System.out.println("option f value: " + cmd.getOptionValue("f"));
+        // 获取未被解析的参数
+        String[] args_unused = cmd.getArgs();
+        System.out.println("args_undefined: " + Arrays.toString(args_unused));
 
         //打印帮助信息
         System.out.println("-------------------------------------");
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("ApacheCli", options);
-        formatter.printHelp("ApacheCli", options, true);
+        //formatter.printHelp("ApacheCli", options, true);
 
     }
 }
