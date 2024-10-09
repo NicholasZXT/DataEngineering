@@ -1,8 +1,6 @@
-package FlinkDemos.C9_watermark;
+package FlinkDemos.c9_watermark;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.flink.api.common.eventtime.TimestampAssignerSupplier;
-import org.apache.flink.api.common.eventtime.WatermarkGeneratorSupplier;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;

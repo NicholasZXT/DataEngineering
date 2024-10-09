@@ -1,4 +1,4 @@
-package FlinkDemos;
+package FlinkDemos.c3_aggregate;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -12,7 +12,7 @@ import FlinkDemos.beans.WaterSensor;
 /**
  * 演示Flink基本聚合算子使用
  */
-public class C3_Aggregate {
+public class AggregateOperation {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);

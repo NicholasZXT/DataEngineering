@@ -1,4 +1,4 @@
-package FlinkDemos;
+package FlinkDemos.c2_transform;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -13,7 +13,7 @@ import FlinkDemos.beans.WaterSensor;
 /**
  * 演示Flink基本的Transform算子使用
  */
-public class C2_Transform {
+public class TransformOperation {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);

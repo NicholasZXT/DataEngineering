@@ -1,4 +1,4 @@
-package FlinkDemos;
+package FlinkDemos.c1_source;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.api.common.RuntimeExecutionMode;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.api.common.typeinfo.Types;  // Flink提供的数据类型申明
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
@@ -24,7 +25,7 @@ import FlinkDemos.beans.WaterSensor;
 /**
  * 演示Flink的源算子使用
  */
-public class C1_SourceOperations {
+public class SourceOperations {
 
     public static void main(String[] args) throws Exception {
         // Flink程序起点，获取执行环境
@@ -38,6 +39,13 @@ public class C1_SourceOperations {
         //);
         // 方法3：以下方式会自动判断当前运行环境，可以返回一个本地执行环境，或者一个集群执行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+        // 手动设置Flink运行模式，默认就是streaming，一般没有必要设置
+        //env.setRuntimeMode(RuntimeExecutionMode.BATCH);
+        //env.setRuntimeMode(RuntimeExecutionMode.STREAMING);
+        env.setRuntimeMode(RuntimeExecutionMode.AUTOMATIC);
+
+        // 设置并行度
         env.setParallelism(1);
 
         // 从集合中读取数据

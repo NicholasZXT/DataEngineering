@@ -1,4 +1,4 @@
-package FlinkDemos.C8_window;
+package FlinkDemos.c8_window;
 
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;

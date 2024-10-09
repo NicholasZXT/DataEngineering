@@ -1,4 +1,4 @@
-package FlinkDemos;
+package FlinkDemos.c7_sink;
 
 import java.time.Duration;
 import java.time.ZoneId;
@@ -22,7 +22,7 @@ import FlinkDemos.beans.WaterSensor;
 /**
  * 演示Flink的Sink算子使用
  */
-public class C7_SinkOperations {
+public class SinkOperations {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         // 每个目录中，都有 并行度个数的 文件在写入

@@ -1,4 +1,4 @@
-package FlinkDemos;
+package FlinkDemos.c4_partition;
 
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -10,7 +10,7 @@ import FlinkDemos.beans.WaterSensor;
 /**
  * 分区操作
  */
-public class C4_Partition {
+public class PartitionOperation {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(2);

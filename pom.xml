@@ -12,6 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <encoding>UTF-8</encoding>
         <!--指定编译的java版本-->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -37,7 +38,6 @@
         <flink.scala.suffix>_2.12</flink.scala.suffix>
         <hbase.version>2.4.15</hbase.version>
         <jackson.version>2.12.3</jackson.version>
-        <encoding>UTF-8</encoding>
     </properties>
     
     <profiles>
@@ -169,7 +169,7 @@
         </dependency>
         <!-- ***************************************************** -->
         <!-- log4j 依赖 -->
-        <!-- 下面这个是 log4j 1.x 版本的最新依赖，但是也在 2012 年就停止维护， 建议转向 2.x 版本的-->
+        <!-- 下面这个是 log4j 1.x 版本的最新依赖，但是在 2012 年就停止维护， 建议转向 2.x 版本的-->
         <!--<dependency>-->
         <!--    <groupId>log4j</groupId>-->
         <!--    <artifactId>log4j</artifactId>-->

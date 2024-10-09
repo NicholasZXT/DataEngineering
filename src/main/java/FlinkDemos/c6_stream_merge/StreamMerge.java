@@ -1,4 +1,4 @@
-package FlinkDemos;
+package FlinkDemos.c6_stream_merge;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -18,7 +18,7 @@ import FlinkDemos.beans.WaterSensor;
 /**
  * 合流操作
  */
-public class C6_StreamMerge {
+public class StreamMerge {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(2);
