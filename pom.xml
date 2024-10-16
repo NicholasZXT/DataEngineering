@@ -162,11 +162,6 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.22</version>
-        </dependency>
         <!-- ***************************************************** -->
         <!-- log4j 依赖 -->
         <!-- 下面这个是 log4j 1.x 版本的最新依赖，但是在 2012 年就停止维护， 建议转向 2.x 版本的-->
@@ -208,6 +203,26 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.36</version>
             <scope>${local.scope}</scope>
+        </dependency>
+        <!-- ***************************************************** -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.22</version>
+        </dependency>
+        <!-- Alibaba fastJSON -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.68</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Jackson 工具，下面的依赖会自动引入 jackson-core 和 jackson-annotations -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
         </dependency>
         <!-- ***************************************************** -->
         <!-- Apache Common-Cli 命令行解析工具-->
@@ -333,11 +348,6 @@
         <!--    <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
         <!--    <version>${elasticsearch.version}</version>-->
         <!--    <scope>${elasticsearch.scope}</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--    <groupId>com.fasterxml.jackson.core</groupId>-->
-        <!--    <artifactId>jackson-databind</artifactId>-->
-        <!--    <version>${jackson.version}</version>-->
         <!--</dependency>-->
         <!-- ***************************************************** -->
         <!-- Flink 相关依赖 -->
@@ -519,14 +529,6 @@
             <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
             <version>${mapreduce.version}</version>
             <scope>${mapreduce.scope}</scope>
-        </dependency>
-        <!-- ***************************************************** -->
-        <!-- Alibaba fastJSON -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.68</version>
-            <scope>compile</scope>
         </dependency>
         <!-- ***************************************************** -->
         <!-- Thrift依赖：https://mvnrepository.com/artifact/org.apache.thrift/libthrift -->
