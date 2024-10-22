@@ -21,15 +21,18 @@ public class StreamDemo {
         List<Item> item_list = new ArrayList<>();
         Collections.addAll(item_list, item_array);
 
+        // -------- Stream 创建 -----------
         // 从数组创建流
         Stream<Item> s1 = Stream.of(item_array);
         // 从数组指定位置创建流
         Stream<Item> s2 = Arrays.stream(item_array, 0, 6);
         // 从集合创建流
         Stream<Item> s3 = item_list.stream();
-        // 创建可重用的流对象
-        Supplier<Stream<Item>> item_supplier = () -> Stream.of(item_array);
+        // 创建可重用的流对象——使用了Lambda表达式
+        Supplier<Stream<Item>> items_supplier = () -> Stream.of(item_array);
 
+        // -------- Stream 中间操作 -----------
+        // 包括 map, filter, flatMap, peek, sort 等操作方法
         s1.forEach(System.out::println);
         System.out.println("---------------------------");
         // 一个流对象使用一次之后就会被关闭，不能重用
@@ -39,13 +42,20 @@ public class StreamDemo {
         System.out.println("---------------------------");
 
         // 可重用的流，实际上是每次都创建了一个新的流
-        item_supplier.get().forEach(System.out::println);
+        items_supplier.get().forEach(System.out::println);
         System.out.println("---------------------------");
-        item_supplier.get().filter(s -> !Objects.equals(s.getCategory(), "c")).forEach(System.out::println);
+        items_supplier.get().filter(s -> !Objects.equals(s.getCategory(), "c")).forEach(System.out::println);
 
-        // 分组聚合操作
+        // -------- Stream 结果收集 -----------
+        // 常用的有 toArray, reduce, findAny, findFirst, allMatch, anyMatch, noneMatch, counting, min, max 等
+        // 上面使用的 forEach 方法也是一个结果收集方法，常用于调试
+        // 最通用的，还是 collect() 方法，可以完成各种复杂的结果收集，包括分组聚合。
+        // 它的一个签名是 collect(Collector<? super T, A, R> collector)，接受一个 Collector 接口的实现类或者函数式接口，
+        // java.util.stream.Collectors 里提供了不少可以直接生成对应 Collector 的工具方法，可以直接使用，比如 Collectors.toList() 等
+        // 分组聚合操作，需要使用 collect() 方法 + Collectors.groupingBy() 工具方法
         // 仅分组
-        Stream<Item> s4 = item_supplier.get();
+        Stream<Item> s4 = items_supplier.get();
+        // 注意返回的类型，是一个 Map<String, List<Item>>
         Map<String, List<Item>> itemGroups = s4.collect(Collectors.groupingBy(Item::getCategory));
         List<Item> g1 = itemGroups.get("a");
         List<Item> g2 = itemGroups.get("b");
@@ -58,18 +68,18 @@ public class StreamDemo {
         g3.forEach(System.out::println);
         System.out.println("---------------------------");
         // 分组count
-        Stream<Item> s5 = item_supplier.get();
+        Stream<Item> s5 = items_supplier.get();
         Map<String, Long> itemGroupCount = s5.collect(Collectors.groupingBy(Item::getCategory, Collectors.counting()));
         itemGroupCount.forEach((k, v) -> System.out.println("group " + k + " with count: " + v));
         System.out.println("---------------------------");
         // 分组求和
-        Stream<Item> s6 = item_supplier.get();
+        Stream<Item> s6 = items_supplier.get();
         Map<String, Long> itemGroupSum = s6.collect(Collectors.groupingBy(Item::getCategory, Collectors.summingLong(Item::getValue)));
         itemGroupSum.forEach((k, v) -> System.out.println("group " + k + " with sum: " + v));
         System.out.println("---------------------------");
 
         // 分组求count, sum, mean, min, max
-        Stream<Item> s7 = item_supplier.get();
+        Stream<Item> s7 = items_supplier.get();
         // LongSummaryStatistics 是一个专门进行Long数值聚合并记录结果的类，由收集器 Collectors.summarizingLong() 返回
         Map<String, LongSummaryStatistics> itemGroupSummary = s7.collect(
                 Collectors.groupingBy(Item::getCategory, Collectors.summarizingLong(Item::getValue))
