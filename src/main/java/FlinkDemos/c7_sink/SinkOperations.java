@@ -32,54 +32,56 @@ public class SinkOperations {
 
         // 从集合中创建源数据
         DataStreamSource<WaterSensor> sensorDS = env.fromElements(
-                new WaterSensor("s1", 1.0, 1),
-                new WaterSensor("s1", 11.0, 11),
-                new WaterSensor("s2", 2.0, 2),
-                new WaterSensor("s3", 3.0, 3)
+            new WaterSensor("s1", 1.0, 1),
+            new WaterSensor("s1", 11.0, 11),
+            new WaterSensor("s2", 2.0, 2),
+            new WaterSensor("s3", 3.0, 3)
         );
 
-        // 输出到文件
+        // -------------- 输出到文件 --------------
+        // 配置 Sink
         FileSink<String> fileSink = FileSink
-                // 输出行式存储的文件，指定路径、指定编码
-                .<String>forRowFormat(new Path("flink-out"), new SimpleStringEncoder<>("UTF-8"))
-                // 输出文件的一些配置： 文件名的前缀、后缀
-                .withOutputFileConfig(
-                        OutputFileConfig.builder()
-                                .withPartPrefix("file-sink-")
-                                .withPartSuffix(".log")
-                                .build()
-                )
-                // 按照目录分桶：如下，就是每个小时一个目录
-                .withBucketAssigner(new DateTimeBucketAssigner<>("yyyy-MM-dd HH", ZoneId.systemDefault()))
-                // 文件滚动策略:  1分钟 或 1m
-                .withRollingPolicy(
-                        DefaultRollingPolicy.builder()
-                                .withRolloverInterval(Duration.ofMinutes(2))       // 每 2 分钟轮换一次文件
-                                .withMaxPartSize(new MemorySize(1024*1024))  // 每个文件最大 1Mb
-                                .build()
-                )
-                .build();
+            // 输出行式存储的文件，指定路径、指定编码
+            .<String>forRowFormat(new Path("flink-out"), new SimpleStringEncoder<>("UTF-8"))
+            // 输出文件的一些配置： 文件名的前缀、后缀
+            .withOutputFileConfig(
+                OutputFileConfig.builder()
+                    .withPartPrefix("file-sink-")
+                    .withPartSuffix(".log")
+                    .build()
+            )
+            // 按照目录分桶：如下，就是每个小时一个目录
+            .withBucketAssigner(new DateTimeBucketAssigner<>("yyyy-MM-dd HH", ZoneId.systemDefault()))
+            // 文件滚动策略:  1分钟 或 1m
+            .withRollingPolicy(
+                DefaultRollingPolicy.builder()
+                    .withRolloverInterval(Duration.ofMinutes(2))       // 每 2 分钟轮换一次文件
+                    .withMaxPartSize(new MemorySize(1024*1024))  // 每个文件最大 1Mb
+                    .build()
+            )
+            .build();
         // 这里需要先转成 string
         //sensorDS.map(WaterSensor::toString).sinkTo(fileSink);
 
-        // 写入kafka
+        // -------------- 写入kafka --------------
+        // 配置 KafkaSink
         KafkaSink<String> kafkaSink = KafkaSink.<String>builder()
-                // 指定 kafka 的地址和端口
-                .setBootstrapServers("hadoop102:9092,hadoop103:9092,hadoop104:9092")
-                // 指定序列化器：指定Topic名称、具体的序列化
-                .setRecordSerializer(
-                        KafkaRecordSerializationSchema.<String>builder()
-                                .setTopic("flink-sink")
-                                .setValueSerializationSchema(new SimpleStringSchema())
-                                .build()
-                )
-                // 写到kafka的一致性级别： 精准一次、至少一次
-                .setDeliveryGuarantee(DeliveryGuarantee.EXACTLY_ONCE)
-                // 如果是精准一次，必须设置 事务的前缀
-                .setTransactionalIdPrefix("kafka-sink-")
-                // 如果是精准一次，必须设置 事务超时时间: 大于checkpoint间隔，小于 max 15分钟
-                .setProperty(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG, 10*60*1000+"")
-                .build();
+            // 指定 kafka 的地址和端口
+            .setBootstrapServers("hadoop102:9092,hadoop103:9092,hadoop104:9092")
+            // 指定序列化器：指定Topic名称、具体的序列化
+            .setRecordSerializer(
+                KafkaRecordSerializationSchema.<String>builder()
+                    .setTopic("flink-sink")
+                    .setValueSerializationSchema(new SimpleStringSchema())
+                    .build()
+            )
+            // 写到kafka的一致性级别： 精准一次、至少一次
+            .setDeliveryGuarantee(DeliveryGuarantee.EXACTLY_ONCE)
+            // 如果是精准一次，必须设置 事务的前缀
+            .setTransactionalIdPrefix("kafka-sink-")
+            // 如果是精准一次，必须设置 事务超时时间: 大于checkpoint间隔，小于 max 15分钟
+            .setProperty(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG, 10*60*1000+"")
+            .build();
 
         //sensorDS.map(WaterSensor::toString).sinkTo(kafkaSink);
 

@@ -9,6 +9,7 @@ import org.apache.flink.util.Collector;
 import org.apache.flink.util.OutputTag;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.streaming.api.functions.ProcessFunction;
+import org.apache.flink.configuration.Configuration;
 import FlinkDemos.beans.WaterSensor;
 
 /**
@@ -21,12 +22,12 @@ public class StreamSplit {
 
         // 从集合中创建源数据
         DataStreamSource<WaterSensor> sensorDS = env.fromElements(
-                new WaterSensor("s1", 1.0, 1),
-                new WaterSensor("s2", 11.0, 2),
-                new WaterSensor("s3", 2.0, 3),
-                new WaterSensor("s4", 3.0, 4),
-                new WaterSensor("s5", 3.0, 0),
-                new WaterSensor("s6", 3.0, -1)
+            new WaterSensor("s1", 1.0, 1),
+            new WaterSensor("s2", 11.0, 2),
+            new WaterSensor("s3", 2.0, 3),
+            new WaterSensor("s4", 3.0, 4),
+            new WaterSensor("s5", 3.0, 0),
+            new WaterSensor("s6", 3.0, -1)
         );
 
         // 使用过滤的方式分成 奇数流 和 偶数流，这个方式要重复使用
@@ -69,16 +70,18 @@ class SplitProcessFunction extends ProcessFunction<WaterSensor, WaterSensor> {
         this.oddTag = oddTag;
     }
 
-    //@Override
-    //public void open(Configuration parameters) throws Exception {
-    //    super.open(parameters);
-    //    // Tag 的定义不要放在 processElement 方法里
-    //    evenTag = new OutputTag<>("even", Types.POJO(WaterSensor.class));
-    //    oddTag = new OutputTag<>("odd", Types.POJO(WaterSensor.class));
-    //}
+    @Override
+    public void open(Configuration parameters) throws Exception {
+        super.open(parameters);
+        // Tag 的定义不要放在 processElement 方法里
+        //evenTag = new OutputTag<>("even", Types.POJO(WaterSensor.class));
+        //oddTag = new OutputTag<>("odd", Types.POJO(WaterSensor.class));
+    }
 
     @Override
-    public void processElement(WaterSensor value, ProcessFunction<WaterSensor, WaterSensor>.Context ctx, Collector<WaterSensor> out) throws Exception {
+    public void processElement(
+        WaterSensor value, ProcessFunction<WaterSensor, WaterSensor>.Context ctx, Collector<WaterSensor> out
+    ) throws Exception {
         int vc = value.getVc();
         if (vc <= 0){
             // 输出到主流

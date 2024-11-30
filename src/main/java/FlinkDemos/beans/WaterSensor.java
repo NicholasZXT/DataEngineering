@@ -2,6 +2,15 @@ package FlinkDemos.beans;
 
 import java.util.Objects;
 
+
+/**
+ * 演示Flink操作时使用的Java对象，它需要满足如下几个条件：
+ *  1. 公有类
+ *  2. 有一个无参构造方法
+ *  3. 所有属性都是公有
+ *  4. 所有属性的类型都可以序列化
+ * 这样的类会被 Flink 看做一个 POJO(Plain Ordinary Java Object)，自动推断序列化信息，方便数据的解析和序列化
+ */
 public class WaterSensor {
     public String id;
     public Double ts;

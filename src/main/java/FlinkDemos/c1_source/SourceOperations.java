@@ -37,7 +37,7 @@ public class SourceOperations {
         //        1234,
         //        "path/to/jar"
         //);
-        // 方法3：以下方式会自动判断当前运行环境，可以返回一个本地执行环境，或者一个集群执行环境
+        // 方法3：以下方式会自动判断当前运行环境，可以返回一个本地执行环境，或者一个集群执行环境 —— 推荐使用这个
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         // 手动设置Flink运行模式，默认就是streaming，一般没有必要设置
@@ -60,9 +60,13 @@ public class SourceOperations {
         sensorSource.print();
 
         // 从文件中读取，需要 flink-connector-files 依赖
-        FileSource<String> fileSource = FileSource.forRecordStreamFormat(new TextLineInputFormat(),
-                new Path("src/main/resources/hadoop_data/wordcount_input")).build();
-        DataStreamSource<String> fileStream = env.fromSource(fileSource, WatermarkStrategy.noWatermarks(), "fileStream");
+        FileSource<String> fileSource = FileSource.forRecordStreamFormat(
+                new TextLineInputFormat(),
+                new Path("src/main/resources/hadoop_data/wordcount_input")
+        ).build();
+        DataStreamSource<String> fileStream = env.fromSource(
+                fileSource, WatermarkStrategy.noWatermarks(), "fileStream"
+        );
         //fileStream.print();
 
         // 从 socket读取
@@ -71,11 +75,12 @@ public class SourceOperations {
         //socketStream.print("socketStream");
 
         // 数据生成器，DataGeneratorSource 需要4个参数：
-        // 1. GeneratorFunction接口，需要重写map方法， 输入类型固定是Long
+        // 1. GeneratorFunction接口实现类，需要重写map方法， 输入类型固定是Long
         // 2. long类型，自动生成的数字序列（从0自增）的最大值(小于)，达到这个值就停止了
         // 3. 限速策略，比如每秒生成几条数据
         // 4. 返回的类型，使用 Types 指定
         DataGeneratorSource<String> dgSource = new DataGeneratorSource<>(
+                // 这里采用匿名类的方式提供GeneratorFunction接口实现
                 new GeneratorFunction<Long, String>() {
                     @Override
                     public String map(Long value) throws Exception {
@@ -86,7 +91,9 @@ public class SourceOperations {
                 RateLimiterStrategy.perSecond(1),
                 Types.STRING
         );
-        DataStreamSource<String> dgStream = env.fromSource(dgSource, WatermarkStrategy.noWatermarks(), "data-generator");
+        DataStreamSource<String> dgStream = env.fromSource(
+                dgSource, WatermarkStrategy.noWatermarks(), "data-generator"
+        );
         //dgStream.print();
 
         // 从kafka读取数据，需要 flink-connector-kafka 依赖
@@ -102,7 +109,9 @@ public class SourceOperations {
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .setValueOnlyDeserializer(new SimpleStringSchema())
                 .build();
-        DataStreamSource<String> kafkaStream = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "kafka-source");
+        DataStreamSource<String> kafkaStream = env.fromSource(
+                kafkaSource, WatermarkStrategy.noWatermarks(), "kafka-source"
+        );
         // Flink 好像没有提供类似于 limit 这样的API
         //kafkaStream.print("kafka");
 

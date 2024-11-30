@@ -27,7 +27,7 @@ public class AggregateOperation {
         // ------------------------------------------------------------------------------------------------
         // 聚合之前必须要先做分区（分组）操作
         // 先分组，返回的是 一个 KeyedStream，注意，keyBy不是 转换算子，只是对数据进行重分区，不能设置并行度
-        // 使用 lambda 表达式
+        // 使用 lambda 表达式 + 方法引用
         KeyedStream<WaterSensor, String> sensorKS1 = sensorDS.keyBy(WaterSensor::getId);
         // 使用匿名类
         KeyedStream<WaterSensor, String> sensorKS2 = sensorDS

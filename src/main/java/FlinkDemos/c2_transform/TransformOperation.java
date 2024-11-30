@@ -12,6 +12,7 @@ import FlinkDemos.beans.WaterSensor;
 
 /**
  * 演示Flink基本的Transform算子使用
+ * 所有Transform算子基本都要实现 org.apache.flink.api.common.functions 里提供的接口
  */
 public class TransformOperation {
     public static void main(String[] args) throws Exception {
@@ -32,12 +33,14 @@ public class TransformOperation {
         // 不过对于特殊的 POJO 类，lambda表达式可以使用 方法引用 更简洁
         SingleOutputStreamOperator<String> mapStream1 = sensorDS.map(WaterSensor::getId);
         // 方法2：使用匿名实现类
-        SingleOutputStreamOperator<String> mapStream2 = sensorDS.map(new MapFunction<WaterSensor, String>() {
-            @Override
-            public String map(WaterSensor waterSensor) throws Exception {
-                return waterSensor.getId();
+        SingleOutputStreamOperator<String> mapStream2 = sensorDS.map(
+            new MapFunction<WaterSensor, String>(){
+                @Override
+                public String map(WaterSensor waterSensor) throws Exception {
+                    return waterSensor.getId();
+                }
             }
-        });
+        );
         // 方法3：定义一个继承了上面 MapFunction 接口的实现类——这个方法比较麻烦，适用于业务逻辑比较复杂的时候
         SingleOutputStreamOperator<String> mapStream3 = sensorDS.map(new MyMapFunc());
 
