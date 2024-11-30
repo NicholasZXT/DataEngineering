@@ -24,10 +24,10 @@ public class WindowAgg {
         env.setParallelism(1);
         // 从集合中创建源数据
         DataStreamSource<WaterSensor> sensorDS = env.fromElements(
-                new WaterSensor("s1", 1.0, 1),
-                new WaterSensor("s1", 11.0, 11),
-                new WaterSensor("s2", 2.0, 2),
-                new WaterSensor("s3", 3.0, 3)
+            new WaterSensor("s1", 1.0, 1),
+            new WaterSensor("s1", 11.0, 11),
+            new WaterSensor("s2", 2.0, 2),
+            new WaterSensor("s3", 3.0, 3)
         );
         KeyedStream<WaterSensor, String> sensorKS = sensorDS.keyBy(WaterSensor::getId);
         // 这里以计数窗口为例
@@ -48,7 +48,7 @@ public class WindowAgg {
          * 返回的类型必须和原来的一样——这是最大的限制
          */
         SingleOutputStreamOperator<WaterSensor> reducedStream = sensorCountStream.reduce(
-            // 传入一个实现 ReduceFunction 接口的实现类
+            // 传入一个实现 ReduceFunction 接口的匿名实现类
             new ReduceFunction<WaterSensor>() {
                 @Override
                 public WaterSensor reduce(WaterSensor value1, WaterSensor value2) throws Exception {
@@ -74,8 +74,8 @@ public class WindowAgg {
         // 聚合函数的 reduce 和 aggregate 方法里，还可以传入 ProcessWindowFunction子类，达到两者结合的目的
         // 此时的处理逻辑是：先用 聚合函数 逐条处理窗口里的数据，
         SingleOutputStreamOperator<String> compositeStream = sensorCountStream.aggregate(
-                new MyAggregateFunction(),
-                new MyProcessFunction2()
+            new MyAggregateFunction(),
+            new MyProcessFunction2()
         );
         compositeStream.print("compositeStream");
 
