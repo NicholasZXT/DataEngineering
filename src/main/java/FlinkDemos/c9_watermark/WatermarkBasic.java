@@ -11,47 +11,57 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindo
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
+import java.time.Duration;
 import FlinkDemos.beans.WaterSensor;
+import FlinkDemos.c8_window.TimeWindowAgg;
 
 /**
  * WatermarkStrategy 是一个定义水位线生成方式的接口，它继承了两个接口：
  * (1) TimestampAssignerSupplier<T>: createTimestampAssigner() 方法负责从流数据的某个字段中提取时间戳，作为水位线的依据
  * (2) WatermarkGeneratorSupplier<T>: createWatermarkGenerator() 方法负责根据时间戳来生成水位线
+ * 准确来说，此接口定义的是一个生成 WatermarkGenerator 接口实现类的 builder/factory。
  * 此接口里的方法分成 3 个部分：
- * (1) 接口实现类必须要实现的方法
- * (2) 基于Base Strategy 来构建 WatermarkStrategy 的 builder methods
- * (3) 提供了一些创建内置水位线策略的快捷方法
+ * (1) TimestampAssignerSupplier 和 WatermarkGeneratorSupplier 接口必须要实现的方法
+ * (2) 基于 Base Strategy 来构建 WatermarkStrategy 的 builder methods，这些method描述符均为 default
+ * (3) 提供了一些创建内置水位线策略的快捷方法——均为静态方法
  * 其中第 3 部分的快捷方法（都是静态方法）如下：
  *  noWatermarks(): 不创建水位线
  *  forMonotonousTimestamps(): 创建单调递增水位线
  *  forBoundedOutOfOrderness(): 乱序流水位线
  *  forGenerator()
- *  前 3 个方法比较常用，它们在设置水位线生成方式的同时会返回一个 WatermarkStrategy 接口实现类（似乎不是？），之后再设置时间戳提取器
+ *  前 3 个方法比较常用，它们在设置水位线生成方式的同时会返回一个 WatermarkGenerator 接口实现类，之后再设置时间戳提取器
  */
 public class WatermarkBasic {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
         // 从集合中创建源数据，有序流
-        DataStreamSource<WaterSensor> sensorDS = env.fromElements(
-                new WaterSensor("s1", 1.0, 10),
-                new WaterSensor("s2", 2.0, 20),
-                new WaterSensor("s1", 3.0, 30),
-                new WaterSensor("s2", 4.0, 40),
-                new WaterSensor("s1", 5.0, 50),
-                new WaterSensor("s2", 6.0, 60)
-        );
+        //DataStreamSource<WaterSensor> sensorDS = env.fromElements(
+        //    new WaterSensor("s1", 1.0, 10),
+        //    new WaterSensor("s2", 2.0, 20),
+        //    new WaterSensor("s1", 3.0, 30),
+        //    new WaterSensor("s2", 4.0, 40),
+        //    new WaterSensor("s1", 5.0, 50),
+        //    new WaterSensor("s2", 6.0, 60)
+        //);
+        // 这个演示最好使用 socket 流
+        SingleOutputStreamOperator<WaterSensor> sensorDS = env
+            .socketTextStream("localhost", 7890)
+            .map(new TimeWindowAgg.WaterSensorMapFunction());
 
         // 1. 定义 watermark 生成策略
+        // 1.1 定义有序流的单调递增水位线生成策略
         WatermarkStrategy<WaterSensor> watermarkStrategy = WatermarkStrategy
-                // 单调升序的watermark，没有等待时间 —— 只适用于有序流
-                .<WaterSensor>forMonotonousTimestamps()
-                // 1.2 指定 时间戳分配器，从数据中提取
-                .withTimestampAssigner(new SerializableTimestampAssigner<WaterSensor>() {
+            // 单调升序的watermark，没有等待时间 —— 只适用于有序流
+            .<WaterSensor>forMonotonousTimestamps()
+            // 指定 时间戳分配器，从数据中提取时间戳
+            .withTimestampAssigner(
+                new SerializableTimestampAssigner<WaterSensor>() {
                     /**
                      * extractTimestamp 接口参数
                      * @param element The element that the timestamp will be assigned to.
-                     * @param recordTimestamp The current internal timestamp of the element, or a negative value, if no timestamp has been assigned yet.
+                     * @param recordTimestamp The current internal timestamp of the element, or a negative value,
+                     *                        if no timestamp has been assigned yet.
                      * @return The new timestamp
                      */
                     @Override
@@ -62,6 +72,19 @@ public class WatermarkBasic {
                         // 秒转毫秒
                         return element.getTs().longValue() * 1000L;
                     }
+                }
+            );
+
+        // 1.2 定义乱序流的水位线生成策略
+        WatermarkStrategy<WaterSensor> watermarkStrategyOutOfOrder = WatermarkStrategy
+            // 指定watermark生成：乱序的，等待3s
+            .<WaterSensor>forBoundedOutOfOrderness(Duration.ofSeconds(3))
+            // 指定 时间戳分配器，从数据中提取时间戳
+            .withTimestampAssigner(
+                (element, recordTimestamp) -> {
+                    // 返回的时间戳，要求是毫秒
+                    System.out.println("数据=" + element + ",recordTs=" + recordTimestamp);
+                    return element.getTs().longValue() * 1000L;
                 });
 
         // 2. 指定 watermark 策略
@@ -69,42 +92,34 @@ public class WatermarkBasic {
 
         // 3. 根据 watermark 策略，来定义对应的 事件时间语义 的窗口
         SingleOutputStreamOperator<String> result = sensorDSwithWM
-                .keyBy(WaterSensor::getId)
-                // 使用 滚动时间窗口
-                .window(TumblingEventTimeWindows.of(Time.seconds(2)))
-                .process(
-                        new ProcessWindowFunction<WaterSensor, String, String, TimeWindow>() {
-                             @Override
-                             public void process(String key,
-                                                 ProcessWindowFunction<WaterSensor, String, String, TimeWindow>.Context context,
-                                                 Iterable<WaterSensor> elements,
-                                                 Collector<String> out) throws Exception {
-                                 long startTs = context.window().getStart();
-                                 long endTs = context.window().getEnd();
-                                 String windowStart = DateFormatUtils.format(startTs, "yyyy-MM-dd HH:mm:ss");
-                                 String windowEnd = DateFormatUtils.format(endTs, "yyyy-MM-dd HH:mm:ss");
-                                 long count = elements.spliterator().estimateSize();
-                                 out.collect("key=" + key + "的窗口@[" + windowStart + ", " +
-                                         windowEnd + "]包含 " +
-                                         count + " 条数据 ===> " +
-                                         elements.toString());
-                             }
-                         }
-                );
+            .keyBy(WaterSensor::getId)
+            // 使用 滚动时间窗口
+            .window(TumblingEventTimeWindows.of(Time.seconds(2)))
+            .process(
+                new ProcessWindowFunction<WaterSensor, String, String, TimeWindow>() {
+                     @Override
+                     public void process (
+                         String key,
+                         ProcessWindowFunction<WaterSensor, String, String, TimeWindow>.Context context,
+                         Iterable<WaterSensor> elements,
+                         Collector<String> out
+                     ) throws Exception {
+                         long startTs = context.window().getStart();
+                         long endTs = context.window().getEnd();
+                         String windowStart = DateFormatUtils.format(startTs, "yyyy-MM-dd HH:mm:ss");
+                         String windowEnd = DateFormatUtils.format(endTs, "yyyy-MM-dd HH:mm:ss");
+                         long count = elements.spliterator().estimateSize();
+                         out.collect("key=" + key + "的窗口@[" + windowStart + ", " +
+                                 windowEnd + "]包含 " +
+                                 count + " 条数据 ===> " +
+                                 elements.toString()
+                         );
+                     }
+                 }
+            );
 
         result.print("result");
 
         env.execute();
-
-    }
-}
-
-class MyProcessWindowFunction extends ProcessWindowFunction<WaterSensor, String, String, TimeWindow>{
-    @Override
-    public void process(String s,
-                        ProcessWindowFunction<WaterSensor, String, String, TimeWindow>.Context context,
-                        Iterable<WaterSensor> elements,
-                        Collector<String> out) throws Exception {
-
     }
 }
