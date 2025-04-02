@@ -2,6 +2,6 @@ hello java
 hello scala
 hello spark
 hello spark streaming
-hellp hive
+hell0 hive
 hive hbase
 zookeeper hbase

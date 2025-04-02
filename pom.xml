@@ -37,7 +37,9 @@
         <!-- flink scala api的scala版本后缀，一直需要-->
         <flink.scala.suffix>_2.12</flink.scala.suffix>
         <hbase.version>2.4.15</hbase.version>
-        <jackson.version>2.12.3</jackson.version>
+        <!-- 注意和 Spark 的版本冲突-->
+        <!--<jackson.version>2.12.3</jackson.version>-->
+        <jackson.version>2.6.7</jackson.version>
     </properties>
     
     <profiles>
@@ -218,6 +220,7 @@
             <scope>compile</scope>
         </dependency>
         <!-- Jackson 工具，下面的依赖会自动引入 jackson-core 和 jackson-annotations -->
+        <!-- 这里手动引入时，版本需要特别注意，可能会和 Spark 引入的Jackson有冲突-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
