@@ -3,16 +3,21 @@
 # 文件与路径表示
 java里对文件和路径的操作有如下选择：
 1. `java.io.File`类，同时表示文件/目录，它**只用于表示文件（目录）的信息（名称、大小等），不能用于文件内容的访问**
-2. `java.nio.file.Path`**接口**，用于表示文件/目录的路径
-3. `java.nio.file.Paths`类，用于将字符串路径或者URI对象转成 `Path`   
+2. `java.nio.file.Path`**接口**，用于表示文件/目录的路径。
+    这个接口提供了许多操作路径的方法，如：
+   + `isAbsolute()`：判断路径是否为绝对路径
+   + `getParent()`：获取父路径
+   + `getFileName()`：获取文件名
+   + `resolve(Path other)`：路径拼接 —— 这个很有用
+3. `java.nio.file.Paths`类，用于将字符串路径或者URI对象转成 `Path` 接口对象   
    它只有两个静态方法
    + `static Path get(String first, String... more)`
    + `static Path get(URI uri)`
 4. **`java.nio.file.Files`类**封装了一系列操作文件/目录的**静态**方法——这个类用的最多
 
-**`java.io.File`类的官方文档里，推荐使用`java.nio.file`包里的相关类来访问文件/目录**。
+> **`java.io.File`类的官方文档里，推荐使用`java.nio.file`包里的相关类来访问文件/目录**。
 
-使用`java.nio.file`包操作文件/目录时，一般会先使用`Paths.get()`方法获取`Path`对象，然后传递给`Files`类的静态方法。   
+使用`java.nio.file`包操作文件/目录时，一般会先使用`Paths.get()`方法获取`Path`接口对象，然后传递给`Files`类的静态方法。   
 常用静态方法如下：
 + `Files.exists(Path path, LinkOption... options)`：检查文件/目录是否存在，返回boolean
 + `Files.isDirectory(Path path, LinkOption... options)`：检查路径是否为目录，返回boolean
