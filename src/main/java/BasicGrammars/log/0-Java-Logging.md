@@ -98,88 +98,104 @@ public class logTest {
 ```properties
 ################################################################################
 #（1）配置根Logger，语法为：
-log4j.rootLogger = [level],appenderName,appenderName2,...
-#level 是日志记录的优先级，分为 OFF, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, ALL
-#Log4j 建议只使用四个级别，优先级从低到高分别是 DEBUG, INFO, WARN, ERROR
-#通过在这里定义的级别，您可以控制到应用程序中相应级别的日志信息的开关
-#比如在这里定义了INFO级别，则应用程序中所有DEBUG级别的日志信息将不被打印出来
-#appenderName就是指定日志信息输出到哪个地方的配置名称（任意取，但是要和下面对应），可同时指定多个输出目的
+# log4j.rootLogger = <日志级别>, <Appender1>, <Appender2>, ...
+# level 是日志记录的优先级，分为 OFF, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, ALL
+#   Log4j 建议只使用四个级别，优先级从低到高分别是 DEBUG, INFO, WARN, ERROR
+#   通过在这里定义的级别，您可以控制到应用程序中相应级别的日志信息的开关
+#   比如在这里定义了INFO级别，则应用程序中所有DEBUG级别的日志信息将不被打印出来
+# appenderName 就是指定日志信息输出到哪个地方的配置名称——名称任意取，但是要和下面对应，可同时指定多个输出目的
+# 示例: 
+log4j.rootLogger=INFO, console, file
 
 ################################################################################
 #（2）配置日志信息输出目的地Appender，语法为：
 #添加appender提供的实现类
-log4j.appender.appenderName = fully.qualified.name.of.appender.class
+# log4j.appender.appenderName = fully.qualified.name.of.appender.class
 #添加appender提供的实现类的属性
-log4j.appender.appenderName.optionN = valueN
+# log4j.appender.appenderName.optionN = valueN
+
+# 示例:
+log4j.appender.console = org.apache.log4j.ConsoleAppender
+log4j.appender.console.Target = System.err
+log4j.appender.file = org.apache.log4j.FileAppender选项属性
+log4j.appender.file.File = .\\log4j.log
+log4j.appender.file.Append = true
 
 #Log4j提供的appender常用的有以下几种：
-# 1)org.apache.log4j.ConsoleAppender(输出到控制台)
-# 2)org.apache.log4j.FileAppender(输出到文件)
-# 3)org.apache.log4j.DailyRollingFileAppender(每天产生一个日志文件)
-# 4)org.apache.log4j.RollingFileAppender(文件大小到达指定尺寸的时候产生一个新的文件)
-# 5)org.apache.log4j.WriterAppender(将日志信息以流格式发送到任意指定的地方)
+# 1) org.apache.log4j.ConsoleAppender, 输出到控制台
+# 2) org.apache.log4j.FileAppender, 输出到文件
+# 3) org.apache.log4j.DailyRollingFileAppender, 每天产生一个日志文件
+# 4) org.apache.log4j.RollingFileAppender, 文件大小到达指定尺寸的时候产生一个新的文件
+# 5) org.apache.log4j.WriterAppender, 将日志信息以流格式发送到任意指定的地方
 #
-#1)ConsoleAppender选项属性
-# -Threshold = DEBUG:指定日志消息的输出最低层次（来自父类：AppenderSkeleton.java的属性）
-# -ImmediateFlush = true:默认值是true,所有的消息都会被立即输出，设置为false则不会输出 （来自父类WriterAppender.java的属性）
-# -Target = System.err:默认值System.out,输出到控制台(err为红色,out为黑色)
+#1) ConsoleAppender选项属性
+# - Threshold = DEBUG, 指定日志消息的输出最低层次（来自父类：AppenderSkeleton.java的属性）
+# - ImmediateFlush = true, 默认值是true,所有的消息都会被立即输出，设置为false则不会输出 （来自父类WriterAppender.java的属性）
+# - Target = System.err, 默认值System.out,输出到控制台(err为红色,out为黑色)
 #
-#2)FileAppender选项属性
-# -Threshold = INFO:指定日志消息的输出最低层次 （来自父类：AppenderSkeleton.java的属性）
-# -ImmediateFlush = true:默认值是true,所有的消息都会被立即输出 （来自父类WriterAppender.java的属性）
-# -Encoding = UTF-8:可以指定文件编码格式 （来自父类WriterAppender.java的属性）
-# -File = C:\log4j.log:指定消息输出到C:\log4j.log文件
-# -Append = false:默认值true,将消息追加到指定文件中，false指将消息覆盖指定的文件内容
-# -BufferedIO = = false:是否启用缓冲区,默认为false
-# -BufferSize = 8 * 1024://缓冲区大小,默认为8KB
+#2) FileAppender选项属性
+# - Threshold = INFO, 指定日志消息的输出最低层次 （来自父类：AppenderSkeleton.java的属性）
+# - ImmediateFlush = true, 默认值是true,所有的消息都会被立即输出 （来自父类WriterAppender.java的属性）
+# - Encoding = UTF-8, 可以指定文件编码格式 （来自父类WriterAppender.java的属性）
+# - File = C:\log4j.log, 指定消息输出到C:\log4j.log文件
+# - Append = false, 默认值true,将消息追加到指定文件中，false指将消息覆盖指定的文件内容
+# - BufferedIO = = false, 是否启用缓冲区,默认为false
+# - BufferSize = 8 * 1024, 缓冲区大小,默认为8KB
 #
-#3)DailyRollingFileAppender选项属性
-# -Threshold = WARN:指定日志消息的输出最低层次 （来自父类：AppenderSkeleton.java的属性）
-# -ImmediateFlush = true:默认值是true,所有的消息都会被立即输出 （来自父类WriterAppender.java的属性）
-# -Encoding = UTF-8:可以指定文件编码格式 （来自父类WriterAppender.java的属性）
-# -File = C:\log4j.log:指定消息输出到C:\log4j.log文件 （来自父类FileAppender.java的属性）
-# -Append = false:默认值true,将消息追加到指定文件中，false指将消息覆盖指定的文件内容 （来自父类FileAppender.java的属性）
-# -DatePattern='.'yyyy-ww:每周滚动一次文件,即每周产生一个新的文件。还可以按用以下参数:
-#              '.'yyyy-MM:每月
-#              '.'yyyy-ww:每周
-#              '.'yyyy-MM-dd:每天
-#              '.'yyyy-MM-dd-a:每天两次
-#              '.'yyyy-MM-dd-HH:每小时
-#              '.'yyyy-MM-dd-HH-mm:每分钟
+#3) DailyRollingFileAppender选项属性
+# - Threshold = WARN, 指定日志消息的输出最低层次 （来自父类：AppenderSkeleton.java的属性）
+# - ImmediateFlush = true, 默认值是true,所有的消息都会被立即输出 （来自父类WriterAppender.java的属性）
+# - Encoding = UTF-8, 可以指定文件编码格式 （来自父类WriterAppender.java的属性）
+# - File = C:\log4j.log, 指定消息输出到C:\log4j.log文件 （来自父类FileAppender.java的属性）
+# - Append = false, 默认值true,将消息追加到指定文件中，false指将消息覆盖指定的文件内容 （来自父类FileAppender.java的属性）
+# - DatePattern='.'yyyy-ww, 每周滚动一次文件,即每周产生一个新的文件。
+#     还可以按用以下参数:
+#     '.'yyyy-MM, 每月
+#     '.'yyyy-ww, 每周
+#     '.'yyyy-MM-dd, 每天
+#     '.'yyyy-MM-dd-a, 每天两次
+#     '.'yyyy-MM-dd-HH, 每小时
+#     '.'yyyy-MM-dd-HH-mm, 每分钟
 #
-#4)RollingFileAppender选项属性
-# -Threshold = ERROR:指定日志消息的输出最低层次 （来自父类：AppenderSkeleton.java的属性）
-# -ImmediateFlush = TRUE:默认值是true,所有的消息都会被立即输出 （来自父类WriterAppender.java的属性）
-# -Encoding = UTF-8:可以指定文件编码格式 （来自父类WriterAppender.java的属性）
-# -File = C:/log4j.log:指定消息输出到C:/log4j.log文件 （来自父类FileAppender.java的属性）
-# -Append = FALSE:默认值true,将消息追加到指定文件中，false指将消息覆盖指定的文件内容 （来自父类FileAppender.java的属性）
-# -MaxFileSize = 100KB:后缀可以是KB,MB,GB.在日志文件到达该大小时,将会自动滚动.如:log4j.log.1
-# -MaximumFileSize = 1024直接使用字节不带单位
-# -MaxBackupIndex = 2:指定可以产生的滚动文件的最大数
+#4) RollingFileAppender选项属性
+# - Threshold = ERROR, 指定日志消息的输出最低层次 （来自父类：AppenderSkeleton.java的属性）
+# - ImmediateFlush = TRUE, 默认值是true,所有的消息都会被立即输出 （来自父类WriterAppender.java的属性）
+# - Encoding = UTF-8, 可以指定文件编码格式 （来自父类WriterAppender.java的属性）
+# - File = C:/log4j.log, 指定消息输出到C:/log4j.log文件 （来自父类FileAppender.java的属性）
+# - Append = FALSE, 默认值true,将消息追加到指定文件中，false指将消息覆盖指定的文件内容 （来自父类FileAppender.java的属性）
+# - MaxFileSize = 100KB, 后缀可以是KB,MB,GB.在日志文件到达该大小时,将会自动滚动.如:log4j.log.1
+# - MaximumFileSize = 1024, 直接使用字节不带单位
+# - MaxBackupIndex = 2, 指定可以产生的滚动文件的最大数
 
 ################################################################################
 #（3）配置日志信息的格式(布局)，其语法为：
 # 添加layout的实现类
-log4j.appender.appenderName.layout = fully.qualified.name.of.layout.class
+# log4j.appender.appenderName.layout = fully.qualified.name.of.layout.class
 # 添加layout的实现类的属性
-log4j.appender.appenderName.layout.optionN = valueN
+# log4j.appender.appenderName.layout.optionN = valueN
+
+# 示例:
+log4j.appender.console.layout = org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c - %m%n
+log4j.appender.file.layout = org.apache.log4j.PatternLayout
+log4j.appender.file.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c - %m%n
 
 #Log4j提供的layout有以下几种：
-# 1)org.apache.log4j.HTMLLayout(以HTML表格形式布局)
-# 2)org.apache.log4j.PatternLayout(可以灵活地指定布局模式)
-# 3)org.apache.log4j.SimpleLayout(包含日志信息的级别和信息字符串)
-# 4)org.apache.log4j.TTCCLayout(包含日志产生的时间、线程、类别等等信息)
-# 5)org.apache.log4j.xml.XMLLayout(以XML形式布局)
+# 1) org.apache.log4j.HTMLLayout, 以HTML表格形式布局
+# 2) org.apache.log4j.PatternLayout, 可以灵活地指定布局模式 —— 这个最常用
+# 3) org.apache.log4j.SimpleLayout, 包含日志信息的级别和信息字符串
+# 4) org.apache.log4j.TTCCLayout, 包含日志产生的时间、线程、类别等等信息
+# 5) org.apache.log4j.xml.XMLLayout, 以XML形式布局
 #
-#1)HTMLLayout选项属性
-# -LocationInfo = TRUE:默认值false,输出java文件名称和行号
-# -Title=Struts Log Message:默认值 Log4J Log Messages
+#1) HTMLLayout选项属性
+# - LocationInfo = TRUE, 默认值false,输出java文件名称和行号
+# - Title=Struts Log Message, 默认值 Log4J Log Messages
 #
-#2)PatternLayout选项属性
-# -ConversionPattern = %m%n:格式化指定的消息(参数格式见下面)
+#2) PatternLayout选项属性
+# - ConversionPattern = %m%n, 格式化指定的消息(参数格式见下面)
 #
-#3)XMLLayout选项属性
-# -LocationInfo = TRUE:默认值false,输出java文件名称和行号
+#3) XMLLayout选项属性
+# - LocationInfo = TRUE, 默认值false,输出java文件名称和行号
 #
 #Log4J采用类似C语言中的printf函数的打印格式格式化日志信息，打印参数如下：
 # %m 输出代码中指定的消息
@@ -205,6 +221,7 @@ log4j.appender.appenderName.layout.optionN = valueN
 
 ################################################################################
 #（4）指定特定包的输出特定的级别
+# 格式：log4j.logger.<包名>=<日志级别>
 log4j.logger.org.springframework=DEBUG
 ```
 
@@ -228,11 +245,11 @@ Log4j-2.x的Maven坐标如下，分成了 core + api 两个依赖：
 ```
 
 Log4j-2.x 主要有如下组件：
-+ `Logger`：日志记录器
-+ `Appender`：日志输出目的地
-+ `Layout`：输出格式
-+ `Filter`：日志过滤
-+ `Lookup`：访问系统属性、环境变量等
++ `Logger`: 日志记录器
++ `Appender`: 日志输出目的地
++ `Layout`: 输出格式
++ `Filter`: 日志过滤
++ `Lookup`: 访问系统属性、环境变量等
 
 log4j-2.x 的架构大致如下：
 ```text
@@ -255,9 +272,9 @@ Root Logger ——> Loggers
   + Filter: 用于对日志进行过滤，比如只输出 ERROR 级别日志
   + Layout: 定义日志的输出格式，比如日志的日期、时间、方法名称等
 
-
+### 配置文件
 log4j-2.x 主要是通过[配置文件](https://logging.apache.org/log4j/2.x/manual/configuration.html)进行设定，
-默认会在classpath目录下按照如下优先级（不考虑测试配置）寻找配置文件（注意中间的 2）：   
+默认会在classpath目录下按照如下优先级（不考虑测试配置）寻找配置文件（**注意文件名中间的2**）：   
 1. `log4j2.properties` > `log4j2.yaml`/`log4j2.yml` > `log4j2.json`/`log4j.jsn` > `log4j2.xml`
 2. 如果都没有找到，则会按默认配置输出，也就是输出到控制台.   
 
@@ -266,6 +283,7 @@ log4j-2.x 主要是通过[配置文件](https://logging.apache.org/log4j/2.x/man
 log4j-2.x 的日志级别和优先级为：OFF > FATAL > ERROR > WARN> INFO > DEBUG > TRACE > ALL.   
 打印日志时，会打印 >= 所设置级别的日志，设置的日志等级越高，打印出来的日志就越少。
 
+示例参见 resources 目录下的 `log4j2.xml`.
 
 ---
 ## JCL(Commons Logging)
@@ -275,7 +293,8 @@ log4j-2.x 的日志级别和优先级为：OFF > FATAL > ERROR > WARN> INFO > DE
 ---
 # Slf4j阵营
 
-Logback 和 Slf4j 是同一个作者开发的，这两个组件一般一起使用，似乎没有单独使用 Logback 的教程——Logback官方文档也是配合Slf4j一起用，因此这里就不分开介绍了。
+Logback 和 Slf4j 是同一个作者开发的，这两个组件一般一起使用，似乎没有单独使用 Logback 的教程——Logback官方文档也是配合Slf4j一起用，
+因此这里就不分开介绍了。
 
 官方文档:
 + [Logback](https://logback.qos.ch/index.html)
@@ -318,7 +337,7 @@ Logback 整体是基于如下 3 个组件（和Log4j-1.x一样）：
 + `Layout`：日志格式，属于 logback-core 依赖
   + `Layout`对象需要附加在某个`Appender`上，用于设置输出的日志格式
 
-Logback中所有的`Logger`都是由一个`LoggerContext`对象（默认名称为`default`）来管理的，它以一个树形的层次结构来组织所有的`Logger`，最顶层的是`Root` Logger。
+Logback中所有的`Logger`都是由一个`LoggerContext`对象（默认名称为`default`）来管理的，它以一个树形的层次结构来组织所有的`Logger`，最顶层的是`Root`Logger。
 
 
 Logback配置文件名称是`logback.xml`，配置语法参考官方文档 [Chapter3: Logback configuration ->Configuration file syntax](https://logback.qos.ch/manual/configuration.html#syntax)。    
@@ -331,10 +350,11 @@ Logback配置文件名称是`logback.xml`，配置语法参考官方文档 [Chap
     + `<encoder>`节点：负责转换日志事件为字节数组并将字节数组写入到输出流中，class属性设置输出格式的全限定类名
     + `<layout>`节点：配置日志输出形式的类，class属性设置输出格式的全限定类名，详细的配置格式可以参考官方文档 [Chapter 6: Layouts](https://logback.qos.ch/manual/layouts.html)
     + `<filter>`节点
-  + `property`节点：定义常用变量，可选
+  + `<property>`节点：定义常用变量，可选
 
 > Appender中的`encoder`是在 0.9.19 版本引入的，它的引入是因为 layout 只能将日志事件转换为成 string，
 > 而且在日志事件写出时不能进行更细致的控制，不能将日志事件批量聚合。    
 > 与之相反的是，encoder 不但可以完全控制字节写出时的格式，而且还可以控制这些字节什么时候被写出。
 
+配置文件示例参见 resources 目录下的 `logback.xml`。
 
