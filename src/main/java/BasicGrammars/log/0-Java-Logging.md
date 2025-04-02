@@ -293,14 +293,13 @@ log4j-2.x 的日志级别和优先级为：OFF > FATAL > ERROR > WARN> INFO > DE
 ---
 # Slf4j阵营
 
-Logback 和 Slf4j 是同一个作者开发的，这两个组件一般一起使用，似乎没有单独使用 Logback 的教程——Logback官方文档也是配合Slf4j一起用，
+Slf4j 和 Logback 是同一个作者开发的，这两个组件一般一起使用，似乎没有单独使用 Logback 的教程——Logback官方文档也是配合Slf4j一起用，
 因此这里就不分开介绍了。
 
 官方文档:
-+ [Logback](https://logback.qos.ch/index.html)
 + [Slf4j](https://www.slf4j.org/index.html), 里面只有一个 [SLF4J user manual](https://www.slf4j.org/manual.html) 文档比较有用
++ [Logback](https://logback.qos.ch/index.html)
 
-> Spark用的就是Slf4j，见 `org.apache.spark.internal.Logging.scala` 源码。
 
 ## Maven依赖
 Logback分为 3 个依赖：
@@ -309,16 +308,18 @@ Logback分为 3 个依赖：
 + logback-access：为了集成Servlet环境而准备的，可提供HTTP-access的日志接口
 
 ```xml
-<dependency>
-  <groupId>ch.qos.logback</groupId>
-  <artifactId>logback-core</artifactId>
-  <version>1.2.6</version>
-</dependency>
+<!-- Slf4j依赖 -->
 <dependency>
   <groupId>org.slf4j</groupId>
   <artifactId>slf4j-api</artifactId>
   <version>1.7.30</version>
   <scope>test</scope>
+</dependency>
+<!-- Logback依赖 -->
+<dependency>
+  <groupId>ch.qos.logback</groupId>
+  <artifactId>logback-core</artifactId>
+  <version>1.2.6</version>
 </dependency>
 <dependency>
   <groupId>ch.qos.logback</groupId>
@@ -339,7 +340,6 @@ Logback 整体是基于如下 3 个组件（和Log4j-1.x一样）：
 
 Logback中所有的`Logger`都是由一个`LoggerContext`对象（默认名称为`default`）来管理的，它以一个树形的层次结构来组织所有的`Logger`，最顶层的是`Root`Logger。
 
-
 Logback配置文件名称是`logback.xml`，配置语法参考官方文档 [Chapter3: Logback configuration ->Configuration file syntax](https://logback.qos.ch/manual/configuration.html#syntax)。    
 有如下配置节点：
 + 根节点`<configuration>`
@@ -358,3 +358,8 @@ Logback配置文件名称是`logback.xml`，配置语法参考官方文档 [Chap
 
 配置文件示例参见 resources 目录下的 `logback.xml`。
 
+------
+
+# 常用工具日志集成
+
++ Spark 2.x 使用的是 Slf4j，不过后端搭配的是 Log4j 1.x（最后一个版本1.2.17），见 `org.apache.spark.internal.Logging.scala` 源码。
