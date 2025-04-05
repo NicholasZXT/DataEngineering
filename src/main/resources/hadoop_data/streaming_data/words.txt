@@ -1,0 +1,17 @@
+2022-06-15 08:30:10,hello spark streaming
+2022-06-15 08:30:02,hello scala
+2022-06-15 08:30:17,hello hadoop yarn
+2022-06-15 08:30:19,hello hadoop mapreduce
+2022-06-15 08:30:28,hello spark sql
+>>>batch
+2022-06-15 08:30:29,welcome spark streaming
+2022-06-15 08:30:38,welcome spark sql
+2022-06-15 08:30:48,welcome kafka streaming
+2022-06-15 08:30:54,welcome flink
+2022-06-15 08:30:59,welcome flink sql
+>>>batch
+2022-06-15 08:31:09,welcome scala
+2022-06-15 08:31:08,welcome java
+2022-06-15 08:31:10,welcome hadoop
+2022-06-15 08:31:11,welcome spark
+2022-06-15 08:31:12,welcome flink

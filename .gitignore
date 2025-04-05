@@ -17,4 +17,4 @@ data/wordcount_result/
 logs
 tmp
 flink-out
-hadoop_data
+#hadoop_data
