@@ -33,9 +33,9 @@ public class SourceOperations {
         //StreamExecutionEnvironment envLocal = StreamExecutionEnvironment.createLocalEnvironment();
         // 方法2：获取集群执行环境，需要设置JobManager的IP+Port，还有执行jar包
         //StreamExecutionEnvironment envCluster = StreamExecutionEnvironment.createRemoteEnvironment(
-        //        "JobManager-host",
-        //        1234,
-        //        "path/to/jar"
+        //    "JobManager-host",
+        //    1234,
+        //    "path/to/jar"
         //);
         // 方法3：以下方式会自动判断当前运行环境，可以返回一个本地执行环境，或者一个集群执行环境 —— 推荐使用这个
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -54,18 +54,18 @@ public class SourceOperations {
         //collectionSource.print();
 
         DataStreamSource<WaterSensor> sensorSource = env.fromElements(
-                new WaterSensor("sensor_1", 1.0, 1),
-                new WaterSensor("sensor_2", 2.0, 2)
+            new WaterSensor("sensor_1", 1.0, 1),
+            new WaterSensor("sensor_2", 2.0, 2)
         );
         sensorSource.print();
 
         // 从文件中读取，需要 flink-connector-files 依赖
         FileSource<String> fileSource = FileSource.forRecordStreamFormat(
-                new TextLineInputFormat(),
-                new Path("src/main/resources/hadoop_data/wordcount_input")
+            new TextLineInputFormat(),
+            new Path("src/main/resources/hadoop_data/wordcount_input")
         ).build();
         DataStreamSource<String> fileStream = env.fromSource(
-                fileSource, WatermarkStrategy.noWatermarks(), "fileStream"
+            fileSource, WatermarkStrategy.noWatermarks(), "fileStream"
         );
         //fileStream.print();
 
@@ -81,18 +81,18 @@ public class SourceOperations {
         // 4. 返回的类型，使用 Types 指定
         DataGeneratorSource<String> dgSource = new DataGeneratorSource<>(
                 // 这里采用匿名类的方式提供GeneratorFunction接口实现
-                new GeneratorFunction<Long, String>() {
-                    @Override
-                    public String map(Long value) throws Exception {
-                        return "Number: " + value;
-                    }
-                },
-                16,
-                RateLimiterStrategy.perSecond(1),
-                Types.STRING
+            new GeneratorFunction<Long, String>() {
+                @Override
+                public String map(Long value) throws Exception {
+                    return "Number: " + value;
+                }
+            },
+            16,
+            RateLimiterStrategy.perSecond(1),
+            Types.STRING
         );
         DataStreamSource<String> dgStream = env.fromSource(
-                dgSource, WatermarkStrategy.noWatermarks(), "data-generator"
+            dgSource, WatermarkStrategy.noWatermarks(), "data-generator"
         );
         //dgStream.print();
 
@@ -101,16 +101,16 @@ public class SourceOperations {
         Set<TopicPartition> partitions = new HashSet<>();
         partitions.add(partition);
         KafkaSource<String> kafkaSource = KafkaSource.<String>builder()
-                .setBootstrapServers("hadoop101:9092,hadoop102:9092,hadoop103:9092")
-                .setGroupId("f1")
-                .setTopics("first")
-                //.setPartitions(partitions)
-                //.setProperty("partition.discovery.interval.ms", "10000")
-                .setStartingOffsets(OffsetsInitializer.earliest())
-                .setValueOnlyDeserializer(new SimpleStringSchema())
-                .build();
+            .setBootstrapServers("hadoop101:9092,hadoop102:9092,hadoop103:9092")
+            .setGroupId("f1")
+            .setTopics("first")
+            //.setPartitions(partitions)
+            //.setProperty("partition.discovery.interval.ms", "10000")
+            .setStartingOffsets(OffsetsInitializer.earliest())
+            .setValueOnlyDeserializer(new SimpleStringSchema())
+            .build();
         DataStreamSource<String> kafkaStream = env.fromSource(
-                kafkaSource, WatermarkStrategy.noWatermarks(), "kafka-source"
+            kafkaSource, WatermarkStrategy.noWatermarks(), "kafka-source"
         );
         // Flink 好像没有提供类似于 limit 这样的API
         //kafkaStream.print("kafka");

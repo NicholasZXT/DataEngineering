@@ -72,7 +72,7 @@ public class WindowAgg {
 
         // ------------ 3. 聚合函数 + 全窗口函数 ----------------
         // 聚合函数的 reduce 和 aggregate 方法里，还可以传入 ProcessWindowFunction子类，达到两者结合的目的
-        // 此时的处理逻辑是：先用 聚合函数 逐条处理窗口里的数据，
+        // 此时的处理逻辑是：先用 聚合函数 逐条处理窗口里的数据，之后基于增量聚合结果，再用 全窗口函数 进行计算
         SingleOutputStreamOperator<String> compositeStream = sensorCountStream.aggregate(
             new MyAggregateFunction(),
             new MyProcessFunction2()
@@ -100,14 +100,14 @@ class MyAggregateFunction implements AggregateFunction<WaterSensor, Integer, Str
     //创建累加器，初始化累加器
     @Override
     public Integer createAccumulator() {
-        System.out.println("[MyAggregateFunction]创建累加器");
+        System.out.println("[MyAggregateFunction] 创建累加器");
         return 0;
     }
     // 聚合逻辑
     @Override
     public Integer add(WaterSensor value, Integer accumulator) {
         Integer result = accumulator + value.getVc();
-        System.out.println("[MyAggregateFunction]调用add方法, value=" + value
+        System.out.println("[MyAggregateFunction] 调用add方法, value=" + value
                 + ", accumulator=" + accumulator.toString()
                 + ", return: " + result);
         return result;
@@ -116,14 +116,14 @@ class MyAggregateFunction implements AggregateFunction<WaterSensor, Integer, Str
     @Override
     public String getResult(Integer accumulator) {
         String result = accumulator.toString();
-        System.out.println("[MyAggregateFunction]调用getResult方法, return: " + result);
+        System.out.println("[MyAggregateFunction] 调用getResult方法, return: " + result);
         return result;
     }
     // 只有会话窗口才会用到这个方法
     @Override
     public Integer merge(Integer integer, Integer acc1) {
         // 只有会话窗口才会用到
-        System.out.println("[MyAggregateFunction]调用merge方法");
+        System.out.println("[MyAggregateFunction] 调用merge方法");
         return null;
     }
 }
@@ -146,16 +146,22 @@ class MyProcessFunction extends ProcessWindowFunction<WaterSensor, String, Strin
      * @throws Exception
      */
     @Override
-    public void process(String key, ProcessWindowFunction<WaterSensor, String, String, GlobalWindow>.Context context,
-                        Iterable<WaterSensor> elements, Collector<String> out) throws Exception {
+    public void process(
+        String key,
+        ProcessWindowFunction<WaterSensor, String, String, GlobalWindow>.Context context,
+        Iterable<WaterSensor> elements,
+        Collector<String> out
+    ) throws Exception {
         // 上下文可以拿到window对象，还有其他东西：侧输出流 等等
         long windowTs = context.window().maxTimestamp();
         String windowTsStr = DateFormatUtils.format(windowTs, "yyyy-MM-dd HH:mm:ss.SSS");
         long count = elements.spliterator().estimateSize();
-        out.collect("[MyProcessFunction] -> key=" + key
-                + "的窗口@[" +windowTsStr + "]包含 "
-                + count + " 条数据 ===> "
-                + elements.toString());
+        out.collect(
+            "[MyProcessFunction] -> key=" + key
+            + "的窗口@[" +windowTsStr + "]包含 "
+            + count + " 条数据 ===> "
+            + elements.toString()
+        );
     }
 }
 

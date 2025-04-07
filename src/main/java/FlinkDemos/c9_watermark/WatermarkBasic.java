@@ -88,10 +88,10 @@ public class WatermarkBasic {
                 });
 
         // 2. 指定 watermark 策略
-        SingleOutputStreamOperator<WaterSensor> sensorDSwithWM = sensorDS.assignTimestampsAndWatermarks(watermarkStrategy);
+        SingleOutputStreamOperator<WaterSensor> sensorDSWithWM = sensorDS.assignTimestampsAndWatermarks(watermarkStrategy);
 
         // 3. 根据 watermark 策略，来定义对应的 事件时间语义 的窗口
-        SingleOutputStreamOperator<String> result = sensorDSwithWM
+        SingleOutputStreamOperator<String> result = sensorDSWithWM
             .keyBy(WaterSensor::getId)
             // 使用 滚动时间窗口
             .window(TumblingEventTimeWindows.of(Time.seconds(2)))
@@ -109,10 +109,11 @@ public class WatermarkBasic {
                          String windowStart = DateFormatUtils.format(startTs, "yyyy-MM-dd HH:mm:ss");
                          String windowEnd = DateFormatUtils.format(endTs, "yyyy-MM-dd HH:mm:ss");
                          long count = elements.spliterator().estimateSize();
-                         out.collect("key=" + key + "的窗口@[" + windowStart + ", " +
-                                 windowEnd + "]包含 " +
-                                 count + " 条数据 ===> " +
-                                 elements.toString()
+                         out.collect(
+                             "key=" + key + "的窗口@[" + windowStart + ", " +
+                             windowEnd + "]包含 " +
+                             count + " 条数据 ===> " +
+                             elements.toString()
                          );
                      }
                  }

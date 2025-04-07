@@ -185,6 +185,7 @@
             <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <!-- ***************************************************** -->
         <!-- Apache Common-Cli 命令行解析工具-->
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
@@ -193,6 +194,7 @@
             <artifactId>commons-cli</artifactId>
             <version>1.5.0</version>
         </dependency>
+
         <!-- ***************************************************** -->
         <!-- 手动加入 Scala 的依赖，仅在强制设置 scala 版本时需要手动引入-->
         <dependency>
@@ -201,6 +203,7 @@
             <version>${scala.version}</version>
             <scope>${local.scope}</scope>
         </dependency>
+
         <!-- ***************************************************** -->
         <!--  spark-core依赖 -->
         <!--<dependency>-->
@@ -260,6 +263,7 @@
             <version>${spark.version}</version>
             <scope>${spark.scope}</scope>
         </dependency>
+
         <!-- ***************************************************** -->
         <!-- kafka 依赖 -->
         <dependency>
@@ -276,6 +280,7 @@
             <version>${kafka.version}</version>
             <scope>${kafka.scope}</scope>
         </dependency>
+
         <!-- ***************************************************** -->
         <!--HBase依赖 -->
         <dependency>
@@ -296,6 +301,7 @@
             <version>${hbase.version}</version>
             <scope>${hbase.scope}</scope>
         </dependency>
+
         <!-- ***************************************************** -->
         <!-- ElasticSearch依赖-->
         <dependency>
@@ -310,6 +316,7 @@
         <!--    <version>${elasticsearch.version}</version>-->
         <!--    <scope>${elasticsearch.scope}</scope>-->
         <!--</dependency>-->
+
         <!-- ***************************************************** -->
         <!-- Flink 相关依赖 -->
         <!-- Flink DataStream依赖-->
@@ -445,6 +452,7 @@
             <version>${flink.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <!-- ***************************************************** -->
         <!-- Hadoop相关依赖，强烈建议放在所有大数据组件依赖的后面，因为手动指定的hadoop版本很可能会和前面某个组件冲突 -->
         <dependency>
@@ -544,6 +552,7 @@
             <artifactId>libthrift</artifactId>
             <version>0.17.0</version>
         </dependency>
+
         <!-- ***************************************************** -->
         <!-- XGBoost 和 XGBoost for Spark 依赖 -->
         <!--<dependency>-->

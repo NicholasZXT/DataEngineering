@@ -17,10 +17,10 @@ public class PartitionOperation {
 
         // 从集合中创建源数据
         DataStreamSource<WaterSensor> sensorDS = env.fromElements(
-                new WaterSensor("s1", 1.0, 1),
-                new WaterSensor("s2", 11.0, 2),
-                new WaterSensor("s3", 2.0, 3),
-                new WaterSensor("s4", 3.0, 4)
+            new WaterSensor("s1", 1.0, 1),
+            new WaterSensor("s2", 11.0, 2),
+            new WaterSensor("s3", 2.0, 3),
+            new WaterSensor("s4", 3.0, 4)
         );
 
         // shuffle随机分区

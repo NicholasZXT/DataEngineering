@@ -73,14 +73,17 @@ class SplitProcessFunction extends ProcessFunction<WaterSensor, WaterSensor> {
     @Override
     public void open(Configuration parameters) throws Exception {
         super.open(parameters);
-        // Tag 的定义不要放在 processElement 方法里
+        // Tag 的定义最好不要放在 open 方法里，更不能放在 processElement 方法里
         //evenTag = new OutputTag<>("even", Types.POJO(WaterSensor.class));
         //oddTag = new OutputTag<>("odd", Types.POJO(WaterSensor.class));
+        System.out.println("open method called with tags: " + evenTag + ", " + oddTag);
     }
 
     @Override
     public void processElement(
-        WaterSensor value, ProcessFunction<WaterSensor, WaterSensor>.Context ctx, Collector<WaterSensor> out
+        WaterSensor value,
+        ProcessFunction<WaterSensor, WaterSensor>.Context ctx,
+        Collector<WaterSensor> out
     ) throws Exception {
         int vc = value.getVc();
         if (vc <= 0){
