@@ -158,7 +158,7 @@ class MyProcessFunction extends ProcessWindowFunction<WaterSensor, String, Strin
         long count = elements.spliterator().estimateSize();
         out.collect(
             "[MyProcessFunction] -> key=" + key
-            + "的窗口@[" +windowTsStr + "]包含 "
+            + "的窗口@[" + windowTsStr + "]包含 "
             + count + " 条数据 ===> "
             + elements.toString()
         );

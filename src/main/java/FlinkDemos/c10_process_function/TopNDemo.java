@@ -21,7 +21,8 @@ import FlinkDemos.beans.WaterSensor;
 import FlinkDemos.c8_window.TimeWindowAgg;
 
 /**
- *
+ * 实时统计一段时间内的出现次数最多的水位。
+ * 例如统计最近 10 秒钟内出现次数最多的两个水位，并且每 5 秒钟更新一次
  */
 public class TopNDemo {
     public static void main(String[] args) throws Exception {
@@ -40,18 +41,19 @@ public class TopNDemo {
         //);
         // 这个演示建议使用 socket 流
         SingleOutputStreamOperator<WaterSensor> sensorDS = env
-            .socketTextStream("localhost", 7890)
+            .socketTextStream("localhost", 9700)
             .map(new TimeWindowAgg.WaterSensorMapFunction())
             .assignTimestampsAndWatermarks(
                 WatermarkStrategy
-                    .<WaterSensor>forBoundedOutOfOrderness(Duration.ofSeconds(3))
+                    .<WaterSensor>forBoundedOutOfOrderness(Duration.ofSeconds(2))
                     .withTimestampAssigner((element, ts) -> element.getTs().longValue() * 1000L)
             );
+        //sensorDS.print("sensorDS");
 
         // ----------------------------------------------------------------------------
         // 方案一：不分区，使用一个窗口将所有数据汇集到一起，用hashmap存，key=vc，value=count值
-        // 最近10秒= 窗口长度， 每5秒输出 = 滑动步长
-        sensorDS.windowAll(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(5)))
+        // 窗口长度 = 最近4秒, 滑动步长 = 每2秒输出
+        sensorDS.windowAll(SlidingEventTimeWindows.of(Time.seconds(4), Time.seconds(2)))
             .process(new MyTopNPAWF())
             .print("TopN-with-AllWindow");
 
@@ -59,19 +61,18 @@ public class TopNDemo {
         // 方案二：使用 KeyedProcessFunction实现
         /**
          * 1、按照 vc 做 keyBy，开窗，分别 count
-         *    ==》 增量聚合，计算 count
-         *    ==》 全窗口，对计算结果 count值封装,带上窗口结束时间的标签
-         *          ==》 为了让同一个窗口时间范围的计算结果到一起去
+         *  1.1 增量聚合，计算 count
+         *  1.2 全窗口，对计算结果 count值封装,带上窗口结束时间的标签，为了让同一个窗口时间范围的计算结果到一起去
          * 2、对同一个窗口范围的 count 值进行处理：排序、取前N个
-         *    =》 按照 windowEnd 做 keyBy
-         *    =》 使用 process，来一条调用一次，需要先分开存，用 HashMap{key=windowEnd,value=List}
-         *      =》 使用定时器，对 存起来的结果 进行 排序、取前N个
+         *  2.1 按照 windowEnd 做 keyBy
+         *  2.2 使用 process，来一条调用一次，需要先分开存，用 HashMap{key=windowEnd, value=List}
+         *  2.3 使用定时器，对 存起来的结果 进行 排序、取前N个
          */
         // 1. 按照 vc 分组、开窗、聚合（增量计算+全量打标签）
         //  开窗聚合后，就是普通的流，没有了窗口信息，需要自己打上窗口的标记 windowEnd
         SingleOutputStreamOperator<Tuple3<Integer, Integer, Long>> windowAgg = sensorDS
             .keyBy(WaterSensor::getVc)
-            .window(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(5)))
+            .window(SlidingEventTimeWindows.of(Time.seconds(4), Time.seconds(2)))
             .aggregate(
                 new VcCountAgg(),
                 new WindowResult()
@@ -87,12 +88,10 @@ public class TopNDemo {
 
     public static class MyTopNPAWF extends ProcessAllWindowFunction<WaterSensor, String, TimeWindow> {
         @Override
-        public void process(
-            Context context, Iterable<WaterSensor> elements, Collector<String> out
-        ) throws Exception {
-            // 定义一个hashmap用来存统计结果：key=vc，value=count值
+        public void process(Context context, Iterable<WaterSensor> elements, Collector<String> out) throws Exception {
+            // 1. 遍历数据, 统计各个vc出现的次数，存放在一个 HashMap 里
+            // 定义一个hashmap用来存统计结果: key=vc, value=count
             Map<Integer, Integer> vcCountMap = new HashMap<>();
-            // 1.遍历数据, 统计各个vc出现的次数
             for (WaterSensor element : elements) {
                 Integer vc = element.getVc();
                 if (vcCountMap.containsKey(vc)) {
@@ -103,13 +102,14 @@ public class TopNDemo {
                     vcCountMap.put(vc, 1);
                 }
             }
-            // 2.对 count值进行排序: 利用List来实现排序
-            List<Tuple2<Integer, Integer>> datas = new ArrayList<>();
+
+            // 2. 对 count值进行排序: 利用List来实现排序
+            List<Tuple2<Integer, Integer>> counts = new ArrayList<>();
             for (Integer vc : vcCountMap.keySet()) {
-                datas.add(Tuple2.of(vc, vcCountMap.get(vc)));
+                counts.add(Tuple2.of(vc, vcCountMap.get(vc)));
             }
             // 对List进行排序，根据count值 降序
-            datas.sort(
+            counts.sort(
                 new Comparator<Tuple2<Integer, Integer>>() {
                     @Override
                     public int compare(Tuple2<Integer, Integer> o1, Tuple2<Integer, Integer> o2) {
@@ -118,17 +118,18 @@ public class TopNDemo {
                     }
                 }
             );
-            // 3.取出 count最大的2个 vc
+
+            // 3. 取出 count最大的2个 vc
             StringBuilder outStr = new StringBuilder();
-            outStr.append("================================\n");
+            outStr.append("\n--------------------------------\n");
             // 遍历排序后的 List，取出前2个， 考虑可能List不够2个的情况  ==》 List中元素的个数 和 2 取最小值
-            for (int i = 0; i < Math.min(2, datas.size()); i++) {
-                Tuple2<Integer, Integer> vcCount = datas.get(i);
+            for (int i = 0; i < Math.min(2, counts.size()); i++) {
+                Tuple2<Integer, Integer> vcCount = counts.get(i);
                 outStr.append("Top" + (i + 1) + "\n");
                 outStr.append("vc=" + vcCount.f0 + "\n");
                 outStr.append("count=" + vcCount.f1 + "\n");
                 outStr.append("窗口结束时间=" + DateFormatUtils.format(context.window().getEnd(), "yyyy-MM-dd HH:mm:ss.SSS") + "\n");
-                outStr.append("================================\n");
+                outStr.append("--------------------------------\n");
             }
             out.collect(outStr.toString());
         }

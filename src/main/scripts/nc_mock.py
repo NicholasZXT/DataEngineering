@@ -94,8 +94,11 @@ if __name__ == "__main__":
     server_ip = '127.0.0.1'
     server_port = 9700
 
+    # python .\src\main\scripts\nc_mock.py
     print(f">>> current path: {cur_dir}.")
-    file_path = os.path.join(os.getcwd(), "src", "main", "resources", "hadoop_data", "streaming_data", "words.txt")
+    # file_path = os.path.join(os.getcwd(), "src", "main", "resources", "hadoop_data", "streaming_data", "words.txt")
+    file_path = os.path.join(os.getcwd(), "src", "main", "resources", "hadoop_data", "streaming_data", "water_sensor.txt")
+    print(f">>> file path: {file_path}.")
     content = read_file(file_path)
     # for line in content():
     #     print(line)
