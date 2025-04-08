@@ -182,6 +182,12 @@ public class TopNDemo {
         }
     }
 
+    /**
+     * 泛型参数 KeyedProcessFunction<KEY, IN, OUT> 如下：
+     * <KEY> – Type of the key.
+     * <IN> – Type of the input elements.
+     * <OUT> – Type of the output elements.
+     */
     public static class TopN extends KeyedProcessFunction<Long, Tuple3<Integer, Integer, Long>, String> {
         // 存不同窗口的 统计结果 {key=windowEnd, value=数据List}
         private Map<Long, List<Tuple3<Integer, Integer, Long>>> windowCountMap;
@@ -193,27 +199,33 @@ public class TopNDemo {
             windowCountMap = new HashMap<>();
         }
 
+        /**
+         * 处理 按键分区 后流中的每个元素
+         * @param value 当前待处理的元素，对应于 IN 类型
+         * @param ctx 上下文对象，提供访问当前键、时间戳、定时器服务等功能，类型是 Context
+         * @param out 用于收集输出结果的收集器，类型是 Collector<OUT>
+         * @throws Exception
+         */
         @Override
         public void processElement(
             Tuple3<Integer, Integer, Long> value, Context ctx, Collector<String> out
         ) throws Exception {
-            // 进入这个方法，只是一条数据，要排序，得到齐才行 ===》 存起来，不同窗口分开存
-            // 1. 存到HashMap中
+            // 每个 Key 的窗口中每条元素都会调用此方法
+            // 1. 这里的 Key 是 windowEnd 时间，每个Key（WindowEnd）里是不同水位的 count，将不同水位的 count 存放在 HashMap中
             Long windowEnd = value.f2;
             if (windowCountMap.containsKey(windowEnd)) {
                 // 1.1 包含vc，不是该vc的第一条，直接添加到List中
-                List<Tuple3<Integer, Integer, Long>> dataList = windowCountMap.get(windowEnd);
-                dataList.add(value);
+                List<Tuple3<Integer, Integer, Long>> vcCountList = windowCountMap.get(windowEnd);
+                vcCountList.add(value);
             } else {
                 // 1.1 不包含vc，是该vc的第一条，需要初始化list
-                List<Tuple3<Integer, Integer, Long>> dataList = new ArrayList<>();
-                dataList.add(value);
-                windowCountMap.put(windowEnd, dataList);
+                List<Tuple3<Integer, Integer, Long>> vcCountList = new ArrayList<>();
+                vcCountList.add(value);
+                windowCountMap.put(windowEnd, vcCountList);
             }
-            // 2. 注册一个定时器， windowEnd+1ms即可（
+            // 2. 注册一个定时器， windowEnd + 1ms即可
             // 同一个窗口范围，应该同时输出，只不过是一条一条调用processElement方法，只需要延迟1ms即可
             ctx.timerService().registerEventTimeTimer(windowEnd + 1);
-
         }
 
         @Override
@@ -222,8 +234,8 @@ public class TopNDemo {
             // 定时器触发，同一个窗口范围的计算结果攒齐了，开始 排序、取TopN
             Long windowEnd = ctx.getCurrentKey();
             // 1. 排序
-            List<Tuple3<Integer, Integer, Long>> dataList = windowCountMap.get(windowEnd);
-            dataList.sort(new Comparator<Tuple3<Integer, Integer, Long>>() {
+            List<Tuple3<Integer, Integer, Long>> vcCountList = windowCountMap.get(windowEnd);
+            vcCountList.sort(new Comparator<Tuple3<Integer, Integer, Long>>() {
                 @Override
                 public int compare(Tuple3<Integer, Integer, Long> o1, Tuple3<Integer, Integer, Long> o2) {
                     // 降序， 后 减 前
@@ -232,18 +244,18 @@ public class TopNDemo {
             });
             // 2. 取TopN
             StringBuilder outStr = new StringBuilder();
-            outStr.append("================================\n");
-            // 遍历 排序后的 List，取出前 threshold 个， 考虑可能List不够2个的情况  ==》 List中元素的个数 和 2 取最小值
-            for (int i = 0; i < Math.min(threshold, dataList.size()); i++) {
-                Tuple3<Integer, Integer, Long> vcCount = dataList.get(i);
-                outStr.append("Top" + (i + 1) + "\n");
+            outStr.append("\n================================\n");
+            // 遍历 排序后的 List，取出前 threshold 个，考虑可能List不够2个的情况，因此取 List中元素的个数 和 2 的较小值
+            for (int i = 0; i < Math.min(threshold, vcCountList.size()); i++) {
+                Tuple3<Integer, Integer, Long> vcCount = vcCountList.get(i);
                 outStr.append("vc=" + vcCount.f0 + "\n");
                 outStr.append("count=" + vcCount.f1 + "\n");
+                outStr.append("Top" + (i + 1) + "\n");
                 outStr.append("窗口结束时间=" + vcCount.f2 + "\n");
                 outStr.append("================================\n");
             }
             // 用完的List，及时清理，节省资源
-            dataList.clear();
+            vcCountList.clear();
             out.collect(outStr.toString());
         }
     }
