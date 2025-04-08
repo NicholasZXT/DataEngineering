@@ -42,10 +42,10 @@ public class WindowAgg {
         // ------------ 1. 增量聚合函数 ----------------
         /**
          * reduce：
-         * 1、相同key的第一条数据来的时候，不会调用reduce方法
-         * 2、增量聚合： 来一条数据，就会计算一次，但是不会输出
-         * 3、在窗口触发的时候，才会输出窗口的最终计算结果
-         * 返回的类型必须和原来的一样——这是最大的限制
+         * 1、相同Key的第一条数据来的时候，不会调用reduce方法
+         * 2、增量聚合：每个Key内部，来一条数据，就会计算一次，但是不会输出
+         * 3、在窗口触发的时候，才会输出窗口的最终聚合结果
+         * 返回的类型必须和原来的一样 —— 这是 reduce 算子的语义，也是最大的限制
          */
         SingleOutputStreamOperator<WaterSensor> reducedStream = sensorCountStream.reduce(
             // 传入一个实现 ReduceFunction 接口的匿名实现类
@@ -75,7 +75,7 @@ public class WindowAgg {
         // 此时的处理逻辑是：先用 聚合函数 逐条处理窗口里的数据，之后基于增量聚合结果，再用 全窗口函数 进行计算
         SingleOutputStreamOperator<String> compositeStream = sensorCountStream.aggregate(
             new MyAggregateFunction(),
-            new MyProcessFunction2()
+            new MyProcessFunctionForAgg()
         );
         compositeStream.print("compositeStream");
 
@@ -90,24 +90,25 @@ public class WindowAgg {
  * <Integer>：累加器的类型，存储的中间计算结果的类型
  * <String>：输出的类型
  * 使用逻辑：
- * 1、属于本窗口的第一条数据来，创建窗口，创建累加器
- * 2、增量聚合： 来一条计算一条， 调用一次add方法
- * 3、窗口输出时调用一次getResult方法
- * 4、输入、中间累加器、输出 类型可以不一样，非常灵活
+ * 1、属于本窗口的第一条数据来，创建窗口，初始化累加器
+ * 2、增量聚合：来一条计算一条，调用一次add方法
+ * 3、窗口输出时调用一次 getResult 方法
+ * 4、输入类型、中间累加器类型、输出类型可以不一样，非常灵活
  */
 class MyAggregateFunction implements AggregateFunction<WaterSensor, Integer, String>{
     // 上面的类名后面不要跟泛型参数 ----- KEY
     //创建累加器，初始化累加器
     @Override
     public Integer createAccumulator() {
-        System.out.println("[MyAggregateFunction] 创建累加器");
+        Integer accumulator = 0;
+        System.out.println("[MyAggregateFunction] -> createAccumulator: init accumulator=" + accumulator);
         return 0;
     }
     // 聚合逻辑
     @Override
-    public Integer add(WaterSensor value, Integer accumulator) {
-        Integer result = accumulator + value.getVc();
-        System.out.println("[MyAggregateFunction] 调用add方法, value=" + value
+    public Integer add(WaterSensor currentRecord, Integer accumulator) {
+        Integer result = accumulator + currentRecord.getVc();
+        System.out.println("[MyAggregateFunction] -> add, currentRecord=" + currentRecord
                 + ", accumulator=" + accumulator.toString()
                 + ", return: " + result);
         return result;
@@ -116,14 +117,14 @@ class MyAggregateFunction implements AggregateFunction<WaterSensor, Integer, Str
     @Override
     public String getResult(Integer accumulator) {
         String result = accumulator.toString();
-        System.out.println("[MyAggregateFunction] 调用getResult方法, return: " + result);
+        System.out.println("[MyAggregateFunction] -> getResult, return: " + result);
         return result;
     }
     // 只有会话窗口才会用到这个方法
     @Override
     public Integer merge(Integer integer, Integer acc1) {
         // 只有会话窗口才会用到
-        System.out.println("[MyAggregateFunction] 调用merge方法");
+        System.out.println("[MyAggregateFunction] -> merge");
         return null;
     }
 }
@@ -140,7 +141,7 @@ class MyProcessFunction extends ProcessWindowFunction<WaterSensor, String, Strin
     /**
      * 抽象方法 的参数
      * @param key The key for which this window is evaluated.
-     * @param context The context in which the window is being evaluated. 注意，Context 是 抽象类 Window 的内部变量.
+     * @param context The context in which the window is being evaluated. 注意，Context 是 抽象类 Window 的内部类.
      * @param elements The elements in the window being evaluated.
      * @param out A collector for emitting elements.
      * @throws Exception
@@ -168,7 +169,7 @@ class MyProcessFunction extends ProcessWindowFunction<WaterSensor, String, Strin
 /**
  * 和 MyAggregateFunction 聚合函数一起使用的 全窗口函数，它的第一个泛型不再是 WaterSensor了，而是聚合函数的输出
  */
-class MyProcessFunction2 extends ProcessWindowFunction<String, String, String, GlobalWindow> {
+class MyProcessFunctionForAgg extends ProcessWindowFunction<String, String, String, GlobalWindow> {
     /**
      * 抽象方法 的参数
      * @param key The key for which this window is evaluated.
@@ -178,13 +179,18 @@ class MyProcessFunction2 extends ProcessWindowFunction<String, String, String, G
      * @throws Exception
      */
     @Override
-    public void process(String key, ProcessWindowFunction<String, String, String, GlobalWindow>.Context context,
-                        Iterable<String> elements, Collector<String> out) throws Exception {
+    public void process(
+        String key,
+        ProcessWindowFunction<String, String, String, GlobalWindow>.Context context,
+        Iterable<String> elements,
+        Collector<String> out
+    ) throws Exception {
         // 上下文可以拿到window对象，还有其他东西：侧输出流 等等
         long windowTs = context.window().maxTimestamp();
         String windowTsStr = DateFormatUtils.format(windowTs, "yyyy-MM-dd HH:mm:ss.SSS");
+        // 查看当前 Key 的窗口数据条数，实际上只有一条，因为这里拿到的是 MyAggregateFunction 增量聚合的最终结果，每个Key只有一条记录
         long count = elements.spliterator().estimateSize();
-        out.collect("[MyProcessFunction2] -> key=" + key
+        out.collect("[MyProcessFunctionForAgg] -> key=" + key
                 + "的窗口@[" + windowTsStr + "]包含 "
                 + count + " 条数据 ===> "
                 + elements.toString());

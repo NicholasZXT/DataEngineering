@@ -43,6 +43,7 @@ public class TopNDemo {
         SingleOutputStreamOperator<WaterSensor> sensorDS = env
             .socketTextStream("localhost", 9700)
             .map(new TimeWindowAgg.WaterSensorMapFunction())
+            // 分配水位线
             .assignTimestampsAndWatermarks(
                 WatermarkStrategy
                     .<WaterSensor>forBoundedOutOfOrderness(Duration.ofSeconds(2))
@@ -51,11 +52,11 @@ public class TopNDemo {
         //sensorDS.print("sensorDS");
 
         // ----------------------------------------------------------------------------
-        // 方案一：不分区，使用一个窗口将所有数据汇集到一起，用hashmap存，key=vc，value=count值
+        // 方案一：不分区，使用一个窗口将所有数据汇集到一起，用hashmap存状态 {key=vc, value=count}
         // 窗口长度 = 最近4秒, 滑动步长 = 每2秒输出
-        sensorDS.windowAll(SlidingEventTimeWindows.of(Time.seconds(4), Time.seconds(2)))
-            .process(new MyTopNPAWF())
-            .print("TopN-with-AllWindow");
+        //sensorDS.windowAll(SlidingEventTimeWindows.of(Time.seconds(4), Time.seconds(2)))
+        //    .process(new MyTopNPAWF())
+        //    .print("TopN-with-AllWindow");
 
         // ----------------------------------------------------------------------------
         // 方案二：使用 KeyedProcessFunction实现
@@ -70,7 +71,7 @@ public class TopNDemo {
          */
         // 1. 按照 vc 分组、开窗、聚合（增量计算+全量打标签）
         //  开窗聚合后，就是普通的流，没有了窗口信息，需要自己打上窗口的标记 windowEnd
-        SingleOutputStreamOperator<Tuple3<Integer, Integer, Long>> windowAgg = sensorDS
+        SingleOutputStreamOperator<Tuple3<Integer, Integer, Long>> sensorDSW = sensorDS
             .keyBy(WaterSensor::getVc)
             .window(SlidingEventTimeWindows.of(Time.seconds(4), Time.seconds(2)))
             .aggregate(
@@ -78,7 +79,7 @@ public class TopNDemo {
                 new WindowResult()
             );
         // 2. 按照窗口标签（窗口结束时间）keyBy，保证同一个窗口时间范围的结果在一起，然后排序、取TopN
-        windowAgg
+        sensorDSW
             .keyBy(r -> r.f2)
             .process(new TopN(2))
             .print("TopN-with-KeyedProcessFunction");
@@ -136,6 +137,9 @@ public class TopNDemo {
     }
 
 
+    /**
+     * 1、增量聚合：计算 每个key(vc值)下的 count
+     */
     public static class VcCountAgg implements AggregateFunction<WaterSensor, Integer, Integer> {
         @Override
         public Integer createAccumulator() {
@@ -160,9 +164,9 @@ public class TopNDemo {
 
     /**
      * 泛型如下：
-     * 第一个：输入类型 = 增量函数的输出  count值，Integer
-     * 第二个：输出类型 = Tuple3(vc，count，windowEnd) ,带上 窗口结束时间 的标签
-     * 第三个：key类型 ， vc，Integer
+     * 第一个：输入类型 = 增量聚合函数的输出 count值: Integer
+     * 第二个：输出类型 = Tuple3(vc, count, windowEnd), 带上 窗口结束时间 的标签
+     * 第三个：key类型 = vc: Integer
      * 第四个：窗口类型
      */
     public static class WindowResult extends ProcessWindowFunction<Integer, Tuple3<Integer, Integer, Long>, Integer, TimeWindow> {
@@ -170,22 +174,23 @@ public class TopNDemo {
         public void process(
             Integer key, Context context, Iterable<Integer> elements, Collector<Tuple3<Integer, Integer, Long>> out
         ) throws Exception {
-            // 迭代器里面只有一条数据，next一次即可
-            Integer count = elements.iterator().next();
+            // 每个key内部调用 VcCountAgg 增量聚合之后，最后只有一个总的count值，因此迭代器里面只有一条数据，next一次即可
+            Integer vcCount = elements.iterator().next();
             long windowEnd = context.window().getEnd();
-            out.collect(Tuple3.of(key, count, windowEnd));
+            // 输出的时候，带上当前的 key 和 windowEnd，用于下一阶段的处理
+            out.collect(Tuple3.of(key, vcCount, windowEnd));
         }
     }
 
     public static class TopN extends KeyedProcessFunction<Long, Tuple3<Integer, Integer, Long>, String> {
-        // 存不同窗口的 统计结果，key=windowEnd，value=list数据
-        private Map<Long, List<Tuple3<Integer, Integer, Long>>> dataListMap;
+        // 存不同窗口的 统计结果 {key=windowEnd, value=数据List}
+        private Map<Long, List<Tuple3<Integer, Integer, Long>>> windowCountMap;
         // 要取的Top数量
         private int threshold;
 
         public TopN(int threshold) {
             this.threshold = threshold;
-            dataListMap = new HashMap<>();
+            windowCountMap = new HashMap<>();
         }
 
         @Override
@@ -195,15 +200,15 @@ public class TopNDemo {
             // 进入这个方法，只是一条数据，要排序，得到齐才行 ===》 存起来，不同窗口分开存
             // 1. 存到HashMap中
             Long windowEnd = value.f2;
-            if (dataListMap.containsKey(windowEnd)) {
+            if (windowCountMap.containsKey(windowEnd)) {
                 // 1.1 包含vc，不是该vc的第一条，直接添加到List中
-                List<Tuple3<Integer, Integer, Long>> dataList = dataListMap.get(windowEnd);
+                List<Tuple3<Integer, Integer, Long>> dataList = windowCountMap.get(windowEnd);
                 dataList.add(value);
             } else {
                 // 1.1 不包含vc，是该vc的第一条，需要初始化list
                 List<Tuple3<Integer, Integer, Long>> dataList = new ArrayList<>();
                 dataList.add(value);
-                dataListMap.put(windowEnd, dataList);
+                windowCountMap.put(windowEnd, dataList);
             }
             // 2. 注册一个定时器， windowEnd+1ms即可（
             // 同一个窗口范围，应该同时输出，只不过是一条一条调用processElement方法，只需要延迟1ms即可
@@ -217,7 +222,7 @@ public class TopNDemo {
             // 定时器触发，同一个窗口范围的计算结果攒齐了，开始 排序、取TopN
             Long windowEnd = ctx.getCurrentKey();
             // 1. 排序
-            List<Tuple3<Integer, Integer, Long>> dataList = dataListMap.get(windowEnd);
+            List<Tuple3<Integer, Integer, Long>> dataList = windowCountMap.get(windowEnd);
             dataList.sort(new Comparator<Tuple3<Integer, Integer, Long>>() {
                 @Override
                 public int compare(Tuple3<Integer, Integer, Long> o1, Tuple3<Integer, Integer, Long> o2) {
