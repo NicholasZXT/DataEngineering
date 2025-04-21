@@ -4,11 +4,14 @@ import java.nio.file.{Files, Path, Paths}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{Column, ColumnName, DataFrame, DataFrameReader, DataFrameWriter, Dataset, SaveMode, SparkSession}
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
-//import org.apache.spark.mllib.rdd.MLPairRDDFunctions
+import org.apache.spark.sql.functions.{element_at}
+// SparkML 中特别需要注意的是下面两个类型
+import org.apache.spark.mllib.linalg.{Vector, Vectors}
 // 基本转换器
 import org.apache.spark.ml.feature.{
   Imputer, ImputerModel, MinMaxScaler, MinMaxScalerModel, StandardScaler, StandardScalerModel,
-  OneHotEncoder, OneHotEncoderModel, StringIndexer, StringIndexerModel, VectorIndexer, VectorIndexerModel,
+  OneHotEncoder, OneHotEncoderEstimator, OneHotEncoderModel, StringIndexer, StringIndexerModel, IndexToString,
+  VectorIndexer, VectorIndexerModel, VectorSlicer,
   Normalizer, Binarizer, Bucketizer, QuantileDiscretizer, PolynomialExpansion, PCA
 }
 // 高级转换器
@@ -102,6 +105,20 @@ object HelloSparkML {
     bostonData.printSchema()
     bostonData.show(numRows = 5, truncate = false)
 
+    //------ 特征工程mock数据 ------
+    val mockData = Seq(
+      (1, 18, "male", 90, "A"),
+      (2, 24, "female", 80, "B"),
+      (3, 28, "male", 50, "D"),
+      (4, 30, "female", 70, "C"),
+      (5, 34, "female", 75, "C"),
+    )
+    val df = spark.createDataFrame(mockData).toDF("id", "age", "gender", "score", "grade")
+    df.printSchema()
+
+    // ----- 特征工程练习 --------
+    numericFeatureTransform(spark, df)
+    categoryFeatureTransform(spark, df)
 
     //------ 分类问题建模------
     irisDataClassification(irisData)
@@ -113,15 +130,87 @@ object HelloSparkML {
 
   }
 
+  def numericFeatureTransform(spark: SparkSession, df: DataFrame): Unit = {
+    import spark.implicits._
+    // 数值特征归一化
+    val standardScaler = new StandardScaler().
+      setInputCol("score").
+      setOutputCol("score_standard").
+      setWithStd(true).
+      setWithMean(true).
+      fit(df)
+    println("------ StandardScaler ------")
+    standardScaler.transform(df).show(numRows = 10, truncate = false)
+  }
+
+  def categoryFeatureTransform(spark: SparkSession, df: DataFrame): Unit = {
+    import spark.implicits._
+    // 字符串转数值序号，注意，fit方法返回的是 StringIndexerModel
+    val stringIndexer: StringIndexerModel = new StringIndexer().
+      setInputCol("gender").
+      setOutputCol("gender_label").
+      fit(df)
+    val df_strIndexed = stringIndexer.transform(df)
+    println("------ StringIndexer ------")
+    df_strIndexed.show(numRows = 10, truncate = false)
+    // 转回去
+    val genderReverse = new IndexToString().setInputCol("gender_label").setOutputCol("gender_reversed")
+    println("------ IndexToString ------")
+    genderReverse.transform(df_strIndexed).show(numRows = 10, truncate = false)
+
+    // OneHotEncoderEstimator（代替OneHotEncoder） 的输入必须是 numeric，不能直接处理 String，要先用 StringIndexer 转换
+    val gradeStrIndexer: StringIndexerModel = new StringIndexer().
+      setInputCol("grade").
+      setOutputCol("grade_label").
+      fit(df)
+    val df_gradeStrIndexed = gradeStrIndexer.transform(df)
+    val oneHotEncoder: OneHotEncoderModel = new OneHotEncoderEstimator().
+      setInputCols(Array("grade_label")).
+      setOutputCols(Array("grade_onehot")).
+      setDropLast(false).
+      setHandleInvalid("error").
+      fit(df_gradeStrIndexed)
+    println("------ OneHotEncoderEstimator ------")
+    val df_onehot = oneHotEncoder.transform(df_gradeStrIndexed)
+    df_onehot.printSchema()
+    df_onehot.show(numRows = 10, truncate = false)
+    // oneHot 返回的列的类型是 org.apache.spark.ml.linalg.SparseVector
+    df_onehot.rdd.take(1).foreach(row => {println(row.get(5))})
+    //df_onehot
+      //.withColumn("grade_onehot.type", $"grade_onehot.type")
+      //.withColumn("grade_onehot.type", $"grade_onehot".getField("type"))
+      //.withColumn("grade_onehot.type", $"grade_onehot".getItem(0))
+      //.withColumn("grade_onehot.size", $"grade_onehot.size")
+      //.withColumn("grade_onehot.indices", $"grade_onehot.indices")
+      //.withColumn("grade_onehot.values", $"grade_onehot.values")
+      //.show(numRows = 10, truncate = false)
+
+
+    //val vectorSlicer = new VectorSlicer().
+    //  setInputCol("grade_onehot").
+    //  setOutputCol("grade_onehot_expand").
+    //  setNames(Array("grade_onehot_sliced_0", "grade_onehot_sliced_1", "grade_onehot_sliced_2"))
+    //vectorSlicer.transform(df_onehot).show(numRows = 10, truncate = false)
+
+    //val vecIndexer: VectorIndexerModel = new VectorIndexer().
+    //  setInputCol("grade").
+    //  setOutputCol("grade_num").
+    //  setMaxCategories(4).
+    //  fit(df)
+    //print("------ VectorIndexer ------")
+    //vecIndexer.transform(df).show(numRows = 10, truncate = false)
+  }
+
   def irisDataClassification(irisData: DataFrame): Unit = {
-    // 处理class列，注意，fit方法返回的是 StringIndexerModel
+    // 处理class列
     val stringIndexer: StringIndexerModel = new StringIndexer().
       setInputCol("class").
-      setOutputCol("classIndex").
+      setOutputCol("class_label").
       fit(irisData)
-    //val labelTransformed = stringIndexer.transform(iris_data).drop("class")
+    val labelTransformed = stringIndexer.transform(irisData)
+      //.drop("class")
     //labelTransformed.printSchema()
-    //labelTransformed.show()
+    labelTransformed.show(numRows = 20, truncate = false)
 
     // 处理特征
     //val vectorAssembler = new VectorAssembler().
