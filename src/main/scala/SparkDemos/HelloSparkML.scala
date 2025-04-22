@@ -2,9 +2,13 @@ package SparkDemos
 
 import java.nio.file.{Files, Path, Paths}
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.{Column, ColumnName, DataFrame, DataFrameReader, DataFrameWriter, Dataset, SaveMode, SparkSession}
+import org.apache.spark.sql.{
+  Column, ColumnName, Row, DataFrame, DataFrameReader, DataFrameWriter, Dataset,
+  SparkSession, SaveMode, Encoders
+}
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 import org.apache.spark.sql.functions.{element_at}
+import org.apache.spark.sql.catalyst.encoders.RowEncoder
 // SparkML 中特别需要注意的是下面两个类型
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
 // 基本转换器
@@ -30,6 +34,8 @@ import org.apache.spark.ml.regression.{
   RandomForestRegressor, RandomForestRegressionModel,
   GBTRegressor, GBTRegressionModel
 }
+// 模型评估
+import org.apache.spark.ml.evaluation.{BinaryClassificationEvaluator, RegressionEvaluator, MulticlassClassificationEvaluator}
 
 
 /**
@@ -82,6 +88,25 @@ object HelloSparkML {
     val currentDir: Path = Paths.get(System.getProperty("user.dir"))
     println(s"currentDir '${currentDir}' exist: ${Files.exists(currentDir)}.")
 
+    //------ SparkML数据输入规范 ------
+    // SparkML里大部分的机器学习算法的输入都是一个如下两列的DataFrame： 标签列 - Double类型，特征列 - Vector[Double]类型
+    val data = spark.createDataFrame(Seq(
+      (1.0, Vectors.dense(0.0, 1.1, 0.1)),
+      (0.0, Vectors.dense(2.0, 1.0, -1.0)),
+      (0.0, Vectors.dense(2.0, 1.3, 1.0)),
+      (1.0, Vectors.dense(0.0, 1.2, -0.5))
+    )).toDF("label", "features")
+    //data.printSchema()
+    //data.show(numRows = 5, truncate = false)
+    // 如果想从其中的 features 列的Vector获取值，那么需要使用如下的方式
+    // [Spark Scala: How to convert Dataframe[vector] to DataFrame[f1:Double, ..., fn: Double)]](https://stackoverflow.com/questions/38110038/spark-scala-how-to-convert-dataframevector-to-dataframef1double-fn-d)
+    val data_features = data.map{
+      case Row(label: Double, features: Vector) => (label, features(0), features(1), features(2))
+    }.toDF("label", "f1", "f2", "f3")
+    //data_features.printSchema()
+    //data_features.show(numRows = 5, truncate = false)
+
+
     //------ 分类问题：Iris数据集 ------
     val irisFileName: Path = Paths.get("src", "main", "resources", "hadoop_data", "iris_data", "iris.data")
     val irisDataPath: Path = currentDir.resolve(irisFileName)
@@ -95,15 +120,15 @@ object HelloSparkML {
       )
     )
     val irisData = spark.read.schema(schema).csv(irisDataPath.toString)
-    irisData.printSchema()
-    irisData.show(numRows = 5, truncate = false)
+    //irisData.printSchema()
+    //irisData.show(numRows = 5, truncate = false)
 
     //------ 回归问题：Boston房价数据集 ------
     val bostonFileName: Path = Paths.get("src", "main", "resources", "hadoop_data", "boston_housing", "HousingData.csv")
     val bostonDataPath: Path = currentDir.resolve(bostonFileName)
     val bostonData = spark.read.option("header", "true").csv(bostonDataPath.toString)
-    bostonData.printSchema()
-    bostonData.show(numRows = 5, truncate = false)
+    //bostonData.printSchema()
+    //bostonData.show(numRows = 5, truncate = false)
 
     //------ 特征工程mock数据 ------
     val mockData = Seq(
@@ -114,42 +139,67 @@ object HelloSparkML {
       (5, 34, "female", 75, "C"),
     )
     val df = spark.createDataFrame(mockData).toDF("id", "age", "gender", "score", "grade")
-    df.printSchema()
+    //df.printSchema()
+    //df.rdd.foreach(row => println(row.getClass.getName))
 
     // ----- 特征工程练习 --------
     numericFeatureTransform(spark, df)
     categoryFeatureTransform(spark, df)
 
     //------ 分类问题建模------
-    irisDataClassification(irisData)
+    irisDataClassification(spark, irisData)
 
     //------ 回归问题建模------
-    bostonHousingRegression(bostonData)
+    bostonHousingRegression(spark, bostonData)
 
     spark.stop()
-
   }
 
   def numericFeatureTransform(spark: SparkSession, df: DataFrame): Unit = {
+    println("======== numericFeatureTransform ========")
     import spark.implicits._
+    // SparkML 里的 StandardScaler, MinMaxScaler, Normalizer 等不能直接作用于 Double 列，只能作用于 Vector 类型的列 ------ KEY
+    // 可以使用 VectorAssembler 将多个 Double 列组合成一个 Vector 列
+    val assembler = new VectorAssembler().setInputCols(Array("score")).setOutputCol("score_vec")
+    val df_vec = assembler.transform(df)
+    //df_vec.printSchema()
+    //df_vec.show(numRows = 10, truncate = false)
+
     // 数值特征归一化
-    val standardScaler = new StandardScaler().
-      setInputCol("score").
-      setOutputCol("score_standard").
-      setWithStd(true).
-      setWithMean(true).
-      fit(df)
+    val standardScaler = new StandardScaler()
+      .setInputCol("score_vec")
+      .setOutputCol("score_standard")
+      .setWithStd(true)
+      .setWithMean(true)
+      .fit(df_vec)
     println("------ StandardScaler ------")
-    standardScaler.transform(df).show(numRows = 10, truncate = false)
+    standardScaler.transform(df_vec).show(numRows = 10, truncate = false)
+
+    val minMaxScaler = new MinMaxScaler()
+      .setInputCol("score_vec")
+      .setOutputCol("score_minmax")
+      //.setMax(5.0)
+      //.setMin(1.0)
+      .fit(df_vec)
+    println("------ MinMaxScaler ------")
+    minMaxScaler.transform(df_vec).show(numRows = 10, truncate = false)
+
+    val normalizer = new Normalizer()
+      .setInputCol("score_vec")
+      .setOutputCol("score_norm")
+      .setP(2.0)   // 这个不需要fit
+    println("------ Normalizer ------")
+    normalizer.transform(df_vec).show(numRows = 10, truncate = false)
   }
 
   def categoryFeatureTransform(spark: SparkSession, df: DataFrame): Unit = {
+      println("======== categoryFeatureTransform ========")
     import spark.implicits._
     // 字符串转数值序号，注意，fit方法返回的是 StringIndexerModel
-    val stringIndexer: StringIndexerModel = new StringIndexer().
-      setInputCol("gender").
-      setOutputCol("gender_label").
-      fit(df)
+    val stringIndexer: StringIndexerModel = new StringIndexer()
+      .setInputCol("gender")
+      .setOutputCol("gender_label")
+      .fit(df)
     val df_strIndexed = stringIndexer.transform(df)
     println("------ StringIndexer ------")
     df_strIndexed.show(numRows = 10, truncate = false)
@@ -159,69 +209,84 @@ object HelloSparkML {
     genderReverse.transform(df_strIndexed).show(numRows = 10, truncate = false)
 
     // OneHotEncoderEstimator（代替OneHotEncoder） 的输入必须是 numeric，不能直接处理 String，要先用 StringIndexer 转换
-    val gradeStrIndexer: StringIndexerModel = new StringIndexer().
-      setInputCol("grade").
-      setOutputCol("grade_label").
-      fit(df)
+    val gradeStrIndexer: StringIndexerModel = new StringIndexer()
+      .setInputCol("grade")
+      .setOutputCol("grade_label")
+      .fit(df)
     val df_gradeStrIndexed = gradeStrIndexer.transform(df)
-    val oneHotEncoder: OneHotEncoderModel = new OneHotEncoderEstimator().
-      setInputCols(Array("grade_label")).
-      setOutputCols(Array("grade_onehot")).
-      setDropLast(false).
-      setHandleInvalid("error").
-      fit(df_gradeStrIndexed)
+    val oneHotEncoder: OneHotEncoderModel = new OneHotEncoderEstimator()
+      .setInputCols(Array("grade_label"))
+      .setOutputCols(Array("grade_onehot"))
+      .setDropLast(false)
+      .setHandleInvalid("error")
+      .fit(df_gradeStrIndexed)
     println("------ OneHotEncoderEstimator ------")
     val df_onehot = oneHotEncoder.transform(df_gradeStrIndexed)
     df_onehot.printSchema()
     df_onehot.show(numRows = 10, truncate = false)
     // oneHot 返回的列的类型是 org.apache.spark.ml.linalg.SparseVector
-    df_onehot.rdd.take(1).foreach(row => {println(row.get(5))})
-    //df_onehot
-      //.withColumn("grade_onehot.type", $"grade_onehot.type")
-      //.withColumn("grade_onehot.type", $"grade_onehot".getField("type"))
-      //.withColumn("grade_onehot.type", $"grade_onehot".getItem(0))
-      //.withColumn("grade_onehot.size", $"grade_onehot.size")
-      //.withColumn("grade_onehot.indices", $"grade_onehot.indices")
-      //.withColumn("grade_onehot.values", $"grade_onehot.values")
-      //.show(numRows = 10, truncate = false)
-
-
-    //val vectorSlicer = new VectorSlicer().
-    //  setInputCol("grade_onehot").
-    //  setOutputCol("grade_onehot_expand").
-    //  setNames(Array("grade_onehot_sliced_0", "grade_onehot_sliced_1", "grade_onehot_sliced_2"))
-    //vectorSlicer.transform(df_onehot).show(numRows = 10, truncate = false)
-
-    //val vecIndexer: VectorIndexerModel = new VectorIndexer().
-    //  setInputCol("grade").
-    //  setOutputCol("grade_num").
-    //  setMaxCategories(4).
-    //  fit(df)
-    //print("------ VectorIndexer ------")
-    //vecIndexer.transform(df).show(numRows = 10, truncate = false)
   }
 
-  def irisDataClassification(irisData: DataFrame): Unit = {
+  def irisDataClassification(spark: SparkSession, irisData: DataFrame): Unit = {
+    println("======== irisDataClassification ========")
+    import spark.implicits._
+
+    // 原始数据是 3 分类，这里只取两分类数据
+    val irisDataFilter = irisData.filter($"class" === "Iris-setosa" || $"class" === "Iris-versicolor")
+
     // 处理class列
-    val stringIndexer: StringIndexerModel = new StringIndexer().
-      setInputCol("class").
-      setOutputCol("class_label").
-      fit(irisData)
-    val labelTransformed = stringIndexer.transform(irisData)
+    val stringIndexer: StringIndexerModel = new StringIndexer()
+      .setInputCol("class")
+      .setOutputCol("class_label")
+      .fit(irisDataFilter)
+    val irisDataLabeled = stringIndexer.transform(irisDataFilter)
       //.drop("class")
-    //labelTransformed.printSchema()
-    labelTransformed.show(numRows = 20, truncate = false)
+    //irisDataLabeled.printSchema()
+    //irisDataLabeled.show(numRows = 20, truncate = false)
 
-    // 处理特征
-    //val vectorAssembler = new VectorAssembler().
-    //  setInputCols(Array("sepal length", "sepal width", "petal length", "petal width")).
-    //  setOutputCol("features")
-    //val xgbInput = vectorAssembler.transform(labelTransformed).select("features", "classIndex")
-    //xgbInput.printSchema()
-    //xgbInput.show()
+    // 汇总所有特征列为 Vector
+    val vectorAssembler = new VectorAssembler()
+      .setInputCols(Array("sepal_length", "sepal_width", "petal_length", "petal_width"))
+      .setOutputCol("features")
+    val irisDataTrain = vectorAssembler.transform(irisDataLabeled)
+    //irisDataTrain.show(numRows = 20, truncate = false)
+
+    // 使用 LogisticRegression
+    val lr = new LogisticRegression(uid = "irisData-LR")
+      .setFeaturesCol("features")
+      .setLabelCol("class_label")
+      .setFitIntercept(true)     //  是否使用截距
+      .setStandardization(true)  // 是否先对数据标准化
+      .setMaxIter(10)
+      .setRegParam(0.3)
+      .setElasticNetParam(0.8)
+    val lrModel: LogisticRegressionModel = lr.fit(irisDataTrain)
+    println(s"LogisticRegression Model -> Coefficients: ${lrModel.coefficients}; Intercept: ${lrModel.intercept}")
+    // 查看训练过程信息
+    val trainingSummary = lrModel.binarySummary
+    // Obtain the objective per iteration.
+    val objectiveHistory = trainingSummary.objectiveHistory
+    println("objectiveHistory:")
+    objectiveHistory.foreach(loss => println(loss))
+    // Obtain the receiver-operating characteristic as a dataframe and areaUnderROC.
+    val roc = trainingSummary.roc
+    roc.show()
+    println(s"areaUnderROC: ${trainingSummary.areaUnderROC}")
+    // 预测，使用 transform 方法
+    val predictions = lrModel.transform(irisDataTrain)
+    predictions.printSchema()
+    predictions.show(numRows = 10, truncate = false)
+    // 预测效果评估
+    val evaluator = new BinaryClassificationEvaluator(uid = "irisData-LR-BinaryClassify-Evaluator")
+      .setLabelCol("class_label")
+      .setRawPredictionCol("prediction")
+      .setMetricName("areaUnderROC")
+    val aucScore = evaluator.evaluate(predictions)
+    println(s"Test Error = ${aucScore}")
   }
 
-  def bostonHousingRegression(bostonData: DataFrame): Unit = {
+  def bostonHousingRegression(spark: SparkSession, bostonData: DataFrame): Unit = {
+    println("======== bostonHousingRegression ========")
   }
 
 }
