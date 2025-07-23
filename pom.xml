@@ -452,6 +452,12 @@
             <version>${flink.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Flink-CDC 依赖-->
+        <dependency>
+            <groupId>com.ververica</groupId>
+            <artifactId>flink-connector-mysql-cdc</artifactId>
+            <version>3.0.0</version>
+        </dependency>
 
         <!-- ***************************************************** -->
         <!-- Hadoop相关依赖，强烈建议放在所有大数据组件依赖的后面，因为手动指定的hadoop版本很可能会和前面某个组件冲突 -->
