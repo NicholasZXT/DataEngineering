@@ -14,10 +14,10 @@ public class MysqlSourceSQL {
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
 
         //2.使用FlinkCDC SQL方式建表
-        tableEnv.executeSql("" +
+        tableEnv.executeSql(
                 "create table person(\n" +
-                "    id int primary key,\n" +
-                "    name string" +
+                "    id int primary key NOT ENFORCED,\n" +
+                "    name string," +
                 "    age int" +
                 ") WITH (\n" +
                 " 'connector' = 'mysql-cdc',\n" +
@@ -30,8 +30,19 @@ public class MysqlSourceSQL {
                 ")");
 
         //3.查询并打印
-        Table table = tableEnv.sqlQuery("select * from t1");
+        Table table = tableEnv.sqlQuery("select * from person");
         table.execute().print();
+        // 输出示例：
+        //  +----+-------------+--------------------------------+-------------+
+        //  | op |          id |                           name |         age |
+        //  +----+-------------+--------------------------------+-------------+
+        //  | +I |           3 |                          nicho |          26 | 插入数据 {"id":3,"name":"nicho","age":26}
+        //  | -U |           3 |                          nicho |          26 | 修改数据 {"id":3,"name":"nicho","age":26} 为  {"id":3,"name":"nicho","age":29}
+        //  | +U |           3 |                          nicho |          29 |
+        //  | -U |           3 |                          nicho |          29 | 修改数据 {"id":3,"name":"nicho","age":29} 为  {"id":3,"name":"nicho","age":30}
+        //  | +U |           3 |                          nicho |          30 |
+        //  | +I |           4 |                           jane |          18 | 插入数据 {"id":4,"name":"jane","age":18}
+        //  | -D |           4 |                           jane |          18 | 删除数据 {"id":4,"name":"jane","age":18}
 
     }
 }

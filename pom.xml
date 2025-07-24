@@ -453,11 +453,20 @@
             <scope>compile</scope>
         </dependency>
         <!-- Flink-CDC 依赖-->
+        <!-- Flink-CDC 2.0.0 ~ 3.0.1 版本使用的是如下包名空间 -->
         <dependency>
             <groupId>com.ververica</groupId>
             <artifactId>flink-connector-mysql-cdc</artifactId>
-            <version>3.0.0</version>
+            <version>2.4.2</version>
+            <!-- 下面的 3.0.1 版本和 Flink-1.17 有依赖冲突 -->
+            <!--<version>3.0.1</version>-->
         </dependency>
+        <!-- Flink-CDC 从 3.1.x 版本使用如下包名空间 -->
+        <!--<dependency>-->
+        <!--    <groupId>org.apache.flink</groupId>-->
+        <!--    <artifactId>flink-connector-mysql-cdc</artifactId>-->
+        <!--    <version>3.1.0</version>-->
+        <!--</dependency>-->
 
         <!-- ***************************************************** -->
         <!-- Hadoop相关依赖，强烈建议放在所有大数据组件依赖的后面，因为手动指定的hadoop版本很可能会和前面某个组件冲突 -->
