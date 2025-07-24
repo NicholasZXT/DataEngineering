@@ -84,7 +84,7 @@
     </appender>
 
     <!-- 配置具体的Logger，name设置名称，对应于某一个包名或者某个类名；level设置日志级别；additivity=false不继承上级Logger的配置-->
-    <logger name="BasicGrammars.log.LogbackDemo" level="debug" additivity="true">
+    <logger name="Basics.log.LogbackDemo" level="debug" additivity="true">
         <!-- 指定 Appender -->
         <!-- additivity=true 时，如果设置了下面的 console，会和 ROOT 重复，导致控制台上 info 以上的信息输出2次-->
         <!--<appender-ref ref="console"/>-->
@@ -95,7 +95,7 @@
     </logger>
 
     <!-- 配合 lombok 使用-->
-    <logger name="BasicGrammars.log.Slf4jDemo" level="debug" additivity="false">
+    <logger name="Basics.log.Slf4jDemo" level="debug" additivity="false">
         <appender-ref ref="console"/>
     </logger>
 
