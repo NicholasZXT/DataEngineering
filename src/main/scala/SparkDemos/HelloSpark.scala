@@ -122,7 +122,7 @@ object HelloSpark {
     println(">>>>>>")
     aggregateByKeyRdd.foreach(println)
 
-
+    println("--------- combineByKeyRdd ---------")
     // combineByKey[C]，这个算子也比较复杂，参数签名为：
     //   createCombiner: V => C, 创建每个key的初始值
     //     输入是当前分区中的 某个key 的第一个Value（V），输出是一个新的 Combiner（类型为 C）
@@ -148,7 +148,6 @@ object HelloSpark {
       // 3. 全局聚合：合并所有分区的 (sum, count)，得到最终结果
       (acc1: (Int, Int), acc2: (Int, Int)) => (acc1._1 + acc2._1, acc1._2 + acc2._2)
     )
-    println("--------- combineByKeyRdd ---------")
     combineByKeyRdd.foreach(println)
     // 计算均值
     println(">>>> key.mean by mapValues")
@@ -163,8 +162,13 @@ object HelloSpark {
     }).foreach(println)
   }
 
-  // 用于 mapPartitionWithIndex 的函数
-  def foreach_partition_fun(index: Int, iter: Iterator[Int]): Iterator[String] = {
+  /**
+   * 用于 mapPartitionWithIndex 的函数
+   * @param index
+   * @param iter
+   * @return
+   */
+  def foreachPartitionFun(index: Int, iter: Iterator[Int]): Iterator[String] = {
     // 第一个参数是分区数，第二个是该分区元素的迭代器（不能是 Iterable）
     // 函数的返回值必须也是一个迭代器，所以不能使用 foreach
     iter.map(x => "[partID:" + index + ", val: " + x + "]")
