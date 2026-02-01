@@ -1,5 +1,6 @@
 package SparkDemos
 
+import SparkDemos.beans.MessageBean
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.types.{IntegerType, LongType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SaveMode, SparkSession}
@@ -15,7 +16,6 @@ import com.alibaba.fastjson.{JSON, JSONObject}
 import java.util.Date
 import java.text.SimpleDateFormat
 import scala.collection.mutable.ArrayBuffer
-import SparkDemos.MessageBean
 
 /**
  * 展示如何使用 SparkStreaming 消费 kafka 中的JSON消息，写入HDFS

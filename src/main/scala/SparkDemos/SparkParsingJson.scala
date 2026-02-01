@@ -9,7 +9,7 @@ import org.apache.spark.sql.functions.{col, element_at, explode, from_json, get_
 /**
  * SparkSQL 解析 JSON + explode实现行转列
  */
-object ParsingJson extends App {
+object SparkParsingJson extends App {
 
   val spark = SparkSession.builder()
     .appName("SparkSQL Json Parsing")

@@ -17,7 +17,7 @@ import utils.HBaseUtils
  * 下面这种访问 HBase 数据的方式，应该是直接读的 HDFS上的 HBase 表数据，没有经过 Hbase 的 RegionServer，
  * 所以也不能实现 HBase 客户端的 Scan, Get 等操作.
  */
-object ReadingHbase extends App {
+object SparkReadingHbase extends App {
 
   val conf = new SparkConf()
     .setAppName("Reading HBase data Demo")

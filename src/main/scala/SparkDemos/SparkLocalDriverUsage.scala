@@ -9,7 +9,7 @@ import org.apache.spark.sql.SparkSession
  * 展示如何在本地IDEA里调试Spark程序（本地Spark Driver），并连接到远程的YARN 集群。
  * **不推荐生产环境这么用**。
  */
-object LocalDriverUsage {
+object SparkLocalDriverUsage {
 
   /**
    * 本地IDEA调试时，需要设置两个环境变量：
@@ -17,7 +17,7 @@ object LocalDriverUsage {
    *  - HADOOP_CONF_DIR: 指定Hadoop的配置文件路径
    */
   def main(args: Array[String]): Unit = {
-    println("=== LocalDriverUsage ===")
+    println("=== SparkLocalDriverUsage ===")
 
     val sparkConf = new SparkConf()
     val hadoopConf = readAndCheckHadoopConf()
@@ -36,7 +36,7 @@ object LocalDriverUsage {
 
     val spark = SparkSession.builder()
       .config(sparkConf)
-      .appName(LocalDriverUsage.getClass.getSimpleName)
+      .appName(SparkLocalDriverUsage.getClass.getSimpleName)
       .config("spark.executor.instances", "1")
       .config("spark.executor.memory", "4g")
       // 设置 master 为 yarn-client 模式，并指定队列

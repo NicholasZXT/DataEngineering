@@ -8,7 +8,7 @@ import org.apache.spark.sql.functions.udf
 /**
  * 展示将 单例对象 的方法注册为 Spark UDF 时，配合广播变量的使用。
  */
-object UDFWithBroadCastValueUsage {
+object SparkUDFWithBroadCastValueUsage {
 
   def main(args: Array[String]): Unit = {
     val sparkConf = new SparkConf()
