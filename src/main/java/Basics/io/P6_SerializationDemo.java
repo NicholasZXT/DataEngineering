@@ -57,40 +57,44 @@ public class P6_SerializationDemo {
 		 */
 		
 	}
-	
 
-}
+	/*
+	 *   一个类实现了序列化接口，那么其子类都可以进行序列化
+	 */
+    static class Foo implements Serializable {
+		public Foo() {
+			System.out.println("foo...");
+		}
+	}
 
-/*
- *   一个类实现了序列化接口，那么其子类都可以进行序列化
- */
-class Foo implements Serializable {
-	public Foo(){
-		System.out.println("foo...");
+	static class Foo1 extends Foo {
+		public Foo1() {
+			System.out.println("foo1...");
+		}
 	}
-}
-class Foo1 extends Foo{
-	public Foo1(){
-		System.out.println("foo1...");
+
+	static class Foo2 extends Foo1 {
+		public Foo2() {
+			System.out.println("foo2...");
+		}
 	}
-}
-class Foo2 extends Foo1{
-	public Foo2(){
-		System.out.println("foo2...");
+
+	static class Bar {
+		public Bar() {
+			System.out.println("bar");
+		}
 	}
-}
-class Bar{
-	public Bar(){
-		System.out.println("bar");
+
+	static class Bar1 extends Bar {
+		public Bar1() {
+			System.out.println("bar1..");
+		}
 	}
-}
-class Bar1 extends Bar{
-	public Bar1(){
-		System.out.println("bar1..");
+
+	static class Bar2 extends Bar1 implements Serializable {
+		public Bar2() {
+			System.out.println("bar2...");
+		}
 	}
-}
-class Bar2 extends Bar1 implements Serializable{
-	public Bar2(){
-		System.out.println("bar2...");
-	}
+
 }

@@ -27,36 +27,35 @@ public class ThreadsDemo {
         th4.start();
 
     }
-}
 
-
-// 第一种创建线程对象的方式：继承 java.lang.Thread 类，重写其中的 run 方法。实际上，Thread类就是Runnable接口的一个实现类。
-class ThreadSubClass extends Thread {
-    @Override
-    public void run() {
-        String cls_name = this.getClass().getSimpleName();
-        String th_name = Thread.currentThread().getName();
-        System.out.println(cls_name + "-Thread is running with thread name: " + th_name);
+    // 第一种创建线程对象的方式：继承 java.lang.Thread 类，重写其中的 run 方法。实际上，Thread类就是Runnable接口的一个实现类。
+    static class ThreadSubClass extends Thread {
+        @Override
+        public void run() {
+            String cls_name = this.getClass().getSimpleName();
+            String th_name = Thread.currentThread().getName();
+            System.out.println(cls_name + "-Thread is running with thread name: " + th_name);
+        }
     }
-}
 
-// 第二种创建线程对象的方式：实现 java.lang.Runnable 接口及run方法
-class ThreadInterface implements Runnable {
-    @Override
-    public void run() {
-        String cls_name = this.getClass().getSimpleName();
-        String th_name = Thread.currentThread().getName();
-        System.out.println(cls_name + "-Thread is running with thread name: " + th_name);
+    // 第二种创建线程对象的方式：实现 java.lang.Runnable 接口及run方法
+    static class ThreadInterface implements Runnable {
+        @Override
+        public void run() {
+            String cls_name = this.getClass().getSimpleName();
+            String th_name = Thread.currentThread().getName();
+            System.out.println(cls_name + "-Thread is running with thread name: " + th_name);
+        }
     }
-}
 
-// 展示线程的属性，这里必须要使用 继承 Thread 类的方式，因为这些属性是 Thread 类封装的
-class ThreadProperty extends Thread {
-    @Override
-    public void run() {
-        String cls_name = this.getClass().getSimpleName();
-        // 线程名称，可设置
-        this.setName(cls_name + "-Thread");
-        System.out.printf("Thread properties: <ID: %s, Name: %s, Daemon: %s, Priority: %s>", this.getId(), this.getName(), this.isDaemon(), this.getPriority());
+    // 展示线程的属性，这里必须要使用 继承 Thread 类的方式，因为这些属性是 Thread 类封装的
+    static class ThreadProperty extends Thread {
+        @Override
+        public void run() {
+            String cls_name = this.getClass().getSimpleName();
+            // 线程名称，可设置
+            this.setName(cls_name + "-Thread");
+            System.out.printf("Thread properties: <ID: %s, Name: %s, Daemon: %s, Priority: %s>", this.getId(), this.getName(), this.isDaemon(), this.getPriority());
+        }
     }
 }

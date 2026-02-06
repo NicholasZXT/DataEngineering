@@ -90,69 +90,72 @@ public class StreamMerge {
 
         env.execute();
     }
-}
 
-class MyKeyedConnectCoProcessFunction extends CoProcessFunction<Tuple2<Integer, String>, Tuple3<Integer, String, Integer>, String> {
-    // 每条流定义一个hashmap，用来存数据
-    Map<Integer, List<Tuple2<Integer, String>>> s1Cache = new HashMap<>();
-    Map<Integer, List<Tuple3<Integer, String, Integer>>> s2Cache = new HashMap<>();
 
-    /**
-     * 第一条流的处理逻辑
-     * @param value 第一条流的数据
-     * @param ctx   上下文
-     * @param out   采集器
-     * @throws Exception
-     */
-    @Override
-    public void processElement1(
-        Tuple2<Integer, String> value, Context ctx, Collector<String> out
-    ) throws Exception {
-        Integer id = value.f0;
-        // 1. s1的数据来了，就存到变量中
-        if (!s1Cache.containsKey(id)) {
-            // 1.1 如果key不存在，说明是该key的第一条数据，初始化，put进map中
-            List<Tuple2<Integer, String>> s1Values = new ArrayList<>();
-            s1Values.add(value);
-            s1Cache.put(id, s1Values);
-        } else {
-            // 1.2 key存在，不是该key的第一条数据，直接添加到 value的list中
-            s1Cache.get(id).add(value);
-        }
-        // 2.去 s2Cache中查找是否有id能匹配上的,匹配上就输出，没有就不输出
-        if (s2Cache.containsKey(id)) {
-            for (Tuple3<Integer, String, Integer> s2Element : s2Cache.get(id)) {
-                out.collect("s1:" + value + "<========>" + "s2:" + s2Element);
+    static class MyKeyedConnectCoProcessFunction extends CoProcessFunction<Tuple2<Integer, String>, Tuple3<Integer, String, Integer>, String> {
+        // 每条流定义一个hashmap，用来存数据
+        Map<Integer, List<Tuple2<Integer, String>>> s1Cache = new HashMap<>();
+        Map<Integer, List<Tuple3<Integer, String, Integer>>> s2Cache = new HashMap<>();
+
+        /**
+         * 第一条流的处理逻辑
+         *
+         * @param value 第一条流的数据
+         * @param ctx   上下文
+         * @param out   采集器
+         * @throws Exception
+         */
+        @Override
+        public void processElement1(
+            Tuple2<Integer, String> value, Context ctx, Collector<String> out
+        ) throws Exception {
+            Integer id = value.f0;
+            // 1. s1的数据来了，就存到变量中
+            if (!s1Cache.containsKey(id)) {
+                // 1.1 如果key不存在，说明是该key的第一条数据，初始化，put进map中
+                List<Tuple2<Integer, String>> s1Values = new ArrayList<>();
+                s1Values.add(value);
+                s1Cache.put(id, s1Values);
+            } else {
+                // 1.2 key存在，不是该key的第一条数据，直接添加到 value的list中
+                s1Cache.get(id).add(value);
+            }
+            // 2.去 s2Cache中查找是否有id能匹配上的,匹配上就输出，没有就不输出
+            if (s2Cache.containsKey(id)) {
+                for (Tuple3<Integer, String, Integer> s2Element : s2Cache.get(id)) {
+                    out.collect("s1:" + value + "<========>" + "s2:" + s2Element);
+                }
             }
         }
-    }
 
-    /**
-     * 第二条流的处理逻辑
-     * @param value 第二条流的数据
-     * @param ctx   上下文
-     * @param out   采集器
-     * @throws Exception
-     */
-    @Override
-    public void processElement2(
-        Tuple3<Integer, String, Integer> value, Context ctx, Collector<String> out
-    ) throws Exception {
-        Integer id = value.f0;
-        // 1. s2的数据来了，就存到变量中
-        if (!s2Cache.containsKey(id)) {
-            // 1.1 如果key不存在，说明是该key的第一条数据，初始化，put进map中
-            List<Tuple3<Integer, String, Integer>> s2Values = new ArrayList<>();
-            s2Values.add(value);
-            s2Cache.put(id, s2Values);
-        } else {
-            // 1.2 key存在，不是该key的第一条数据，直接添加到 value的list中
-            s2Cache.get(id).add(value);
-        }
-        // 2.去 s1Cache中查找是否有id能匹配上的,匹配上就输出，没有就不输出
-        if (s1Cache.containsKey(id)) {
-            for (Tuple2<Integer, String> s1Element : s1Cache.get(id)) {
-                out.collect("s1:" + s1Element + "<========>" + "s2:" + value);
+        /**
+         * 第二条流的处理逻辑
+         *
+         * @param value 第二条流的数据
+         * @param ctx   上下文
+         * @param out   采集器
+         * @throws Exception
+         */
+        @Override
+        public void processElement2(
+            Tuple3<Integer, String, Integer> value, Context ctx, Collector<String> out
+        ) throws Exception {
+            Integer id = value.f0;
+            // 1. s2的数据来了，就存到变量中
+            if (!s2Cache.containsKey(id)) {
+                // 1.1 如果key不存在，说明是该key的第一条数据，初始化，put进map中
+                List<Tuple3<Integer, String, Integer>> s2Values = new ArrayList<>();
+                s2Values.add(value);
+                s2Cache.put(id, s2Values);
+            } else {
+                // 1.2 key存在，不是该key的第一条数据，直接添加到 value的list中
+                s2Cache.get(id).add(value);
+            }
+            // 2.去 s1Cache中查找是否有id能匹配上的,匹配上就输出，没有就不输出
+            if (s1Cache.containsKey(id)) {
+                for (Tuple2<Integer, String> s1Element : s1Cache.get(id)) {
+                    out.collect("s1:" + s1Element + "<========>" + "s2:" + value);
+                }
             }
         }
     }

@@ -97,50 +97,49 @@ public class StreamDemo {
         );
 
     }
-}
 
+    static class Item {
+        private int id;
+        private String category;
+        private int value;
 
-class Item {
-    private int id;
-    private String category;
-    private int value;
+        public Item(int id, String category, int value) {
+            this.id = id;
+            this.category = category;
+            this.value = value;
+        }
 
-    public Item(int id, String category, int value) {
-        this.id = id;
-        this.category = category;
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return "Item{" +
+        @Override
+        public String toString() {
+            return "Item{" +
                 "id=" + id +
                 ", category='" + category + '\'' +
                 ", value=" + value +
                 '}';
-    }
+        }
 
-    public int getId() {
-        return id;
-    }
+        public int getId() {
+            return id;
+        }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+        public void setId(int id) {
+            this.id = id;
+        }
 
-    public String getCategory() {
-        return category;
-    }
+        public String getCategory() {
+            return category;
+        }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+        public void setCategory(String category) {
+            this.category = category;
+        }
 
-    public int getValue() {
-        return value;
-    }
+        public int getValue() {
+            return value;
+        }
 
-    public void setValue(int value) {
-        this.value = value;
+        public void setValue(int value) {
+            this.value = value;
+        }
     }
 }

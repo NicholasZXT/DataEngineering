@@ -33,11 +33,13 @@ public class JacksonDemos {
         System.out.println(person_rev);
 
     }
+
+    @Data
+    static class Person {
+        private String name;
+        private Integer age;
+        private List<String> skillList;
+    }
+
 }
 
-@Data
-class Person {
-    private String name;
-    private Integer age;
-    private List<String> skillList;
-}

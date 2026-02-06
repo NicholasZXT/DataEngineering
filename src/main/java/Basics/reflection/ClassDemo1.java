@@ -40,10 +40,10 @@ public class ClassDemo1 {
 			e.printStackTrace();
 		}
 	}
-}
 
-class Foo{
-	void print(){
-		System.out.println("foo");
+	static class Foo {
+		void print() {
+			System.out.println("foo");
+		}
 	}
 }

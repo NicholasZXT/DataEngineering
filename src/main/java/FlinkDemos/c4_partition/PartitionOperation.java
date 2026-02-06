@@ -43,20 +43,22 @@ public class PartitionOperation {
 
         env.execute();
     }
-}
 
-// 分区器必须实现 Partitioner 接口
-class MyPartitioner implements Partitioner<Integer> {
-    @Override
-    public int partition(Integer key, int numPartitions) {
-        return key % numPartitions;
+    // 分区器必须实现 Partitioner 接口
+    static class MyPartitioner implements Partitioner<Integer> {
+        @Override
+        public int partition(Integer key, int numPartitions) {
+            return key % numPartitions;
+        }
+    }
+
+    static class MyKeySelector implements KeySelector<WaterSensor, Integer> {
+        @Override
+        public Integer getKey(WaterSensor waterSensor) throws Exception {
+            // 使用ID作为分区的key
+            return waterSensor.getVc();
+        }
     }
 }
 
-class MyKeySelector implements KeySelector<WaterSensor, Integer> {
-    @Override
-    public Integer getKey(WaterSensor waterSensor) throws Exception {
-        // 使用ID作为分区的key
-        return waterSensor.getVc();
-    }
-}
+

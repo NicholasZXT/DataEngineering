@@ -59,41 +59,41 @@ public class StreamSplit {
 
         env.execute();
     }
-}
 
-class SplitProcessFunction extends ProcessFunction<WaterSensor, WaterSensor> {
-    private OutputTag<WaterSensor> evenTag;
-    private OutputTag<WaterSensor> oddTag;
+    static class SplitProcessFunction extends ProcessFunction<WaterSensor, WaterSensor> {
+        private OutputTag<WaterSensor> evenTag;
+        private OutputTag<WaterSensor> oddTag;
 
-    public SplitProcessFunction(OutputTag<WaterSensor> evenTag, OutputTag<WaterSensor> oddTag){
-        this.evenTag = evenTag;
-        this.oddTag = oddTag;
-    }
+        public SplitProcessFunction(OutputTag<WaterSensor> evenTag, OutputTag<WaterSensor> oddTag) {
+            this.evenTag = evenTag;
+            this.oddTag = oddTag;
+        }
 
-    @Override
-    public void open(Configuration parameters) throws Exception {
-        super.open(parameters);
-        // Tag 的定义最好不要放在 open 方法里，更不能放在 processElement 方法里
-        //evenTag = new OutputTag<>("even", Types.POJO(WaterSensor.class));
-        //oddTag = new OutputTag<>("odd", Types.POJO(WaterSensor.class));
-        System.out.println("open method called with tags: " + evenTag + ", " + oddTag);
-    }
+        @Override
+        public void open(Configuration parameters) throws Exception {
+            super.open(parameters);
+            // Tag 的定义最好不要放在 open 方法里，更不能放在 processElement 方法里
+            //evenTag = new OutputTag<>("even", Types.POJO(WaterSensor.class));
+            //oddTag = new OutputTag<>("odd", Types.POJO(WaterSensor.class));
+            System.out.println("open method called with tags: " + evenTag + ", " + oddTag);
+        }
 
-    @Override
-    public void processElement(
-        WaterSensor value,
-        ProcessFunction<WaterSensor, WaterSensor>.Context ctx,
-        Collector<WaterSensor> out
-    ) throws Exception {
-        int vc = value.getVc();
-        if (vc <= 0){
-            // 输出到主流
-            out.collect(value);
-        }else if (vc % 2 == 0){
-            // 使用 Context 对象输出到侧流，第一个参数是 Tag, 第二个参数是数据
-            ctx.output(evenTag, value);
-        }else {
-            ctx.output(oddTag, value);
+        @Override
+        public void processElement(
+            WaterSensor value,
+            ProcessFunction<WaterSensor, WaterSensor>.Context ctx,
+            Collector<WaterSensor> out
+        ) throws Exception {
+            int vc = value.getVc();
+            if (vc <= 0) {
+                // 输出到主流
+                out.collect(value);
+            } else if (vc % 2 == 0) {
+                // 使用 Context 对象输出到侧流，第一个参数是 Tag, 第二个参数是数据
+                ctx.output(evenTag, value);
+            } else {
+                ctx.output(oddTag, value);
+            }
         }
     }
 }

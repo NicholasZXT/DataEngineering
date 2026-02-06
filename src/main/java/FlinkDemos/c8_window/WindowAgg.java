@@ -82,118 +82,123 @@ public class WindowAgg {
         env.execute();
     }
 
-}
+    /**
+     * AggregateFunction 接口实现类
+     * <WaterSensor>： 输入数据的类型
+     * <Integer>：累加器的类型，存储的中间计算结果的类型
+     * <String>：输出的类型
+     * 使用逻辑：
+     * 1、属于本窗口的第一条数据来，创建窗口，初始化累加器
+     * 2、增量聚合：来一条计算一条，调用一次add方法
+     * 3、窗口输出时调用一次 getResult 方法
+     * 4、输入类型、中间累加器类型、输出类型可以不一样，非常灵活
+     */
+    static class MyAggregateFunction implements AggregateFunction<WaterSensor, Integer, String> {
+        // 上面的类名后面不要跟泛型参数 ----- KEY
+        //创建累加器，初始化累加器
+        @Override
+        public Integer createAccumulator() {
+            Integer accumulator = 0;
+            System.out.println("[MyAggregateFunction] -> createAccumulator: init accumulator=" + accumulator);
+            return 0;
+        }
 
-/**
- * AggregateFunction 接口实现类
- * <WaterSensor>： 输入数据的类型
- * <Integer>：累加器的类型，存储的中间计算结果的类型
- * <String>：输出的类型
- * 使用逻辑：
- * 1、属于本窗口的第一条数据来，创建窗口，初始化累加器
- * 2、增量聚合：来一条计算一条，调用一次add方法
- * 3、窗口输出时调用一次 getResult 方法
- * 4、输入类型、中间累加器类型、输出类型可以不一样，非常灵活
- */
-class MyAggregateFunction implements AggregateFunction<WaterSensor, Integer, String>{
-    // 上面的类名后面不要跟泛型参数 ----- KEY
-    //创建累加器，初始化累加器
-    @Override
-    public Integer createAccumulator() {
-        Integer accumulator = 0;
-        System.out.println("[MyAggregateFunction] -> createAccumulator: init accumulator=" + accumulator);
-        return 0;
-    }
-    // 聚合逻辑
-    @Override
-    public Integer add(WaterSensor currentRecord, Integer accumulator) {
-        Integer result = accumulator + currentRecord.getVc();
-        System.out.println("[MyAggregateFunction] -> add, currentRecord=" + currentRecord
+        // 聚合逻辑
+        @Override
+        public Integer add(WaterSensor currentRecord, Integer accumulator) {
+            Integer result = accumulator + currentRecord.getVc();
+            System.out.println("[MyAggregateFunction] -> add, currentRecord=" + currentRecord
                 + ", accumulator=" + accumulator.toString()
                 + ", return: " + result);
-        return result;
-    }
-    // 获取最终结果，窗口触发时输出
-    @Override
-    public String getResult(Integer accumulator) {
-        String result = accumulator.toString();
-        System.out.println("[MyAggregateFunction] -> getResult, return: " + result);
-        return result;
-    }
-    // 只有会话窗口才会用到这个方法
-    @Override
-    public Integer merge(Integer integer, Integer acc1) {
-        // 只有会话窗口才会用到
-        System.out.println("[MyAggregateFunction] -> merge");
-        return null;
-    }
-}
+            return result;
+        }
 
-/**
- * ProcessWindowFunction 抽象类 —— 不是接口了
- * <WaterSensor>： 输入数据的类型
- * <String>：输出数据的类型
- * <String>：key的类型
- * <GlobalWindow>：Window类型
- * 使用逻辑：
- */
-class MyProcessFunction extends ProcessWindowFunction<WaterSensor, String, String, GlobalWindow> {
-    /**
-     * 抽象方法 的参数
-     * @param key The key for which this window is evaluated.
-     * @param context The context in which the window is being evaluated. 注意，Context 是 抽象类 Window 的内部类.
-     * @param elements The elements in the window being evaluated.
-     * @param out A collector for emitting elements.
-     * @throws Exception
-     */
-    @Override
-    public void process(
-        String key,
-        ProcessWindowFunction<WaterSensor, String, String, GlobalWindow>.Context context,
-        Iterable<WaterSensor> elements,
-        Collector<String> out
-    ) throws Exception {
-        // 上下文可以拿到window对象，还有其他东西：侧输出流 等等
-        long windowTs = context.window().maxTimestamp();
-        String windowTsStr = DateFormatUtils.format(windowTs, "yyyy-MM-dd HH:mm:ss.SSS");
-        long count = elements.spliterator().estimateSize();
-        out.collect(
-            "[MyProcessFunction] -> key=" + key
-            + "的窗口@[" + windowTsStr + "]包含 "
-            + count + " 条数据 ===> "
-            + elements.toString()
-        );
-    }
-}
+        // 获取最终结果，窗口触发时输出
+        @Override
+        public String getResult(Integer accumulator) {
+            String result = accumulator.toString();
+            System.out.println("[MyAggregateFunction] -> getResult, return: " + result);
+            return result;
+        }
 
-/**
- * 和 MyAggregateFunction 聚合函数一起使用的 全窗口函数，它的第一个泛型不再是 WaterSensor了，而是聚合函数的输出
- */
-class MyProcessFunctionForAgg extends ProcessWindowFunction<String, String, String, GlobalWindow> {
+        // 只有会话窗口才会用到这个方法
+        @Override
+        public Integer merge(Integer integer, Integer acc1) {
+            // 只有会话窗口才会用到
+            System.out.println("[MyAggregateFunction] -> merge");
+            return null;
+        }
+    }
+
     /**
-     * 抽象方法 的参数
-     * @param key The key for which this window is evaluated.
-     * @param context The context in which the window is being evaluated. 注意，Context 是 抽象类 Window 的内部变量.
-     * @param elements The elements in the window being evaluated.
-     * @param out A collector for emitting elements.
-     * @throws Exception
+     * ProcessWindowFunction 抽象类 —— 不是接口了
+     * <WaterSensor>： 输入数据的类型
+     * <String>：输出数据的类型
+     * <String>：key的类型
+     * <GlobalWindow>：Window类型
+     * 使用逻辑：
      */
-    @Override
-    public void process(
-        String key,
-        ProcessWindowFunction<String, String, String, GlobalWindow>.Context context,
-        Iterable<String> elements,
-        Collector<String> out
-    ) throws Exception {
-        // 上下文可以拿到window对象，还有其他东西：侧输出流 等等
-        long windowTs = context.window().maxTimestamp();
-        String windowTsStr = DateFormatUtils.format(windowTs, "yyyy-MM-dd HH:mm:ss.SSS");
-        // 查看当前 Key 的窗口数据条数，实际上只有一条，因为这里拿到的是 MyAggregateFunction 增量聚合的最终结果，每个Key只有一条记录
-        long count = elements.spliterator().estimateSize();
-        out.collect("[MyProcessFunctionForAgg] -> key=" + key
+    static class MyProcessFunction extends ProcessWindowFunction<WaterSensor, String, String, GlobalWindow> {
+        /**
+         * 抽象方法 的参数
+         *
+         * @param key      The key for which this window is evaluated.
+         * @param context  The context in which the window is being evaluated. 注意，Context 是 抽象类 Window 的内部类.
+         * @param elements The elements in the window being evaluated.
+         * @param out      A collector for emitting elements.
+         * @throws Exception
+         */
+        @Override
+        public void process(
+            String key,
+            ProcessWindowFunction<WaterSensor, String, String, GlobalWindow>.Context context,
+            Iterable<WaterSensor> elements,
+            Collector<String> out
+        ) throws Exception {
+            // 上下文可以拿到window对象，还有其他东西：侧输出流 等等
+            long windowTs = context.window().maxTimestamp();
+            String windowTsStr = DateFormatUtils.format(windowTs, "yyyy-MM-dd HH:mm:ss.SSS");
+            long count = elements.spliterator().estimateSize();
+            out.collect(
+                "[MyProcessFunction] -> key=" + key
+                    + "的窗口@[" + windowTsStr + "]包含 "
+                    + count + " 条数据 ===> "
+                    + elements.toString()
+            );
+        }
+    }
+
+    /**
+     * 和 MyAggregateFunction 聚合函数一起使用的 全窗口函数，它的第一个泛型不再是 WaterSensor了，而是聚合函数的输出
+     */
+    static class MyProcessFunctionForAgg extends ProcessWindowFunction<String, String, String, GlobalWindow> {
+        /**
+         * 抽象方法 的参数
+         *
+         * @param key      The key for which this window is evaluated.
+         * @param context  The context in which the window is being evaluated. 注意，Context 是 抽象类 Window 的内部变量.
+         * @param elements The elements in the window being evaluated.
+         * @param out      A collector for emitting elements.
+         * @throws Exception
+         */
+        @Override
+        public void process(
+            String key,
+            ProcessWindowFunction<String, String, String, GlobalWindow>.Context context,
+            Iterable<String> elements,
+            Collector<String> out
+        ) throws Exception {
+            // 上下文可以拿到window对象，还有其他东西：侧输出流 等等
+            long windowTs = context.window().maxTimestamp();
+            String windowTsStr = DateFormatUtils.format(windowTs, "yyyy-MM-dd HH:mm:ss.SSS");
+            // 查看当前 Key 的窗口数据条数，实际上只有一条，因为这里拿到的是 MyAggregateFunction 增量聚合的最终结果，每个Key只有一条记录
+            long count = elements.spliterator().estimateSize();
+            out.collect("[MyProcessFunctionForAgg] -> key=" + key
                 + "的窗口@[" + windowTsStr + "]包含 "
                 + count + " 条数据 ===> "
                 + elements.toString());
+        }
     }
+
 }
 

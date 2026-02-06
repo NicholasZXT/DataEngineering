@@ -83,71 +83,75 @@ public class WatermarkCustom {
         env.execute();
 
     }
-}
 
-class MyPeriodWatermark<T> implements WatermarkGenerator<T> {
-    // 乱序等待时间
-    private long delayTs;
-    // 用来保存 当前为止 最大的事件时间
-    private long maxTs;
+    static class MyPeriodWatermark<T> implements WatermarkGenerator<T> {
+        // 乱序等待时间
+        private long delayTs;
+        // 用来保存 当前为止 最大的事件时间
+        private long maxTs;
 
-    public MyPeriodWatermark(long delayTs) {
-        this.delayTs = delayTs;
-        this.maxTs = Long.MIN_VALUE + this.delayTs + 1;
+        public MyPeriodWatermark(long delayTs) {
+            this.delayTs = delayTs;
+            this.maxTs = Long.MIN_VALUE + this.delayTs + 1;
+        }
+
+        /**
+         * 每条数据来，都会调用一次： 用来提取最大的事件时间，保存下来
+         *
+         * @param event
+         * @param eventTimestamp 提取到的数据的 事件时间
+         * @param output
+         */
+        @Override
+        public void onEvent(T event, long eventTimestamp, WatermarkOutput output) {
+            maxTs = Math.max(maxTs, eventTimestamp);
+            System.out.println("调用onEvent方法，获取目前为止的最大时间戳=" + maxTs);
+        }
+
+        /**
+         * 周期性调用： 发射 watermark
+         *
+         * @param output
+         */
+        @Override
+        public void onPeriodicEmit(WatermarkOutput output) {
+            output.emitWatermark(new Watermark(maxTs - delayTs - 1));
+            System.out.println("调用onPeriodicEmit方法，生成watermark=" + (maxTs - delayTs - 1));
+        }
     }
 
-    /**
-     * 每条数据来，都会调用一次： 用来提取最大的事件时间，保存下来
-     * @param event
-     * @param eventTimestamp 提取到的数据的 事件时间
-     * @param output
-     */
-    @Override
-    public void onEvent(T event, long eventTimestamp, WatermarkOutput output) {
-        maxTs = Math.max(maxTs, eventTimestamp);
-        System.out.println("调用onEvent方法，获取目前为止的最大时间戳=" + maxTs);
-    }
+    static class MyPuntuatedWatermark<T> implements WatermarkGenerator<T> {
+        // 乱序等待时间
+        private long delayTs;
+        // 用来保存 当前为止 最大的事件时间
+        private long maxTs;
 
-    /**
-     * 周期性调用： 发射 watermark
-     * @param output
-     */
-    @Override
-    public void onPeriodicEmit(WatermarkOutput output) {
-        output.emitWatermark(new Watermark(maxTs - delayTs - 1));
-        System.out.println("调用onPeriodicEmit方法，生成watermark=" + (maxTs - delayTs - 1));
-    }
-}
+        public MyPuntuatedWatermark(long delayTs) {
+            this.delayTs = delayTs;
+            this.maxTs = Long.MIN_VALUE + this.delayTs + 1;
+        }
 
-class MyPuntuatedWatermark<T> implements WatermarkGenerator<T> {
-    // 乱序等待时间
-    private long delayTs;
-    // 用来保存 当前为止 最大的事件时间
-    private long maxTs;
+        /**
+         * 每条数据来，都会调用一次： 用来提取最大的事件时间，保存下来,并发射watermark
+         *
+         * @param event
+         * @param eventTimestamp 提取到的数据的 事件时间
+         * @param output
+         */
+        @Override
+        public void onEvent(T event, long eventTimestamp, WatermarkOutput output) {
+            maxTs = Math.max(maxTs, eventTimestamp);
+            output.emitWatermark(new Watermark(maxTs - delayTs - 1));
+            System.out.println("调用onEvent方法，获取目前为止的最大时间戳=" + maxTs + ",watermark=" + (maxTs - delayTs - 1));
+        }
 
-    public MyPuntuatedWatermark(long delayTs) {
-        this.delayTs = delayTs;
-        this.maxTs = Long.MIN_VALUE + this.delayTs + 1;
-    }
-
-    /**
-     * 每条数据来，都会调用一次： 用来提取最大的事件时间，保存下来,并发射watermark
-     * @param event
-     * @param eventTimestamp 提取到的数据的 事件时间
-     * @param output
-     */
-    @Override
-    public void onEvent(T event, long eventTimestamp, WatermarkOutput output) {
-        maxTs = Math.max(maxTs, eventTimestamp);
-        output.emitWatermark(new Watermark(maxTs - delayTs - 1));
-        System.out.println("调用onEvent方法，获取目前为止的最大时间戳=" + maxTs+",watermark="+(maxTs - delayTs - 1));
-    }
-
-    /**
-     * 周期性调用： 不需要
-     * @param output
-     */
-    @Override
-    public void onPeriodicEmit(WatermarkOutput output) {
+        /**
+         * 周期性调用： 不需要
+         *
+         * @param output
+         */
+        @Override
+        public void onPeriodicEmit(WatermarkOutput output) {
+        }
     }
 }
