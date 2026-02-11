@@ -1,11 +1,11 @@
-package FlinkDemos;
+package FlinkDemos.sql;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
-/*
+/**
 调试 FlinkSQL 读kafka 写Hive
 ----------------------------------------------------------
 flink-sql 建表语句如下：
@@ -49,7 +49,7 @@ TBLPROPERTIES (
 );
 ----------------------------------------------------------
 flink任务执行语句如下：
-flink run -t yarn-per-job -Dyarn.application.name=kafka2hive-test_flink -c FlinkDemos.FlinkSqlImportTest DataEngineering-1.0.jar
+flink run -t yarn-per-job -Dyarn.application.name=kafka2hive-test_flink -c FlinkDemos.sql.FlinkSqlImportTest DataEngineering-1.0.jar
 ----------------------------------------------------------
 kafka控制台生产者语句如下：
 kafka-console-producer.sh --broker-list 10.8.6.185:9092 --topic test_flink

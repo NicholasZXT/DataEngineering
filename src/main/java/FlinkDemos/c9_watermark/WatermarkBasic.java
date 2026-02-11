@@ -4,8 +4,10 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;  // 水位线策略接口
+import org.apache.flink.api.common.eventtime.TimestampAssigner;  // 所有时间戳提取方法底层对应的接口
+import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;  // Lambda时间戳提取接口
+import org.apache.flink.api.common.eventtime.TimestampAssignerSupplier;      // 支持上下文的时间戳提取工厂接口
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
@@ -56,14 +58,8 @@ public class WatermarkBasic {
             .<WaterSensor>forMonotonousTimestamps()
             // 指定 时间戳分配器，从数据中提取时间戳
             .withTimestampAssigner(
+                // 这里使用接口匿名实现类，比较繁琐
                 new SerializableTimestampAssigner<WaterSensor>() {
-                    /**
-                     * extractTimestamp 接口参数
-                     * @param element The element that the timestamp will be assigned to.
-                     * @param recordTimestamp The current internal timestamp of the element, or a negative value,
-                     *                        if no timestamp has been assigned yet.
-                     * @return The new timestamp
-                     */
                     @Override
                     public long extractTimestamp(WaterSensor element, long recordTimestamp) {
                         //返回的时间戳，单位是 毫秒
@@ -81,6 +77,7 @@ public class WatermarkBasic {
             .<WaterSensor>forBoundedOutOfOrderness(Duration.ofSeconds(3))
             // 指定 时间戳分配器，从数据中提取时间戳
             .withTimestampAssigner(
+                // 这里使用 Lambda 表达式，更加简洁
                 (element, recordTimestamp) -> {
                     // 返回的时间戳，要求是毫秒
                     System.out.println("数据=" + element + ",recordTs=" + recordTimestamp);
