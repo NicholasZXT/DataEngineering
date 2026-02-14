@@ -1,5 +1,9 @@
 package FlinkDemos.c11_state;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
@@ -12,10 +16,6 @@ import org.apache.flink.api.common.state.*;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import FlinkDemos.beans.WaterSensor;
 import FlinkDemos.c8_window.TimeWindowAgg;
@@ -23,7 +23,7 @@ import FlinkDemos.c8_window.TimeWindowAgg;
 /**
  * 演示托管状态里，KeyedState 的各个用法
  */
-public class KeyedStateDemos {
+public class KeyedStateUsage {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
@@ -73,7 +73,6 @@ public class KeyedStateDemos {
         sensorKDS
             .process(new MyReducingStateProcFunc())
             .print("KeyedState -> ReducingState");
-
 
         // ---------------- AggregatingState 使用 ----------------
         // 计算每种传感器的平均水位
