@@ -1,9 +1,9 @@
-package FlinkDemos.c10_process_function;
+package FlinkDemos.c8_process_function;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.flink.configuration.Configuration;
+
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;

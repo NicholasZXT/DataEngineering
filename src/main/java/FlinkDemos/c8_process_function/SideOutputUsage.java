@@ -1,4 +1,4 @@
-package FlinkDemos.c10_process_function;
+package FlinkDemos.c8_process_function;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -29,6 +29,10 @@ public class SideOutputUsage {
 
         // 主输出流（本例中不使用，留空）
         processedStream.print("MAIN");
+
+        // 也有使用如下方式来定义 OutputTag 的，但是还是推荐使用上面匿名类的方式。
+        //OutputTag<String> evenTag = new OutputTag<>("even", Types.STRING);
+        //OutputTag<String> oddTag = new OutputTag<>("odd", Types.STRING);
 
         // 获取两个侧输出流
         processedStream.getSideOutput(EVEN_OUTPUT_TAG).print("EVEN");

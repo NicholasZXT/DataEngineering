@@ -1,4 +1,4 @@
-package FlinkDemos.c9_watermark;
+package FlinkDemos.c7_window;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;

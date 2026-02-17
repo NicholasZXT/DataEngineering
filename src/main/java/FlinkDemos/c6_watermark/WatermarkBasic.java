@@ -1,13 +1,10 @@
-package FlinkDemos.c9_watermark;
+package FlinkDemos.c6_watermark;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;  // 水位线策略接口
-import org.apache.flink.api.common.eventtime.TimestampAssigner;  // 所有时间戳提取方法底层对应的接口
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;  // Lambda时间戳提取接口
-import org.apache.flink.api.common.eventtime.TimestampAssignerSupplier;      // 支持上下文的时间戳提取工厂接口
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
@@ -15,7 +12,7 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 import java.time.Duration;
 import FlinkDemos.beans.WaterSensor;
-import FlinkDemos.c8_window.TimeWindowAgg;
+import FlinkDemos.c7_window.TimeWindowAgg;
 
 /**
  * WatermarkStrategy 是一个定义水位线生成方式的接口，它继承了两个接口：

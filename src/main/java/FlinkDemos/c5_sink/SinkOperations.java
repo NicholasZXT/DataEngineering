@@ -1,4 +1,4 @@
-package FlinkDemos.c7_sink;
+package FlinkDemos.c5_sink;
 
 import java.time.Duration;
 import java.time.ZoneId;

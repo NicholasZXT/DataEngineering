@@ -1,4 +1,4 @@
-package FlinkDemos.c10_process_function;
+package FlinkDemos.c8_process_function;
 
 import java.time.Duration;
 import java.util.Arrays;

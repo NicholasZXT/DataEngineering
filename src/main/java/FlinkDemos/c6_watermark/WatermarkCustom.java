@@ -1,9 +1,8 @@
-package FlinkDemos.c9_watermark;
+package FlinkDemos.c6_watermark;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.eventtime.Watermark;
 import org.apache.flink.api.common.eventtime.WatermarkGenerator;
@@ -15,7 +14,7 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
 import FlinkDemos.beans.WaterSensor;
-import FlinkDemos.c8_window.TimeWindowAgg;
+import FlinkDemos.c7_window.TimeWindowAgg;
 
 /**
  * 演示自定义水位线生成器

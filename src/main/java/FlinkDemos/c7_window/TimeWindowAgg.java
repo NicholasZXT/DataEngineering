@@ -1,4 +1,4 @@
-package FlinkDemos.c8_window;
+package FlinkDemos.c7_window;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;

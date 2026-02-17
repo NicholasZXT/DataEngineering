@@ -1,4 +1,4 @@
-package FlinkDemos.c10_process_function;
+package FlinkDemos.c8_process_function;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.util.*;
 
 import FlinkDemos.beans.WaterSensor;
-import FlinkDemos.c8_window.TimeWindowAgg;
+import FlinkDemos.c7_window.TimeWindowAgg;
 
 /**
  * 实时统计一段时间内的出现次数最多的水位。
