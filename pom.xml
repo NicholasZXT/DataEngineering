@@ -470,6 +470,12 @@
         <!--    <artifactId>flink-connector-mysql-cdc</artifactId>-->
         <!--    <version>3.1.0</version>-->
         <!--</dependency>-->
+        <!-- Flink-CEP 依赖-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-cep</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
 
         <!-- ***************************************************** -->
         <!-- Hadoop相关依赖，强烈建议放在所有大数据组件依赖的后面，因为手动指定的hadoop版本很可能会和前面某个组件冲突 -->
